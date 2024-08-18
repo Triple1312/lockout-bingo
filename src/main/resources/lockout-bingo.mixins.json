@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "net.abrikoos.lockout_bingo.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "LockoutLivingEntityMixin",
+    "LockoutPlayerAdvancementTrackerMixin",
+    "ScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "HudBoardMixin"
+	]
+}
