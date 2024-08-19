@@ -65,6 +65,31 @@ public class LockoutBingo implements ModInitializer {
 			LockoutLogger.log("Started blackout game");
 		});
 
+
+//		LootTableEvents.MODIFY.register((resourceManager, tableBuilder, source, id) -> {
+//			if (source.isBuiltin() && LootTables.PIGLIN_BARTERING_GAMEPLAY.equals(id)) {
+//				LootPool.builder()
+//						.with(ItemEntry.builder(Items.ENDER_PEARL ).weight(10))
+//						.with(ItemEntry.builder(Items.POTIO));
+//
+//				LootPool.Builder poolbuilder = LootPool.builder()
+//								.with(ItemEntry.builder(Items.ENCHANTED_BOOK).apply(EnchantRandomlyLootFunction.builder()
+//										.add(Enchantments.SOUL_SPEED, 1)  // Adds Soul Speed 1
+//										.add(Enchantments.SOUL_SPEED, 2))) // Adds Soul Speed 2
+//								.with(ItemEntry.builder(Items.SPLASH_POTION).weight(10).apply(SetPotionLootFunction.builder(Potions.FIRE_RESISTANCE)))
+//
+//
+//
+//
+//
+//				tableBuilder.modifyPools( pool -> {
+//					pool.with(ItemEntry.builder(Items.ENDER_PEARL).weight(20).apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(4.f, 8.f)))).build();
+//					pool.with(ItemEntry.builder(Items.STRING).weight())
+//				});
+//			}
+//		});
+
+
 	}
 
 

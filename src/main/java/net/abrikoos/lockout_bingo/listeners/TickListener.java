@@ -1,5 +1,6 @@
 package net.abrikoos.lockout_bingo.listeners;
 
+import net.abrikoos.lockout_bingo.LockoutLogger;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.MinecraftServer;
 

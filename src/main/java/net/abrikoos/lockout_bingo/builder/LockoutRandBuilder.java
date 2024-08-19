@@ -78,6 +78,8 @@ public class LockoutRandBuilder extends LockoutGoalBuilder {
         final int max_lvl = 2;
         final int max_use = 2;
         final int max_tame = 2;
+        final int max_biomes = 1;
+        final int max_wool = 1;
 
 
         int redstone_count = 0;
@@ -97,6 +99,8 @@ public class LockoutRandBuilder extends LockoutGoalBuilder {
         int lvl_count = 0;
         int use_count = 0;
         int tame_count = 0;
+        int biomes_count = 0;
+        int wool_count = 0;
 
         for (GoalListItem goal : goals) {
             for (LockoutGoalTag tag : goal.tags) {
@@ -152,6 +156,12 @@ public class LockoutRandBuilder extends LockoutGoalBuilder {
                     case lvl:
                         lvl_count++;
                         break;
+                    case biomes:
+                        biomes_count++;
+                        break;
+                    case wool:
+                        wool_count++;
+                        break;
                     default:
                         break;
                 }
@@ -176,6 +186,8 @@ public class LockoutRandBuilder extends LockoutGoalBuilder {
         else if (lvl_count > max_lvl) {removeGoalsWithTag(LockoutGoalTag.lvl); return false;}
         else if (use_count > max_use) {removeGoalsWithTag(LockoutGoalTag.use); return false;}
         else if (tame_count > max_tame) {removeGoalsWithTag(LockoutGoalTag.tame); return false;}
+        else if (biomes_count > max_biomes) {removeGoalsWithTag(LockoutGoalTag.biomes); return false;}
+        else if (wool_count > max_wool) {removeGoalsWithTag(LockoutGoalTag.wool); return false;}
         return true;
 
     }

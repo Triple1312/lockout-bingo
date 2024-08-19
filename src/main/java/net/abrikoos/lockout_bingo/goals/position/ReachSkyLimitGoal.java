@@ -1,19 +1,16 @@
-package net.abrikoos.lockout_bingo.goals.lvl;
+package net.abrikoos.lockout_bingo.goals.position;
 
 import net.abrikoos.lockout_bingo.goals.stats.StatGoal;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-public class ReachLvlGoal extends StatGoal {
+public class ReachSkyLimitGoal extends StatGoal {
 
-    final int lvl;
-
-    public ReachLvlGoal(int id, int lvl) {
+    public ReachSkyLimitGoal(int id) {
         super(id);
-        this.lvl = lvl;
     }
 
     @Override
     protected boolean validateProgress(ServerPlayerEntity player) {
-        return player.experienceLevel >= lvl;
+        return player.getY() >= 320;
     }
 }

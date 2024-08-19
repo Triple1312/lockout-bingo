@@ -66,6 +66,8 @@ public class GoalItemRegistry {
         items.add(new GoalListItem("obtain black glazed terracotta", "", 1, List.of(), "obtain_black_glazed_terracotta", List.of(Identifier.of("lockout-bingo:goalicon/block/black_glazed_terracotta.png"))));
         items.add(new GoalListItem("obtain all saplings", "", 1, List.of(), "obtain_all_saplings", List.of(Identifier.of("minecraft:textures/block/oak_sapling.png"), Identifier.of("minecraft:textures/block/spruce_sapling.png"), Identifier.of("minecraft:textures/block/birch_sapling.png"), Identifier.of("minecraft:textures/block/jungle_sapling.png"), Identifier.of("minecraft:textures/block/acacia_sapling.png"), Identifier.of("minecraft:textures/block/dark_oak_sapling.png"))));
         items.add(new GoalListItem("obtain 2 music disks", "", 1, List.of(C2), "obtain_2_music_disks", List.of(Identifier.of("minecraft:textures/item/music_disc_11.png"), Identifier.of("minecraft:textures/item/music_disc_13.png"), Identifier.of("minecraft:textures/item/music_disc_blocks.png"), Identifier.of("minecraft:textures/item/music_disc_cat.png"), Identifier.of("minecraft:textures/item/music_disc_chirp.png"), Identifier.of("minecraft:textures/item/music_disc_far.png"), Identifier.of("minecraft:textures/item/music_disc_mall.png"), Identifier.of("minecraft:textures/item/music_disc_mellohi.png"), Identifier.of("minecraft:textures/item/music_disc_stal.png"), Identifier.of("minecraft:textures/item/music_disc_strad.png"), Identifier.of("minecraft:textures/item/music_disc_wait.png"), Identifier.of("minecraft:textures/item/music_disc_ward.png"))));
+        items.add(new GoalListItem("obtain all types of horse armor", "", 1, List.of(), "obtain_all_harmor", List.of(Identifier.of("minecraft:textures/item/iron_horse_armor.png"), Identifier.of("minecraft:textures/item/golden_horse_armor.png"), Identifier.of("minecraft:textures/item/diamond_horse_armor.png"))));
+
 
         items.add(new GoalListItem("eat 5 unique foods", "", 1, List.of(C5, eat), "eat_5", List.of(Identifier.of("minecraft:textures/item/apple.png"))));
         items.add(new GoalListItem("eat 10 unique foods", "", 1, List.of(C10, eat), "eat_10", List.of(Identifier.of("minecraft:textures/item/apple.png"))));
@@ -149,9 +151,17 @@ public class GoalItemRegistry {
         items.add(new GoalListItem("tactical fishing", "", 1, List.of(advancement), "tactical_fishing_adv", List.of(Identifier.of("minecraft:textures/item/tropical_fish_bucket.png"))));
         items.add(new GoalListItem("scrape the wax off a copper block", "", 1, List.of(advancement), "wax_off_adv", List.of(Identifier.of("minecraft:textures/item/stone_axe.png"))));
         items.add(new GoalListItem("axolotl in a bucket", "", 1, List.of(advancement), "axolotl_bucket_adv", List.of(Identifier.of("minecraft:textures/item/axolotl_bucket.png"))));
-        items.add(new GoalListItem("Crafters crafting crafters", "", 1, List.of(advancement), "crafters_crafting_crafters_adv", List.of(Identifier.of("lockout-bingo:goalicon/block/crafter.png"))));
+        items.add(new GoalListItem("Crafters crafting crafters", "", 1, List.of(advancement), "crafters_adv", List.of(Identifier.of("lockout-bingo:goalicon/block/crafter.png"))));
         items.add(new GoalListItem("use a trial key on a vault", "", 1, List.of(advancement), "trial_key_adv", List.of(Identifier.of("lockout-bingo:goalicon/item/trial_key.png"))));
         items.add(new GoalListItem("use wolf armor on a wolf", "", 1, List.of(advancement), "wolf_armor_adv", List.of(Identifier.of("lockout-bingo:goalicon/item/wolf_armor.png"))));
+        items.add(new GoalListItem("Sound of music: play a music disk in a meadow", "", 1, List.of(advancement), "sound_of_music_adv", List.of(Identifier.of("lockout-bingo:goalicon/block/jukebox.png"))));
+        items.add(new GoalListItem("catch a fish", "", 1, List.of(advancement), "fishy_business_adv", List.of(Identifier.of("minecraft:textures/item/fishing_rod.png"))));
+
+        // biome goals
+        items.add(new GoalListItem("find 15 unique biomes", "", 1, List.of(C15, biomes), "biomes_15", List.of(Identifier.of("minecraft:textures/item/diamond_boots.png"))));
+        items.add(new GoalListItem("find 20 unique biomes", "", 1, List.of(C20, biomes), "biomes_20", List.of(Identifier.of("minecraft:textures/item/diamond_boots.png"))));
+        items.add(new GoalListItem("find 25 unique biomes", "", 1, List.of(C25, biomes), "biomes_25", List.of(Identifier.of("minecraft:textures/item/diamond_boots.png"))));
+        items.add(new GoalListItem("find 30 unique biomes", "", 1, List.of(C30, biomes), "biomes_30", List.of(Identifier.of("minecraft:textures/item/diamond_boots.png"))));
 
         items.add(new GoalListItem("die by golem", "", 1, List.of(die), "die_golem", List.of(Identifier.of("lockout-bingo:goalicon/entity/iron_golem.png"))));
         items.add(new GoalListItem("die by llama", "", 1, List.of(die), "die_llama", List.of(Identifier.of("lockout-bingo:goalicon/entity/lama.png"))));
@@ -201,6 +211,25 @@ public class GoalItemRegistry {
 
         items.add(new GoalListItem("break 5 pickaxes", "", 1, List.of(C5, broken), "break_5_pickaxes", List.of(Identifier.of("minecraft:textures/item/wooden_pickaxe.png"))));
         items.add(new GoalListItem("get them in a bucket !!", "", 5, List.of(), "get_them_in_a_bucket", List.of(Identifier.of("minecraft:textures/item/pufferfish_bucket.png"))));
+
+        // level goals
+        items.add(new GoalListItem("reach level 15", "", 1, List.of(lvl, C15), "lvl_15", List.of(Identifier.of("lockout-bingo:goalicon/entity/experience_orb.png"))));
+        items.add(new GoalListItem("reach level 30", "", 1, List.of(lvl, C30), "lvl_30", List.of(Identifier.of("lockout-bingo:goalicon/entity/experience_orb.png"))));
+
+
+        // position goals
+        items.add(new GoalListItem("reach bedrock", "", 1, List.of(), "reach_bedrock", List.of(Identifier.of("lockout-bingo:goalicon/block/bedrock.png"))));
+        items.add(new GoalListItem("reach the sky limit", "", 1, List.of(), "reach_sky_limit", List.of(Identifier.of("lockout-bingo:goalicon/item/sun.png"))));
+        items.add(new GoalListItem("fall for 300 blocks", "", 1, List.of(C300), "fall_300", List.of(Identifier.of("lockout-bingo:goalicon/item/feather.png"))));
+
+        //wool goals
+        items.add(new GoalListItem("obtain a stack of lime wool", "", 1, List.of(wool, C64), "64_lime_wool", List.of(Identifier.of("lockout-bingo:goalicon/block/wool/lime_wool.png"))));
+        items.add(new GoalListItem("obtain a stack of gray wool", "", 1, List.of(wool, C64), "64_gray_wool", List.of(Identifier.of("lockout-bingo:goalicon/block/wool/gray_wool.png"))));
+        items.add(new GoalListItem("obtain a stack of cyan wool", "", 1, List.of(wool, C64), "64_cyan_wool", List.of(Identifier.of("lockout-bingo:goalicon/block/wool/cyan_wool.png"))));
+        items.add(new GoalListItem("obtain a stack of brown wool", "", 1, List.of(wool, C64), "64_brown_wool", List.of(Identifier.of("lockout-bingo:goalicon/block/wool/brown_wool.png"))));
+
+        items.add(new GoalListItem("duplicate a smithing template", "", 1, List.of(C2), "duplicate_smithing_template", List.of(Identifier.of("lockout-bingo:goalicon/item/smithing_templates/silence_template.png")))); // todo nog bij voegen
+
     }
 
     public static GoalItemRegistry getInstance() {

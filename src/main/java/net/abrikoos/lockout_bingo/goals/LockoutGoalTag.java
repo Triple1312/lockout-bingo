@@ -36,5 +36,9 @@ public enum LockoutGoalTag {
     C2,
     C200,
     C500,
+    C300,
+    C30,
     broken, // cant use break so ...
+    biomes,
+    wool,
 }

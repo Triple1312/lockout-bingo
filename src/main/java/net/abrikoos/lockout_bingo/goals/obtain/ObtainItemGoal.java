@@ -25,11 +25,7 @@ public class ObtainItemGoal extends LockoutGoal {
             PlayerInventory inventory = player.getInventory();
             for (int i = 0; i < inventory.size(); i++) {
                 if (inventory.getStack(i).getItem() == item && inventory.getStack(i).getCount() >= this.count) {
-
-                    LockoutLogger.log("Player " + player.getName().toString() + " has obtained " + item.getName().toString());
-                    this.notifyListeners(new LockoutGoalEvent(player.getNameForScoreboard(), "ally", this.id));
-                    completed = player;
-                    return;
+                    this.completed(player);
                 }
             }
         }

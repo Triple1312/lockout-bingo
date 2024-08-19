@@ -1,5 +1,6 @@
 package net.abrikoos.lockout_bingo.listeners;
 
+import net.abrikoos.lockout_bingo.LockoutLogger;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.apache.logging.log4j.util.TriConsumer;

@@ -114,6 +114,9 @@ public class GoalListItem {
             else if (tag == LockoutGoalTag.C25) {
                 ctx.drawText(textRenderer,"25", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
             }
+            else if (tag == LockoutGoalTag.C30) {
+                ctx.drawText(textRenderer,"30", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+            }
             else if (tag == LockoutGoalTag.C64) {
                 ctx.drawText(textRenderer,"64", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
             }
@@ -134,6 +137,9 @@ public class GoalListItem {
             }
             else if (tag == LockoutGoalTag.C500) {
                 ctx.drawText(textRenderer,"500", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+            }
+            else if (tag == LockoutGoalTag.C300) {
+                ctx.drawText(textRenderer,"300", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
             }
         }
     }

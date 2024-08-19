@@ -4,6 +4,7 @@ import net.abrikoos.lockout_bingo.goals.advancement.GetAdvancementGoal;
 import net.abrikoos.lockout_bingo.goals.advancement.MultiAdvancementGoal;
 import net.abrikoos.lockout_bingo.goals.breed.BreedAnimalGoal;
 import net.abrikoos.lockout_bingo.goals.breed.BreedMultiAnimalsGoal;
+import net.abrikoos.lockout_bingo.goals.craft.DuplicateTemplateGoal;
 import net.abrikoos.lockout_bingo.goals.damage.DealDamageGoal;
 import net.abrikoos.lockout_bingo.goals.die.DieFromEntityGoal;
 import net.abrikoos.lockout_bingo.goals.die.DieFromWeaponGoal;
@@ -14,9 +15,13 @@ import net.abrikoos.lockout_bingo.goals.effect.GetMultiEffectGoal;
 import net.abrikoos.lockout_bingo.goals.kill.KillHostileEntityGoal;
 import net.abrikoos.lockout_bingo.goals.kill.KillJeb;
 import net.abrikoos.lockout_bingo.goals.kill.MultiKillHostilesGoal;
+import net.abrikoos.lockout_bingo.goals.lvl.ReachLvlGoal;
 import net.abrikoos.lockout_bingo.goals.mine.MineDiamondOre;
 import net.abrikoos.lockout_bingo.goals.mine.MineEmeraldOre;
 import net.abrikoos.lockout_bingo.goals.obtain.*;
+import net.abrikoos.lockout_bingo.goals.position.FallGoal;
+import net.abrikoos.lockout_bingo.goals.position.ReachBedrockGoal;
+import net.abrikoos.lockout_bingo.goals.position.ReachSkyLimitGoal;
 import net.abrikoos.lockout_bingo.goals.ride.RideHorseGoal;
 import net.abrikoos.lockout_bingo.goals.ride.RidePigGoal;
 import net.abrikoos.lockout_bingo.goals.tools.BreakXPickaxes;
@@ -34,6 +39,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.screen.LoomScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.SmithingScreenHandler;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
@@ -97,6 +103,7 @@ public class GoalFactory {
             case "obtain_black_glazed_terracotta" -> new ObtainItemGoal(id, Items.BLACK_GLAZED_TERRACOTTA);
             case "obtain_all_saplings" -> new ObtainXofSetItemsGoal(id, List.of(Items.OAK_SAPLING, Items.SPRUCE_SAPLING, Items.BIRCH_SAPLING, Items.JUNGLE_SAPLING, Items.ACACIA_SAPLING, Items.DARK_OAK_SAPLING, Items.CHERRY_SAPLING), 7); //todo make class
             case "obtain_2_music_disks" -> new ObtainXofSetItemsGoal(id, List.of(Items.MUSIC_DISC_11, Items.MUSIC_DISC_13, Items.MUSIC_DISC_OTHERSIDE, Items.MUSIC_DISC_PRECIPICE, Items.MUSIC_DISC_5, Items.MUSIC_DISC_CAT, Items.MUSIC_DISC_BLOCKS, Items.MUSIC_DISC_CHIRP, Items.MUSIC_DISC_FAR, Items.MUSIC_DISC_MALL, Items.MUSIC_DISC_MELLOHI, Items.MUSIC_DISC_PIGSTEP, Items.MUSIC_DISC_RELIC, Items.MUSIC_DISC_STAL, Items.MUSIC_DISC_STRAD, Items.MUSIC_DISC_WAIT, Items.MUSIC_DISC_BLOCKS, Items.MUSIC_DISC_WARD), 2);
+            case "obtain_all_harmor" -> new ObtainXofSetItemsGoal(id, List.of(Items.DIAMOND_HORSE_ARMOR, Items.GOLDEN_HORSE_ARMOR, Items.IRON_HORSE_ARMOR, Items.LEATHER_HORSE_ARMOR), 4);
 
             // eat goals
             case "eat_5" -> new EatMultiFoodGoal(id, 5);
@@ -192,6 +199,14 @@ public class GoalFactory {
             case "crafters_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "adventure/crafters_crafting_crafters"));
             case "trial_key_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "adventure/under_lock_and_key"));
             case "wolf_armor_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "adventure/repair_wolf_armor"));
+            case "sound_of_music_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "adventure/play_jukebox_in_meadows"));
+            case "fishy_business_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "husbandry/fishy_business"));
+
+            // biome goals
+            case "biomes_15" -> new MultiAdvancementGoal(id, Identifier.of("minecraft", "adventure/adventuring_time"), 15);
+            case "biomes_20" -> new MultiAdvancementGoal(id, Identifier.of("minecraft", "adventure/adventuring_time"), 20);
+            case "biomes_25" -> new MultiAdvancementGoal(id, Identifier.of("minecraft", "adventure/adventuring_time"), 25);
+            case "biomes_30" -> new MultiAdvancementGoal(id, Identifier.of("minecraft", "adventure/adventuring_time"), 30);
 
             // die goals
             case "die_golem" -> new DieFromEntityGoal(id, EntityType.IRON_GOLEM);
@@ -238,6 +253,20 @@ public class GoalFactory {
             case "get_them_in_a_bucket" -> new ObtainXofSetItemsGoal(id, List.of(Items.COD_BUCKET, Items.SALMON_BUCKET, Items.PUFFERFISH_BUCKET, Items.TROPICAL_FISH_BUCKET, Items.AXOLOTL_BUCKET, Items.TADPOLE_BUCKET), 6);
 
             case "break_5_pickaxes" -> new BreakXPickaxes(id, 5);
+
+            case "lvl_15" -> new ReachLvlGoal(id, 15);
+            case "lvl_30" -> new ReachLvlGoal(id, 30);
+
+            case "reach_bedrock" -> new ReachBedrockGoal(id);
+            case "reach_sky_limit" -> new ReachSkyLimitGoal(id);
+            case "fall_300" -> new FallGoal(id, 300);
+
+            case "64_lime_wool" -> new ObtainMultiCountItemGoal(id, Items.LIME_WOOL, 64);
+            case "64_gray_wool" -> new ObtainMultiCountItemGoal(id, Items.GRAY_WOOL, 64);
+            case "64_brown_wool" -> new ObtainMultiCountItemGoal(id, Items.BROWN_WOOL, 64);
+            case "64_cyan_wool" -> new ObtainMultiCountItemGoal(id, Items.CYAN_WOOL, 64);
+
+            case "duplicate_smithing_template" -> new DuplicateTemplateGoal(id);
 
             default ->
 
