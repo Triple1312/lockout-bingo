@@ -4,12 +4,15 @@ import net.abrikoos.lockout_bingo.goals.advancement.GetAdvancementGoal;
 import net.abrikoos.lockout_bingo.goals.advancement.MultiAdvancementGoal;
 import net.abrikoos.lockout_bingo.goals.breed.BreedAnimalGoal;
 import net.abrikoos.lockout_bingo.goals.breed.BreedMultiAnimalsGoal;
+import net.abrikoos.lockout_bingo.goals.brew.BrewPotionGoal;
 import net.abrikoos.lockout_bingo.goals.craft.DuplicateTemplateGoal;
 import net.abrikoos.lockout_bingo.goals.damage.DealDamageGoal;
 import net.abrikoos.lockout_bingo.goals.die.DieFromEntityGoal;
 import net.abrikoos.lockout_bingo.goals.die.DieFromWeaponGoal;
 import net.abrikoos.lockout_bingo.goals.eat.EatFoodGoal;
 import net.abrikoos.lockout_bingo.goals.eat.EatMultiFoodGoal;
+import net.abrikoos.lockout_bingo.goals.effect.DontGetAnyEffects;
+import net.abrikoos.lockout_bingo.goals.effect.DontGetEffectGoal;
 import net.abrikoos.lockout_bingo.goals.effect.GetEffectGoal;
 import net.abrikoos.lockout_bingo.goals.effect.GetMultiEffectGoal;
 import net.abrikoos.lockout_bingo.goals.kill.KillHostileEntityGoal;
@@ -18,6 +21,8 @@ import net.abrikoos.lockout_bingo.goals.kill.MultiKillHostilesGoal;
 import net.abrikoos.lockout_bingo.goals.lvl.ReachLvlGoal;
 import net.abrikoos.lockout_bingo.goals.mine.MineDiamondOre;
 import net.abrikoos.lockout_bingo.goals.mine.MineEmeraldOre;
+import net.abrikoos.lockout_bingo.goals.movement.SprintGoal;
+import net.abrikoos.lockout_bingo.goals.movement.SwimGoal;
 import net.abrikoos.lockout_bingo.goals.obtain.*;
 import net.abrikoos.lockout_bingo.goals.position.FallGoal;
 import net.abrikoos.lockout_bingo.goals.position.ReachBedrockGoal;
@@ -25,21 +30,15 @@ import net.abrikoos.lockout_bingo.goals.position.ReachSkyLimitGoal;
 import net.abrikoos.lockout_bingo.goals.ride.RideHorseGoal;
 import net.abrikoos.lockout_bingo.goals.ride.RidePigGoal;
 import net.abrikoos.lockout_bingo.goals.tools.BreakXPickaxes;
-import net.abrikoos.lockout_bingo.goals.useblock.UseBlockGoal;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.TextureManager;
+import net.abrikoos.lockout_bingo.goals.use.UseBlockGoal;
 
+import net.abrikoos.lockout_bingo.goals.use.UseEntityGoal;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.screen.LoomScreenHandler;
+import net.minecraft.potion.Potions;
 import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.screen.SmithingScreenHandler;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
@@ -53,6 +52,7 @@ public class GoalFactory {
             // dont obtain
             case "no_crafting_table" -> new DontObtainItemGoal(id, Items.CRAFTING_TABLE);
             case "no_obsidian" -> new DontObtainItemGoal(id, Items.OBSIDIAN);
+            case "no_netherrack" -> new DontObtainItemGoal(id, Items.NETHERRACK);
 
             // obtain goals
             case "obtain_end_crystal" -> new ObtainItemGoal(id, Items.END_CRYSTAL);
@@ -76,8 +76,10 @@ public class GoalFactory {
             case "obtain_blue_ice" -> new ObtainItemGoal(id, Items.BLUE_ICE);
             case "obtain_cobweb" -> new ObtainItemGoal(id, Items.COBWEB);
             case "obtain_goat_horn" -> new ObtainItemGoal(id, Items.GOAT_HORN);
+            case "obtain_heart_sea" -> new ObtainItemGoal(id, Items.HEART_OF_THE_SEA);
             case "obtain_calibrated_sculk_sensor" -> new ObtainItemGoal(id, Items.CALIBRATED_SCULK_SENSOR);
             case "obtain_nautilus_shell" -> new ObtainItemGoal(id, Items.NAUTILUS_SHELL);
+            case "obtain_exposed_copper_stairs" -> new ObtainItemGoal(id, Items.EXPOSED_CUT_COPPER_STAIRS);
             case "obtain_copper_bulb" -> new ObtainItemGoal(id, Items.COPPER_BULB);
             case "obtain_daylight_detector" -> new ObtainItemGoal(id, Items.DAYLIGHT_DETECTOR);
             case "obtain_repeater" -> new ObtainItemGoal(id, Items.REPEATER);
@@ -88,8 +90,9 @@ public class GoalFactory {
             case "obtain_activator_rail" -> new ObtainItemGoal(id, Items.ACTIVATOR_RAIL);
             case "obtain_detector_rail" -> new ObtainItemGoal(id, Items.DETECTOR_RAIL);
             case "obtain_powered_rail" -> new ObtainItemGoal(id, Items.POWERED_RAIL);
+            case "obtain_clock" -> new ObtainItemGoal(id, Items.CLOCK);
 
-            // obtain toolset goals
+            // tool goals
             case "obtain_wooden_toolset" -> new ObtainToolSetGoal(id, "wooden");
             case "obtain_stone_toolset" -> new ObtainToolSetGoal(id, "stone");
             case "obtain_iron_toolset" -> new ObtainToolSetGoal(id, "iron");
@@ -97,6 +100,10 @@ public class GoalFactory {
             case "obtain_diamond_toolset" -> new ObtainToolSetGoal(id, "diamond");
             case "obtain_netherite_toolset" -> new ObtainToolSetGoal(id, "netherite"); // too hard
 
+
+
+            // armor goals
+            case "obtain_chainmail" -> new ObtainXofSetItemsGoal(id, List.of(Items.CHAINMAIL_HELMET, Items.CHAINMAIL_CHESTPLATE, Items.CHAINMAIL_LEGGINGS, Items.CHAINMAIL_BOOTS), 1);
 
             case "obtain_all_seeds" -> new ObtainEverySeedGoal(id);
             case "obtain_6_flowers" -> new ObtainXFlowers(id, 6);
@@ -158,6 +165,9 @@ public class GoalFactory {
             case "kill_10" -> new MultiKillHostilesGoal(id, 10);
             case "kill_15" -> new MultiKillHostilesGoal(id, 15);
             case "kill_jeb_" -> new KillJeb(id);
+
+            // use entity goals
+            case "shear_bogged" -> new UseEntityGoal(id, EntityType.BOGGED, Items.SHEARS);
 
             // advancement goals
             case "nether_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "nether/root"));
@@ -249,6 +259,8 @@ public class GoalFactory {
             case "effect_glowing" -> new GetEffectGoal(id, StatusEffects.GLOWING);
             case "effect_3" -> new GetMultiEffectGoal(id, 3);
             case "effect_6" -> new GetMultiEffectGoal(id, 6);
+            case "dont_effect" -> new DontGetAnyEffects(id);
+            case "dont_glowing" -> new DontGetEffectGoal(id, StatusEffects.GLOWING);
 
             case "get_them_in_a_bucket" -> new ObtainXofSetItemsGoal(id, List.of(Items.COD_BUCKET, Items.SALMON_BUCKET, Items.PUFFERFISH_BUCKET, Items.TROPICAL_FISH_BUCKET, Items.AXOLOTL_BUCKET, Items.TADPOLE_BUCKET), 6);
 
@@ -267,6 +279,16 @@ public class GoalFactory {
             case "64_cyan_wool" -> new ObtainMultiCountItemGoal(id, Items.CYAN_WOOL, 64);
 
             case "duplicate_smithing_template" -> new DuplicateTemplateGoal(id);
+
+            case "sprint_1km" -> new SprintGoal(id, 100000);
+            case "swim_1km" -> new SwimGoal(id, 100000);
+
+            // brew goals
+            case "brew_regen" -> new BrewPotionGoal(id, Potions.REGENERATION);
+            case "brew_weaving" -> new BrewPotionGoal(id, Potions.WEAVING);
+            case "brew_oozing" -> new BrewPotionGoal(id, Potions.OOZING);
+            case "brew_invis" -> new BrewPotionGoal(id, Potions.INVISIBILITY);
+            case "brew_leaping" -> new BrewPotionGoal(id, Potions.LEAPING);
 
             default ->
 

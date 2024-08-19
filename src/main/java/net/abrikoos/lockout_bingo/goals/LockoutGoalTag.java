@@ -41,4 +41,5 @@ public enum LockoutGoalTag {
     broken, // cant use break so ...
     biomes,
     wool,
+    km1,
 }

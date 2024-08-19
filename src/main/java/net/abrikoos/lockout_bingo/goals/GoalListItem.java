@@ -141,6 +141,9 @@ public class GoalListItem {
             else if (tag == LockoutGoalTag.C300) {
                 ctx.drawText(textRenderer,"300", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
             }
+            else if (tag == LockoutGoalTag.km1) {
+                ctx.drawText(textRenderer,"1km", x2-2-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+            }
         }
     }
 

@@ -1,11 +1,8 @@
-package net.abrikoos.lockout_bingo.goals.useblock;
+package net.abrikoos.lockout_bingo.goals.use;
 
 import net.abrikoos.lockout_bingo.goals.LockoutGoal;
-import net.abrikoos.lockout_bingo.goals.LockoutGoalEvent;
 import net.abrikoos.lockout_bingo.listeners.ScreenSlotClickListener;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
