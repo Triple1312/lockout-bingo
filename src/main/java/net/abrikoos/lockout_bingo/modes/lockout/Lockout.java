@@ -1,7 +1,7 @@
 package net.abrikoos.lockout_bingo.modes.lockout;
 
 import net.abrikoos.lockout_bingo.goals.LockoutGoal;
-import net.abrikoos.lockout_bingo.modes.team.LockoutTeam;
+import net.abrikoos.lockout_bingo.team.LockoutTeam;
 
 import java.util.List;
 

@@ -34,9 +34,9 @@ public class Blackout {
 
     public String onGoalComplete(LockoutGoalEvent event) {
         LockoutLogger.log("Goal " + event.goalId + " completed by " + event.puuid + " for " + event.recipiant);
-        int[] board = new int[25];
+        String[] board = new String[25];
         for (int i = 0; i < 25; i++) {
-            board[i] = this.goals.get(i).completed == null ? 0 : 1;
+            board[i] = this.goals.get(i).completed == null ? "00000000-0000-0000-000000000000" : "11111111-1111-1111-111111111111";
         }
         LockoutUpdateBoardInfo update = new LockoutUpdateBoardInfo(board);
         LockoutUpdateBoardPacket packet = new LockoutUpdateBoardPacket(update);

@@ -1,22 +1,54 @@
 package net.abrikoos.lockout_bingo;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.abrikoos.lockout_bingo.gamestate.GameState;
+import net.abrikoos.lockout_bingo.item.LockoutModItems;
 import net.abrikoos.lockout_bingo.listeners.EntityKillListener;
 import net.abrikoos.lockout_bingo.listeners.PlayerDeathListener;
-import net.abrikoos.lockout_bingo.network.game.BlackoutStartGamePacket;
-import net.abrikoos.lockout_bingo.network.game.CreateBlackoutRequestPacket;
-import net.abrikoos.lockout_bingo.network.game.LockoutStartGamePacket;
-import net.abrikoos.lockout_bingo.network.game.LockoutUpdateBoardPacket;
+import net.abrikoos.lockout_bingo.listeners.TickListener;
+import net.abrikoos.lockout_bingo.network.compass.CompassPlayerPosition;
+import net.abrikoos.lockout_bingo.network.compass.PlayersPositionPacket;
+import net.abrikoos.lockout_bingo.network.game.*;
 import net.abrikoos.lockout_bingo.network.team.AllTeamsPacket;
 import net.abrikoos.lockout_bingo.network.team.LockoutAddTeamPacket;
+import net.abrikoos.lockout_bingo.network.team.LockoutJoinTeamPacket;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
+import net.fabricmc.fabric.api.loot.v3.LootTableSource;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.item.Items;
+import net.minecraft.loot.LootPool;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.LootTables;
+import net.minecraft.loot.entry.ItemEntry;
+import net.minecraft.loot.function.EnchantRandomlyLootFunction;
+import net.minecraft.loot.function.SetCountLootFunction;
+import net.minecraft.loot.function.SetPotionLootFunction;
+import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
+import net.minecraft.loot.provider.number.UniformLootNumberProvider;
+import net.minecraft.potion.Potions;
+import net.minecraft.predicate.item.EnchantmentsPredicate;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryEntryLookup;
+import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+
+import javax.swing.text.html.parser.Entity;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class LockoutBingo implements ModInitializer {
 
@@ -26,16 +58,22 @@ public class LockoutBingo implements ModInitializer {
 
 	public static EntityKillListener entityKillListener = new EntityKillListener();
 
+
+
+
 	@Override
 	public void onInitialize() {
 		PayloadTypeRegistry.playS2C().register(BlackoutStartGamePacket.ID, BlackoutStartGamePacket.CODEC);
 		PayloadTypeRegistry.playS2C().register(LockoutUpdateBoardPacket.ID, LockoutUpdateBoardPacket.CODEC);
 		PayloadTypeRegistry.playS2C().register(AllTeamsPacket.ID, AllTeamsPacket.PACKET_CODEC);
 		PayloadTypeRegistry.playS2C().register(LockoutStartGamePacket.ID, LockoutStartGamePacket.CODEC);
+		PayloadTypeRegistry.playS2C().register(PlayersPositionPacket.ID, PlayersPositionPacket.CODEC);
 
 
 		PayloadTypeRegistry.playC2S().register(LockoutAddTeamPacket.ID, LockoutAddTeamPacket.PACKET_CODEC);
 		PayloadTypeRegistry.playC2S().register(CreateBlackoutRequestPacket.ID, CreateBlackoutRequestPacket.CODEC);
+		PayloadTypeRegistry.playC2S().register(LockoutJoinTeamPacket.ID, LockoutJoinTeamPacket.PACKET_CODEC);
+		PayloadTypeRegistry.playC2S().register(CreateLockoutPacket.ID, CreateLockoutPacket.CODEC);
 
 		LockoutLogger.log("Hello Fabric world!");
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
@@ -46,14 +84,23 @@ public class LockoutBingo implements ModInitializer {
 			}));
 		});
 
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+			dispatcher.register(CommandManager.literal("goalComplete")
+					.then(CommandManager.argument("team", IntegerArgumentType.integer())
+							.then(CommandManager.argument("goal", IntegerArgumentType.integer())
+									.executes(context -> {
+										GameState.goalComplete(context.getArgument("team", Integer.class), context.getArgument("goal", Integer.class));
+										return 1;
+									})))
+			);
+		});
+
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			GameState.playerServerJoin(handler.getPlayer());
 		});
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
 			GameState.playerServerLeave(handler.getPlayer());
 		});
-
-
 
 		ServerPlayNetworking.registerGlobalReceiver(LockoutAddTeamPacket.ID, (payload, client) -> {
 			GameState.addTeam(payload.team());
@@ -65,32 +112,52 @@ public class LockoutBingo implements ModInitializer {
 			LockoutLogger.log("Started blackout game");
 		});
 
+		ServerPlayNetworking.registerGlobalReceiver(LockoutJoinTeamPacket.ID, (payload, client) -> {
+			GameState.playerJoinTeam(client.player(), payload.teamid());
+			LockoutLogger.log("Player " + client.player().getUuidAsString() + " joined team " + payload.teamid());
+		});
 
-//		LootTableEvents.MODIFY.register((resourceManager, tableBuilder, source, id) -> {
-//			if (source.isBuiltin() && LootTables.PIGLIN_BARTERING_GAMEPLAY.equals(id)) {
-//				LootPool.builder()
-//						.with(ItemEntry.builder(Items.ENDER_PEARL ).weight(10))
-//						.with(ItemEntry.builder(Items.POTIO));
-//
-//				LootPool.Builder poolbuilder = LootPool.builder()
-//								.with(ItemEntry.builder(Items.ENCHANTED_BOOK).apply(EnchantRandomlyLootFunction.builder()
-//										.add(Enchantments.SOUL_SPEED, 1)  // Adds Soul Speed 1
-//										.add(Enchantments.SOUL_SPEED, 2))) // Adds Soul Speed 2
-//								.with(ItemEntry.builder(Items.SPLASH_POTION).weight(10).apply(SetPotionLootFunction.builder(Potions.FIRE_RESISTANCE)))
-//
-//
-//
-//
-//
-//				tableBuilder.modifyPools( pool -> {
-//					pool.with(ItemEntry.builder(Items.ENDER_PEARL).weight(20).apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(4.f, 8.f)))).build();
-//					pool.with(ItemEntry.builder(Items.STRING).weight())
-//				});
-//			}
-//		});
+		ServerPlayNetworking.registerGlobalReceiver(CreateLockoutPacket.ID, (payload, client) -> {
+			GameState.newLockout(payload);
+			LockoutLogger.log("Started lockout game");
+		});
+
+		LockoutModItems.initialize();
+
+		TickListener.subscribe(GameState::sendPlayerPositions);
+
+		LootTableEvents.REPLACE.register((key, original, source, registries) -> {
+			if (LootTables.PIGLIN_BARTERING_GAMEPLAY.equals(key)) {
+                return LootTable.builder().pool(
+								LootPool.builder()
+										.rolls(ConstantLootNumberProvider.create(1.0F))
+										.with(ItemEntry.builder(Items.BOOK).weight(5).apply(new EnchantRandomlyLootFunction.Builder().option(registries.createRegistryLookup().getOrThrow(Enchantments.SOUL_SPEED.getRegistryRef()).getOrThrow(Enchantments.SOUL_SPEED))))
+										.with(ItemEntry.builder(Items.IRON_BOOTS).weight(8).apply(new EnchantRandomlyLootFunction.Builder().option(registries.createRegistryLookup().getOrThrow(Enchantments.SOUL_SPEED.getRegistryRef()).getOrThrow(Enchantments.SOUL_SPEED))))
+										.with(ItemEntry.builder(Items.POTION).weight(10).apply(SetPotionLootFunction.builder(Potions.FIRE_RESISTANCE)))
+										.with(ItemEntry.builder(Items.SPLASH_POTION).weight(10).apply(SetPotionLootFunction.builder(Potions.FIRE_RESISTANCE)))
+										.with(ItemEntry.builder(Items.IRON_NUGGET).weight(10).apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(9.0F, 36.0F))))
+										.with(ItemEntry.builder(Items.ENDER_PEARL).weight(20).apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(4.0F, 8.0F))))
+										.with(ItemEntry.builder(Items.STRING).weight(20).apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(8.0F, 24.0F))))
+										.with(ItemEntry.builder(Items.QUARTZ).weight(20).apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(8.0F, 16.0F))))
+										.with(ItemEntry.builder(Items.OBSIDIAN).weight(40))
+										.with(ItemEntry.builder(Items.CRYING_OBSIDIAN).weight(40).apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1.0F, 3.0F))))
+										.with(ItemEntry.builder(Items.LEATHER).weight(40).apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(4.0F, 10.0F))))
+										.with(ItemEntry.builder(Items.NETHER_BRICK).weight(40).apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(4.0F, 16.0F))))
+										.with(ItemEntry.builder(Items.GLOWSTONE_DUST).weight(20).apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(5.0F, 12.0F))))
+										.with(ItemEntry.builder(Items.GRAVEL).weight(40).apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(8.0F, 16.0F))))
+										.with(ItemEntry.builder(Items.MAGMA_CREAM).weight(20).apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(2.0F, 6.0F))))
+										.with(ItemEntry.builder(Items.FIRE_CHARGE).weight(40).apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1.0F, 5.0F))))
+										.with(ItemEntry.builder(Items.SOUL_SAND).weight(40).apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(4.0F, 16.0F))))
+						).build();
+			};
+            return original;
+        });
+
 
 
 	}
+
+
 
 
 

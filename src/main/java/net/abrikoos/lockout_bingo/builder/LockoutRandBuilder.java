@@ -8,13 +8,13 @@ import java.util.List;
 
 public class LockoutRandBuilder extends LockoutGoalBuilder {
 
-    private static List<GoalListItem> items = new ArrayList<>();
+    protected static List<GoalListItem> items = new ArrayList<>();
 
     public BlackoutStartGameInfo generateBoard() {
         items = new ArrayList<>();
         items.addAll(GoalItemRegistry.getInstance().items);
 
-        BlackoutStartGameInfo info = new BlackoutStartGameInfo(new GoalListItem[25]);
+        BlackoutStartGameInfo info = new BlackoutStartGameInfo(new GoalListItem[25], new ArrayList<>());
         for (int i = 0; i < 25; i++) {
             int randomIndex = (int) (Math.random() * items.size());
             GoalListItem goal = items.get(randomIndex);
@@ -56,11 +56,11 @@ public class LockoutRandBuilder extends LockoutGoalBuilder {
         return ret;
     }
 
-    private static void removeGoalsWithTag(LockoutGoalTag tag) {
+    protected static void removeGoalsWithTag(LockoutGoalTag tag) {
         items.removeIf(goal -> goal.tags.contains(tag));
     }
 
-    private static boolean validateAddGoal(List<GoalListItem> goals) {
+    protected static boolean validateAddGoal(List<GoalListItem> goals) {
         final int max_redstone = 2;
         final int max_silk_touch = 1;
         final int max_die = 3;

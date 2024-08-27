@@ -40,7 +40,7 @@ public abstract class AdvancementGoal extends LockoutGoal {
             if (this.advancementId == null && translatedkey == null) {
                 if (validateProgress(null, criterionName)) {
                     completed = player;
-                    this.notifyListeners(new LockoutGoalEvent(player.getName().getString(), this.recipiant, this.id)); // how Do I ignore the ally part
+                    this.notifyListeners(new LockoutGoalEvent(player.getUuidAsString(), this.recipiant, this.id)); // how Do I ignore the ally part
 
                 }
             }
@@ -48,7 +48,7 @@ public abstract class AdvancementGoal extends LockoutGoal {
                 AdvancementProgress progress = player.getAdvancementTracker().getProgress(new AdvancementEntry(advancementId, advancement)); //todo only checks id anyway
                 if (validateProgress(progress, criterionName)) {
                     completed = player;
-                    this.notifyListeners(new LockoutGoalEvent(player.getName().getString(), this.recipiant, this.id));
+                    this.notifyListeners(new LockoutGoalEvent(player.getUuidAsString(), this.recipiant, this.id));
 
                 }
             }

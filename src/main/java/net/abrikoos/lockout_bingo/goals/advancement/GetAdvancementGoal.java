@@ -21,7 +21,7 @@ public class GetAdvancementGoal extends AdvancementGoal{
             if (this.advancementId == null && super.translateAdvancementTitleKey(advancement) == null) {return;}
             if (translateAdvancementTitleKey(advancement) != null && translateAdvancementTitleKey(advancement).equals(this.advancementId)) {
                 completed = player;
-                this.notifyListeners(new LockoutGoalEvent(player.getNameForScoreboard(), "ally", this.id));
+                this.notifyListeners(new LockoutGoalEvent(player.getUuidAsString(), "ally", this.id));
             }
         }
         catch (Exception e) {

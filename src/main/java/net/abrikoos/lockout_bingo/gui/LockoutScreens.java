@@ -10,6 +10,7 @@ import net.abrikoos.lockout_bingo.network.game.BlackoutStartGameInfo;
 import net.abrikoos.lockout_bingo.network.game.LockoutUpdateBoardInfo;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.option.GameOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,8 @@ public class LockoutScreens {
     public static MainScreen mainScreen = new MainScreen(LockoutScreens::leaveScreen);
 
     private static String currentScreen = "main";
+
+    private static boolean _open = false;
 
 
 //    private static
@@ -58,14 +61,17 @@ public class LockoutScreens {
         switch (currentScreen) {
             case "main" -> {
                 MinecraftClient.getInstance().setScreen(mainScreen);
+                _open = true;
                 return true;
             }
             case "create" -> {
                 MinecraftClient.getInstance().setScreen(createScreen);
+                _open = true;
                 return true;
             }
             case "board" -> {
                 MinecraftClient.getInstance().setScreen(boardScreen);
+                _open = true;
                 return true;
             }
         }
@@ -75,9 +81,14 @@ public class LockoutScreens {
         return false;
     }
 
+    public static String getCurrentScreen() {
+        return currentScreen;
+    }
+
     // returns if successfully closed
     public static boolean close() {
         MinecraftClient.getInstance().setScreen(null);
+        _open = false;
         return true;
     }
 
@@ -110,6 +121,10 @@ public class LockoutScreens {
     public static void setState(String state) {
         currentScreen = state;
         open();
+    }
+
+    public static boolean isOpen() {
+        return _open;
     }
 
 

@@ -1,32 +1,33 @@
 package net.abrikoos.lockout_bingo.gamestate;
 
+import net.abrikoos.lockout_bingo.builder.LockoutFinalBuilder;
 import net.abrikoos.lockout_bingo.builder.LockoutRandBuilder;
 import net.abrikoos.lockout_bingo.goals.LockoutGoal;
 import net.abrikoos.lockout_bingo.goals.LockoutGoalEvent;
+import net.abrikoos.lockout_bingo.item.LockoutModItems;
 import net.abrikoos.lockout_bingo.listeners.*;
-import net.abrikoos.lockout_bingo.modes.team.LockoutTeam;
-import net.abrikoos.lockout_bingo.network.game.BlackoutStartGameInfo;
-import net.abrikoos.lockout_bingo.network.game.BlackoutStartGamePacket;
-import net.abrikoos.lockout_bingo.network.game.LockoutUpdateBoardInfo;
-import net.abrikoos.lockout_bingo.network.game.LockoutUpdateBoardPacket;
+import net.abrikoos.lockout_bingo.network.compass.CompassPlayerPosition;
+import net.abrikoos.lockout_bingo.network.compass.PlayersPositionPacket;
+import net.abrikoos.lockout_bingo.network.game.*;
+import net.abrikoos.lockout_bingo.team.LockoutTeam;
 import net.abrikoos.lockout_bingo.network.team.AllTeamsPacket;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.block.Block;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerAdvancementLoader;
-import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stat;
 import net.minecraft.stat.StatHandler;
 import net.minecraft.stat.Stats;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,9 +41,18 @@ public class GameState {
 
     public static BlackoutStartGameInfo info;
 
+    public static MinecraftServer server;
+
+    public static List<Integer> teamIndexes = new ArrayList<>();
+
 
     public static void playerServerJoin(ServerPlayerEntity player) {
         players.add(player);
+        ServerPlayNetworking.send(player, new AllTeamsPacket(teams));
+        if (inGame()) {
+            ServerPlayNetworking.send(player, new BlackoutStartGamePacket(info));
+            ServerPlayNetworking.send(player, new LockoutUpdateBoardPacket(getBoard()));
+        }
     }
 
     public static void playerServerLeave(ServerPlayerEntity player) {
@@ -53,6 +63,25 @@ public class GameState {
 
     }
 
+    public static void playerJoinTeam(ServerPlayerEntity player, int team) {
+        if (!players.contains(player)) {
+            players.add(player);
+        }
+        for (LockoutTeam t : teams) {
+            if (t.playeruuids.contains(player.getUuidAsString())) {
+                t.removePlayer(player.getUuidAsString());
+            }
+            if (t.teamId == team) {
+                t.addPlayer(player.getUuidAsString());
+            }
+        }
+
+        AllTeamsPacket packet = new AllTeamsPacket(teams);
+        for (ServerPlayerEntity plr : players) {
+            ServerPlayNetworking.send(plr, packet);
+        }
+    }
+
     public static void addTeam(String name) {
         List<String> teamnames = new ArrayList<>();
         for (LockoutTeam team : teams) {
@@ -61,13 +90,34 @@ public class GameState {
                 return;
             }
         }
-        LockoutTeam team = new LockoutTeam(name);
+
+
+        int id = 1;
+        for (int i = 1; i < 11; i++) {
+            boolean found = false;
+            for (LockoutTeam team : teams) {
+                if (team.teamId == i) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                id = i;
+                break;
+            }
+        }
+
+
+        LockoutTeam team = new LockoutTeam(name, id);
         teams.add(team);
-        teamnames.add(name);
-        AllTeamsPacket packet = new AllTeamsPacket(teamnames);
+        AllTeamsPacket packet = new AllTeamsPacket(teams);
         for (ServerPlayerEntity player : players) {
             ServerPlayNetworking.send(player, packet);
         }
+    }
+
+    public static void goalComplete(int team, int goal) {
+//        goals.get(goal).completed(players.get(team));
     }
 
     public static void newBlackout() {
@@ -100,9 +150,54 @@ public class GameState {
             } //todo needs to remove more stuff
         }
 
+
+
         BlackoutStartGamePacket packet = new BlackoutStartGamePacket(info);
         for (ServerPlayerEntity player : players) {
             ServerPlayNetworking.send(player, packet);
+        }
+    }
+
+    public static void newLockout(CreateLockoutPacket packet) {
+        if (!goals.isEmpty()) {
+            destroyGame();
+        }
+
+        LockoutFinalBuilder builder = new LockoutFinalBuilder(packet.difficulty(), packet.end(), packet.nether());
+        BlackoutStartGameInfo bi = builder.generateBoard();
+        goals = builder.buildBoard(bi);
+        bi.teamIndexes = packet.teams();
+        info = bi;
+
+
+        for (LockoutGoal goal : goals) {
+            goal.subscribe(GameState::onGoalComplete);
+        }
+
+        for (ServerPlayerEntity player : players) {
+            player.getInventory().clear();
+//            player.giveItemStack(LockoutModItems.PLAYER_TRACKING_COMPASS.getDefaultStack());
+
+            PlayerAdvancementTracker tracker = player.getAdvancementTracker();
+            MinecraftServer server = player.getServer();
+            assert server != null;
+            ServerAdvancementLoader loader = server.getAdvancementLoader();
+            for (AdvancementEntry advancement : loader.getAdvancements()) {
+                advancement.value().criteria().forEach((criterion, conditions) -> {
+                    tracker.revokeCriterion(advancement, criterion);
+                });
+            }
+
+            StatHandler sh = player.getStatHandler();
+            for (Stat<?> stat : Stats.CUSTOM) {
+                sh.setStat(player, stat, 0);
+            } //todo needs to remove more stuff
+            player.heal(player.getMaxHealth());
+        }
+
+        BlackoutStartGamePacket pt = new BlackoutStartGamePacket(bi);
+        for (ServerPlayerEntity player : players) {
+            ServerPlayNetworking.send(player, pt);
         }
     }
 
@@ -119,19 +214,38 @@ public class GameState {
     }
 
     public static String onGoalComplete(LockoutGoalEvent event) {
-        int[] board = new int[25];
-        if (goals.size() < 25) {
-            return "";
-        }
-        for (int i = 0; i < 25; i++) {
-            board[i] = goals.get(i).completed == null ? 0 : goals.get(i).recipiant() == "ally" ? 1 : 2;
-        }
-        LockoutUpdateBoardInfo update = new LockoutUpdateBoardInfo(board);
+//        String[] board = new String[25];
+//        if (goals.size() < 25) {
+//            return "";
+//        }
+//        for (int i = 0; i < 25; i++) {
+//            board[i] = goals.get(i).completed == null ?
+//                    "00000000-0000-0000-0000-000000000000"
+//                    : goals.get(i).recipiant() == "ally" ?
+//                        goals.get(i).completed.getUuidAsString()
+//                        : "11111111-1111-1111-1111-111111111111";
+//        }
+        LockoutUpdateBoardInfo update = getBoard();
         LockoutUpdateBoardPacket packet = new LockoutUpdateBoardPacket(update);
         for (ServerPlayerEntity player : players) {
             ServerPlayNetworking.send(player, packet);
         }
         return "";
+    }
+
+    public static LockoutUpdateBoardInfo getBoard() {
+        String[] board = new String[25];
+        if (goals.size() < 25) {
+            return new LockoutUpdateBoardInfo(board);
+        }
+        for (int i = 0; i < 25; i++) {
+            board[i] = goals.get(i).completed == null ?
+                    "00000000-0000-0000-0000-000000000000"
+                    : goals.get(i).recipiant() == "ally" ?
+                        goals.get(i).completed.getUuidAsString()
+                        : "11111111-1111-1111-1111-111111111111";
+        }
+        return new LockoutUpdateBoardInfo(board);
     }
 
     protected void resetPlayerStats(ServerPlayerEntity player) {
@@ -172,6 +286,23 @@ public class GameState {
             sh.setStat(player, killedByStat, 0);
         }
 
+    }
+
+    public static boolean inGame() {
+        return !goals.isEmpty();
+    }
+
+    public static void sendPlayerPositions(MinecraftServer server) {
+        if (LocalTime.now().getNano() % 50 < 10 && GameState.inGame()) {
+            List<CompassPlayerPosition> pos = new ArrayList<>();
+            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+                pos.add(CompassPlayerPosition.fromServerPlayer(player));
+            }
+
+            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+                ServerPlayNetworking.send(player, new PlayersPositionPacket(pos));
+            }
+        }
     }
 
 

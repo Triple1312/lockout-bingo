@@ -1,9 +1,11 @@
 package net.abrikoos.lockout_bingo.gui.screens;
 
 import net.abrikoos.lockout_bingo.modes.team.LockoutTeamDataClass;
-import net.abrikoos.lockout_bingo.modes.team.TeamRegistry;
 import net.abrikoos.lockout_bingo.network.game.CreateBlackoutRequestPacket;
 import net.abrikoos.lockout_bingo.network.team.LockoutAddTeamPacket;
+import net.abrikoos.lockout_bingo.network.team.LockoutJoinTeamPacket;
+import net.abrikoos.lockout_bingo.team.Colors;
+import net.abrikoos.lockout_bingo.team.LockoutTeam;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -12,9 +14,9 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
+import net.abrikoos.lockout_bingo.team.TeamRegistry;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 
 public class MainScreen extends Screen {
@@ -23,7 +25,7 @@ public class MainScreen extends Screen {
 
     public MainScreen(Function<Void, Void> leaveScreen) {
         super(Text.of("main"));
-        TeamRegistry.subscribe(this::teamsupdate);
+//        TeamRegistry.subscribe(this::teamsupdate); // todo
         this.init();
     }
 
@@ -35,7 +37,6 @@ public class MainScreen extends Screen {
                     this.client.setScreen(new LockoutCreateScreen(null)); // todo pass teams
                 }
         ).dimensions(40, 40, 120, 20).build();
-        nl.active = false;
         this.addDrawableChild(nl);
         this.addDrawableChild(
                 ButtonWidget.builder(
@@ -48,40 +49,31 @@ public class MainScreen extends Screen {
                 ).dimensions(200, 40, 120, 20).build()
         );
 
-        // new team name input
-//        this.teamaddWidget = new TextFieldWidget(this.textRenderer, 40, 100, 120, 20, Text.of("Team Name"));
-//        this.teamaddWidget.setMaxLength(20);
-//        this.addDrawableChild(this.teamaddWidget);
-//        this.addSelectableChild(this.teamaddWidget);
-//        this.addDrawableChild(ButtonWidget.builder(Text.of("Add"), (btn) -> {
-//            ClientPlayNetworking.send(new LockoutAddTeamPacket(this.teamaddWidget.getText()));
-//
-//        }).dimensions(40, 10, 20, 20).build());
-        MinecraftClient client = MinecraftClient.getInstance();
+        if (this.client != null) {
+            TextFieldWidget tfw = new TextFieldWidget(this.textRenderer, 40, 80, 120, 20, Text.of("Team Name"));
+            this.addDrawableChild(tfw);
+            this.addDrawableChild( ButtonWidget.builder(Text.of("Add"), (btn) -> {
+                ClientPlayNetworking.send(new LockoutAddTeamPacket(tfw.getText()));
+            }).dimensions(165, 80, 45, 20).build());
+        }
+
+        for (int i = 0; i < TeamRegistry.getTeams().size(); i++) {
+            LockoutTeam lt = TeamRegistry.getTeams().get(i);
+            ButtonWidget widg = ButtonWidget.builder(Text.literal(lt.name).withColor(Colors.get(lt.teamId)), (btn) -> {
+                ClientPlayNetworking.send(new LockoutJoinTeamPacket(lt.teamId));
+            }).dimensions(40, 120 + i * 30, 120, 20).build();
+            assert this.client != null;
+            if (lt.playeruuids.contains(this.client.player.getUuidAsString())) {
+                widg.active = false;
+            }
+            String playerNames = "";
+            for (String player : lt.playeruuids) {
+                playerNames += player + "\n";
+            }
+            widg.setTooltip(Tooltip.of(Text.of(playerNames)));
+            this.addDrawableChild(widg);
 
 
-        List<LockoutTeamDataClass> teams = TeamRegistry.teams;
-        // teams buttons
-        for (int i = 0; i < teams.size(); i++) {
-            ButtonWidget wdgt = ButtonWidget.builder(
-                    Text.of("Join " + teams.get(i).name()), (btn) -> {
-                        assert this.client != null;
-                        this.client.setScreen(new LockoutCreateScreen(teams));
-                    }
-            ).dimensions(40, 40 + (i * 20), 120, 20).build();
-            for ( String name: teams.get(i).playernames()) {
-                assert client.player != null;
-                if (Objects.equals(name, client.player.getName().toString())) {
-                    wdgt.active = false;
-                }
-            }
-            StringBuilder tooltip = new StringBuilder();
-            tooltip.append("Players:\n");
-            for (String name: teams.get(i).playernames()) {
-                tooltip.append(name).append("\n");
-            }
-            wdgt.setTooltip(Tooltip.of(Text.of(tooltip.toString())));
-            this.addDrawableChild(wdgt);
         }
 
 

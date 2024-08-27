@@ -58,7 +58,7 @@ public class ObtainAllToolTypeTypesGoal extends LockoutGoal {
                 }
             }
             if (wood && iron && gold && diamond && netherite) {
-                this.notifyListeners(new LockoutGoalEvent(player.getName().getString(), "ally", this.id));
+                this.notifyListeners(new LockoutGoalEvent(player.getUuidAsString(), "ally", this.id));
                 completed = player;
             }
         }

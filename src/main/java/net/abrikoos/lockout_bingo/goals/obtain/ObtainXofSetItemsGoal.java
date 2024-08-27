@@ -42,7 +42,7 @@ public class ObtainXofSetItemsGoal extends LockoutGoal {
             }
             if (sum >= count) {
                 completed = player;
-                this.notifyListeners(new LockoutGoalEvent(player.getNameForScoreboard(), "ally", this.id));
+                this.notifyListeners(new LockoutGoalEvent(player.getUuidAsString(), "ally", this.id));
                 return;
             }
         }

@@ -5,7 +5,8 @@
   "mixins": [
     "LockoutLivingEntityMixin",
     "LockoutPlayerAdvancementTrackerMixin",
-    "ScreenMixin"
+    "ScreenMixin",
+    "GammaMixin"
   ],
   "injectors": {
     "defaultRequire": 1

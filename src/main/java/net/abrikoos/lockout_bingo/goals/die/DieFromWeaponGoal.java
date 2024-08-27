@@ -28,7 +28,7 @@ public class DieFromWeaponGoal extends LockoutGoal {
             RegistryKey<DamageType> x = type.getKeyOrValue().orThrow();
             if (x == this.type) {
                 completed = player;
-                this.notifyListeners(new LockoutGoalEvent(player.getName().getString(), "ally", this.id));
+                this.notifyListeners(new LockoutGoalEvent(player.getUuidAsString(), "ally", this.id));
             }
         }
         catch (Exception e) {

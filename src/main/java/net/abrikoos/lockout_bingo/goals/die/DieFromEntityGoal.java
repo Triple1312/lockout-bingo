@@ -24,7 +24,7 @@ public class DieFromEntityGoal extends LockoutGoal {
         if (completed != null) {return;}
         if (Objects.requireNonNull(source.getAttacker()).getType() == entity) {
             completed = player;
-            this.notifyListeners(new LockoutGoalEvent(player.getName().getString(), "ally", this.id));
+            this.notifyListeners(new LockoutGoalEvent(player.getUuidAsString(), "ally", this.id));
         }
     }
 }

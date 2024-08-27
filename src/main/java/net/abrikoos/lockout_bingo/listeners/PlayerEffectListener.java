@@ -11,6 +11,7 @@ public class PlayerEffectListener {
     private static final List<BiConsumer<PlayerEntity, StatusEffectInstance>> listeners = new ArrayList<>();
 
 
+
     public static void registerEvent(PlayerEntity player, StatusEffectInstance effectInstance) {
         for (BiConsumer<PlayerEntity, StatusEffectInstance> listener : listeners) {
             listener.accept(player, effectInstance);

@@ -5,11 +5,16 @@ import net.abrikoos.lockout_bingo.goals.GoalItemRegistry;
 import net.abrikoos.lockout_bingo.goals.GoalListItem;
 import net.minecraft.network.codec.PacketCodec;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BlackoutStartGameInfo {
     public final GoalListItem[] goals;
+    public List<Integer> teamIndexes;
 
-    public BlackoutStartGameInfo(GoalListItem[] goals) {
+    public BlackoutStartGameInfo(GoalListItem[] goals, List<Integer> teamIndexes) {
         this.goals = goals;
+        this.teamIndexes = teamIndexes;
     }
 
 
@@ -19,11 +24,15 @@ public class BlackoutStartGameInfo {
             for (GoalListItem goal : value.goals) {
                 goal.encode(buf);
             }
+            buf.writeByte(value.teamIndexes.size());
+            for (int teamIndex : value.teamIndexes) {
+                buf.writeByte(teamIndex);
+            }
         }
 
         @Override
         public BlackoutStartGameInfo decode(ByteBuf byteBuf) {
-            BlackoutStartGameInfo info = new BlackoutStartGameInfo(new GoalListItem[25]);
+            GoalListItem[] goals = new GoalListItem[25];
 
             byte[] bytes = new byte[byteBuf.readableBytes()];
             byteBuf.readBytes(bytes);
@@ -37,9 +46,18 @@ public class BlackoutStartGameInfo {
                 }
                 String name = new String(stringbytes);
                 counter += stringlength + 1;
-                info.goals[i] = GoalItemRegistry.getGoal(name);
+                goals[i] = GoalItemRegistry.getGoal(name);
             }
-            return info;
+
+            List<Integer> teamIndexes = new ArrayList<>();
+            int teamcount = bytes[counter];
+            counter++;
+            for (int i = 0; i < teamcount; i++) {
+                teamIndexes.add((int) bytes[counter]);
+                counter++;
+            }
+
+            return new BlackoutStartGameInfo(goals, teamIndexes);
         }
     };
 }

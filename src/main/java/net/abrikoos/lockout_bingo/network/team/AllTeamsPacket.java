@@ -1,6 +1,6 @@
 package net.abrikoos.lockout_bingo.network.team;
 
-import io.netty.buffer.ByteBuf;
+import net.abrikoos.lockout_bingo.team.LockoutTeam;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
@@ -9,7 +9,7 @@ import net.minecraft.util.Identifier;
 import java.util.ArrayList;
 import java.util.List;
 
-public record AllTeamsPacket(List<String> teamnames) implements CustomPayload {
+public record AllTeamsPacket(List<LockoutTeam> teams) implements CustomPayload {
 
     public final static Id<AllTeamsPacket> ID = new CustomPayload.Id<>(Identifier.of("lockout-bingo", "all_teams"));
 
@@ -17,36 +17,27 @@ public record AllTeamsPacket(List<String> teamnames) implements CustomPayload {
 
         @Override
         public void encode(RegistryByteBuf buf, AllTeamsPacket value) {
-            buf.writeByte(value.teamnames.size());
-            for (String team : value.teamnames) {
-                buf.writeByte(team.length());
-                buf.writeCharSequence(team, java.nio.charset.StandardCharsets.UTF_8);
+            buf.writeByte(value.teams.size());
+            for (LockoutTeam team : value.teams) {
+//                buf.writeByte(team.packetSize());
+                LockoutTeam.PACKET_CODEC.encode(buf, team);
             }
         }
 
         @Override
         public AllTeamsPacket decode(RegistryByteBuf buf) {
-            List<String> teamnames = new ArrayList<>();
-            byte[] bytes = new byte[buf.readableBytes()];
-            buf.readBytes(bytes);
-            int counter = 1;
-            for (int i = 0; i < bytes[0]; i++) {
-                int stringlength = bytes[counter];
-                byte[] stringbytes = new byte[stringlength];
-                for (int j = 0; j < stringlength; j++) {
-                    stringbytes[j] = bytes[counter + 1 + j];
-                }
-                String name = new String(stringbytes);
-                teamnames.add(name);
-                counter += stringlength + 1;
-
+            List<LockoutTeam> teams = new ArrayList<>();
+            byte teamcount = buf.readByte();
+            for (int i = 0; i < teamcount; i++) {
+                LockoutTeam tea = LockoutTeam.PACKET_CODEC.decode(buf);
+                teams.add(tea);
             }
-            return new AllTeamsPacket(teamnames);
+            return new AllTeamsPacket(teams);
         }
     };
 
     @Override
     public Id<? extends CustomPayload> getId() {
-        return null;
+        return ID;
     }
 }

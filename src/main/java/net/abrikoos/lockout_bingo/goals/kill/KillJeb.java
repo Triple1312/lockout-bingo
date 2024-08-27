@@ -17,7 +17,7 @@ public class KillJeb extends LockoutGoal {
         if (completed != null) { return; }
         if (target.getType() != null && target.getType().equals(EntityType.SHEEP) && target.getName().getString().equals("jeb_")) {
             this.completed = player;
-            this.notifyListeners(new LockoutGoalEvent(player.getName().getString(), "ally", this.id));
+            this.notifyListeners(new LockoutGoalEvent(player.getUuidAsString(), "ally", this.id));
         }
     }
 }

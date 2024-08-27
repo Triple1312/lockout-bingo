@@ -2,14 +2,26 @@ package net.abrikoos.lockout_bingo;
 
 import net.abrikoos.lockout_bingo.goals.GoalItemRegistry;
 import net.abrikoos.lockout_bingo.gui.LockoutScreens;
+import net.abrikoos.lockout_bingo.gui.widget.CompassesWidget;
+import net.abrikoos.lockout_bingo.item.CustomCompassRenderer;
+import net.abrikoos.lockout_bingo.item.LockoutModItems;
+import net.abrikoos.lockout_bingo.network.compass.PlayersPositionPacket;
 import net.abrikoos.lockout_bingo.network.game.*;
+import net.abrikoos.lockout_bingo.network.team.AllTeamsPacket;
+import net.abrikoos.lockout_bingo.team.PlayerTeamRegistry;
+import net.abrikoos.lockout_bingo.team.TeamController;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
+import net.minecraft.client.gui.screen.option.OptionsScreen;
+import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.option.SimpleOption;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -25,6 +37,7 @@ public class LockoutBingoClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+
 
         Registry.register(Registries.SOUND_EVENT, Identifier.of("lockout-bingo", "goal_complete"), SoundEvent.of(Identifier.of("lockout-bingo", "goal_complete")));
 
@@ -54,6 +67,24 @@ public class LockoutBingoClient implements ClientModInitializer {
             });
         }));
 
+        ClientPlayNetworking.registerGlobalReceiver(AllTeamsPacket.ID,  ((payload, context) -> {
+            context.client().execute(() -> {
+                MinecraftClient client = MinecraftClient.getInstance();
+                TeamController.setAllTeams(payload.teams());
+
+//                LockoutScreens.setTeams(payload.teamnames()); // todo
+            });
+        }));
+
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            PlayerTeamRegistry.updatePlayers();
+        });
+
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+            PlayerTeamRegistry.updatePlayers();
+        });
+
+
 
         KeyBinding openBoardScreenKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "Open Lockout Board",
@@ -71,6 +102,14 @@ public class LockoutBingoClient implements ClientModInitializer {
                 }
             }
         });
+
+        ClientPlayNetworking.registerGlobalReceiver(PlayersPositionPacket.ID, (payload, context) -> {
+            CompassesWidget.positions = payload.positions();
+        });
+
+        BuiltinItemRendererRegistry.INSTANCE.register(LockoutModItems.PLAYER_TRACKING_COMPASS, new CustomCompassRenderer());
+
+
 
     }
 }

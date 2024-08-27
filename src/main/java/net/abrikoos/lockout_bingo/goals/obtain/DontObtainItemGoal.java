@@ -27,7 +27,7 @@ public class DontObtainItemGoal extends LockoutGoal {
                 if (inventory.getStack(i).getItem() == item) {
                     LockoutLogger.log("Player " + player.getName().toString() + " has obtained " + item.getName().toString());
                     completed = player;
-                    this.notifyListeners(new LockoutGoalEvent(player.getNameForScoreboard(), "enemy", this.id));
+                    this.notifyListeners(new LockoutGoalEvent(player.getUuidAsString(), "enemy", this.id));
                     return;
                 }
             }

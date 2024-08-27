@@ -25,7 +25,7 @@ public class FindBiomeGoal extends LockoutGoal {
             Identifier biomeId = player.getWorld().getRegistryManager().get(RegistryKeys.BIOME).getId(b);
             assert biomeId != null;
             if (biomeId.equals(biome)) {
-                this.notifyListeners(new LockoutGoalEvent(player.getNameForScoreboard(), "ally", this.id));
+                this.notifyListeners(new LockoutGoalEvent(player.getUuidAsString(), "ally", this.id));
                 completed = player;
             }
         }
