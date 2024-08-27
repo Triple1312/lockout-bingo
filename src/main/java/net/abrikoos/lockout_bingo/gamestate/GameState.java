@@ -59,10 +59,6 @@ public class GameState {
         players.remove(player);
     }
 
-    public static void createNewGame(GameType type, ClientPlayerEntity client, GameSettings settings) {
-
-    }
-
     public static void playerJoinTeam(ServerPlayerEntity player, int team) {
         if (!players.contains(player)) {
             players.add(player);
