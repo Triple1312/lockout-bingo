@@ -112,6 +112,19 @@ public class GameState {
         }
     }
 
+    public static void removeTeam(String name) {
+        for (LockoutTeam team : teams) {
+            if (team.name.equals(name)) {
+                teams.remove(team);
+                AllTeamsPacket packet = new AllTeamsPacket(teams);
+                for (ServerPlayerEntity player : players) {
+                    ServerPlayNetworking.send(player, packet);
+                }
+                return;
+            }
+        }
+    }
+
     public static void goalComplete(int team, int goal) {
 //        goals.get(goal).completed(players.get(team));
     }

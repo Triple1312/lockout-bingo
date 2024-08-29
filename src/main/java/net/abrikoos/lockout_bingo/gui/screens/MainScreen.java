@@ -4,6 +4,7 @@ import net.abrikoos.lockout_bingo.modes.team.LockoutTeamDataClass;
 import net.abrikoos.lockout_bingo.network.game.CreateBlackoutRequestPacket;
 import net.abrikoos.lockout_bingo.network.team.LockoutAddTeamPacket;
 import net.abrikoos.lockout_bingo.network.team.LockoutJoinTeamPacket;
+import net.abrikoos.lockout_bingo.network.team.LockoutRemoveTeamPacket;
 import net.abrikoos.lockout_bingo.team.Colors;
 import net.abrikoos.lockout_bingo.team.LockoutTeam;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -62,6 +63,9 @@ public class MainScreen extends Screen {
             ButtonWidget widg = ButtonWidget.builder(Text.literal(lt.name).withColor(Colors.get(lt.teamId)), (btn) -> {
                 ClientPlayNetworking.send(new LockoutJoinTeamPacket(lt.teamId));
             }).dimensions(40, 120 + i * 30, 120, 20).build();
+            ButtonWidget delete = ButtonWidget.builder(Text.of("X"), (btn) -> {
+                ClientPlayNetworking.send(new LockoutRemoveTeamPacket(lt.name));
+            }).dimensions(170, 120 + i * 30, 20, 20).build();
             assert this.client != null;
             if (lt.playeruuids.contains(this.client.player.getUuidAsString())) {
                 widg.active = false;
@@ -72,7 +76,9 @@ public class MainScreen extends Screen {
             }
             widg.setTooltip(Tooltip.of(Text.of(playerNames)));
             this.addDrawableChild(widg);
-
+            if (lt.playeruuids.isEmpty()) {
+                this.addDrawableChild(delete);
+            }
 
         }
 

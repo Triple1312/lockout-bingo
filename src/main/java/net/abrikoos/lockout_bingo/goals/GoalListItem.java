@@ -6,6 +6,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.texture.*;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -64,9 +65,9 @@ public class GoalListItem {
         return hasTag(LockoutGoalTag.breed);
     }
 
-    public void draw(DrawContext ctx, float delta, int x, int y, int width, int height) {
+    public void draw(@NotNull DrawContext ctx, float delta, int x, int y, int width, int height) {
         this.delta += delta;
-        ctx.drawTexture(this.resourceids.get(0), x+3, y+3, 0, 0, width-6, height-6, width-6, height-6);
+        ctx.drawTexture(this.resourceids.get((int) (this.delta /30 % resourceids.size())), x+3, y+3, 0, 0, width-6, height-6, width-6, height-6);
         drawModifiers(ctx, x, y, x+width, y+height);
     }
 

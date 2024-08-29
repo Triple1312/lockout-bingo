@@ -42,4 +42,6 @@ public enum LockoutGoalTag {
     biomes,
     wool,
     km1,
+    luck,
+    village
 }

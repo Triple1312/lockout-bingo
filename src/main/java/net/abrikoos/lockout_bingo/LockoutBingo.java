@@ -12,6 +12,7 @@ import net.abrikoos.lockout_bingo.network.game.*;
 import net.abrikoos.lockout_bingo.network.team.AllTeamsPacket;
 import net.abrikoos.lockout_bingo.network.team.LockoutAddTeamPacket;
 import net.abrikoos.lockout_bingo.network.team.LockoutJoinTeamPacket;
+import net.abrikoos.lockout_bingo.network.team.LockoutRemoveTeamPacket;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -74,6 +75,7 @@ public class LockoutBingo implements ModInitializer {
 		PayloadTypeRegistry.playC2S().register(CreateBlackoutRequestPacket.ID, CreateBlackoutRequestPacket.CODEC);
 		PayloadTypeRegistry.playC2S().register(LockoutJoinTeamPacket.ID, LockoutJoinTeamPacket.PACKET_CODEC);
 		PayloadTypeRegistry.playC2S().register(CreateLockoutPacket.ID, CreateLockoutPacket.CODEC);
+		PayloadTypeRegistry.playC2S().register(LockoutRemoveTeamPacket.ID, LockoutRemoveTeamPacket.PACKET_CODEC);
 
 		LockoutLogger.log("Hello Fabric world!");
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
@@ -120,6 +122,11 @@ public class LockoutBingo implements ModInitializer {
 		ServerPlayNetworking.registerGlobalReceiver(CreateLockoutPacket.ID, (payload, client) -> {
 			GameState.newLockout(payload);
 			LockoutLogger.log("Started lockout game");
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(LockoutRemoveTeamPacket.ID, (payload, client) -> {
+			GameState.removeTeam(payload.team());
+			LockoutLogger.log("Removed team " + payload.team());
 		});
 
 		LockoutModItems.initialize();
