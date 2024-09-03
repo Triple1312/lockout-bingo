@@ -1,7 +1,12 @@
 package net.abrikoos.lockout_bingo.gui.screens;
 
+import net.abrikoos.lockout_bingo.LockoutLogger;
+import net.abrikoos.lockout_bingo.gui.LockoutScreens;
+import net.abrikoos.lockout_bingo.gui.widget.ColorSelectButtonWidget;
+import net.abrikoos.lockout_bingo.gui.widget.TeamColorSelectWidget;
 import net.abrikoos.lockout_bingo.modes.team.LockoutTeamDataClass;
 import net.abrikoos.lockout_bingo.network.game.CreateBlackoutRequestPacket;
+import net.abrikoos.lockout_bingo.network.team.ChangeTeamIdPacket;
 import net.abrikoos.lockout_bingo.network.team.LockoutAddTeamPacket;
 import net.abrikoos.lockout_bingo.network.team.LockoutJoinTeamPacket;
 import net.abrikoos.lockout_bingo.network.team.LockoutRemoveTeamPacket;
@@ -9,6 +14,7 @@ import net.abrikoos.lockout_bingo.team.Colors;
 import net.abrikoos.lockout_bingo.team.LockoutTeam;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -19,10 +25,13 @@ import net.abrikoos.lockout_bingo.team.TeamRegistry;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.logging.Logger;
 
 public class MainScreen extends Screen {
 
     TextFieldWidget teamaddWidget;
+
+    boolean toggleColorSelector = false;
 
     public MainScreen(Function<Void, Void> leaveScreen) {
         super(Text.of("main"));
@@ -31,7 +40,10 @@ public class MainScreen extends Screen {
     }
 
     protected void init() {
+//        toggleColorSelector = false;
         // gamemodes buttons
+        this.clearChildren();
+        int colorDrawerY = 0;
         ButtonWidget nl = ButtonWidget.builder(
                 Text.of("New Lockout"), (btn) -> {
                     assert this.client != null;
@@ -68,7 +80,14 @@ public class MainScreen extends Screen {
             }).dimensions(170, 120 + i * 30, 20, 20).build();
             assert this.client != null;
             if (lt.playeruuids.contains(this.client.player.getUuidAsString())) {
-                widg.active = false;
+                if (!this.toggleColorSelector) {
+                    this.addDrawableChild(
+                        new ColorSelectButtonWidget(170, 120 + i * 30, 20, Colors.get(lt.teamId), this::toggleColorSelector)
+                    );
+                }
+                else {
+                    colorDrawerY = 100 + i * 30;
+                }
             }
             String playerNames = "";
             for (String player : lt.playeruuids) {
@@ -80,6 +99,9 @@ public class MainScreen extends Screen {
                 this.addDrawableChild(delete);
             }
 
+        }
+        if (this.toggleColorSelector) {
+            this.drawColorSelect(200, colorDrawerY);
         }
 
 
@@ -99,4 +121,35 @@ public class MainScreen extends Screen {
         return null;
     }
 
+    public void toggleColorSelector(int oldColor) {
+        toggleColorSelector = !toggleColorSelector;
+        LockoutLogger.log("toggleColorSelector: " + toggleColorSelector);
+        MinecraftClient client = MinecraftClient.getInstance();
+        assert client != null;
+        this.init();
+        LockoutScreens.open();
+    }
+
+    protected void colorSelected(int color) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        assert client != null;
+        ClientPlayNetworking.send(new ChangeTeamIdPacket(Colors.getTeamIndex(Colors.getPlayerColor(client.player.getUuidAsString())), Colors.getTeamIndex(color)));
+        this.toggleColorSelector(color);
+        this.init();
+        LockoutScreens.open();
+    }
+
+    public void drawColorSelect( int x, int y) {
+        int widthheight = 30;
+        int colorcount = 10;
+        int padding = 10;
+
+//        ctx.fill(x, y, x + 5*widthheight + 6*padding, y + 2*widthheight + 3*padding, Colors.get(0));
+        for (int i = 0; i < colorcount; i++) {
+            int xi = i % 5;
+            int yi = i / 5;
+            ColorSelectButtonWidget btn = new ColorSelectButtonWidget(x + xi * (widthheight + padding) + padding, y + yi * (widthheight + padding) + padding, widthheight, Colors.get(i+1), this::colorSelected);
+            this.addDrawableChild(btn);
+        }
+    }
 }

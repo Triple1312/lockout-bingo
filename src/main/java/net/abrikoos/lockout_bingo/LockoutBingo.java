@@ -6,23 +6,18 @@ import net.abrikoos.lockout_bingo.item.LockoutModItems;
 import net.abrikoos.lockout_bingo.listeners.EntityKillListener;
 import net.abrikoos.lockout_bingo.listeners.PlayerDeathListener;
 import net.abrikoos.lockout_bingo.listeners.TickListener;
-import net.abrikoos.lockout_bingo.network.compass.CompassPlayerPosition;
 import net.abrikoos.lockout_bingo.network.compass.PlayersPositionPacket;
 import net.abrikoos.lockout_bingo.network.game.*;
-import net.abrikoos.lockout_bingo.network.team.AllTeamsPacket;
-import net.abrikoos.lockout_bingo.network.team.LockoutAddTeamPacket;
-import net.abrikoos.lockout_bingo.network.team.LockoutJoinTeamPacket;
-import net.abrikoos.lockout_bingo.network.team.LockoutRemoveTeamPacket;
+import net.abrikoos.lockout_bingo.network.team.*;
+import net.abrikoos.lockout_bingo.team.Colors;
+import net.abrikoos.lockout_bingo.team.TeamController;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
-import net.fabricmc.fabric.api.loot.v3.LootTableSource;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
@@ -35,20 +30,8 @@ import net.minecraft.loot.function.SetPotionLootFunction;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.loot.provider.number.UniformLootNumberProvider;
 import net.minecraft.potion.Potions;
-import net.minecraft.predicate.item.EnchantmentsPredicate;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryEntryLookup;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-
-import javax.swing.text.html.parser.Entity;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class LockoutBingo implements ModInitializer {
@@ -69,6 +52,7 @@ public class LockoutBingo implements ModInitializer {
 		PayloadTypeRegistry.playS2C().register(AllTeamsPacket.ID, AllTeamsPacket.PACKET_CODEC);
 		PayloadTypeRegistry.playS2C().register(LockoutStartGamePacket.ID, LockoutStartGamePacket.CODEC);
 		PayloadTypeRegistry.playS2C().register(PlayersPositionPacket.ID, PlayersPositionPacket.CODEC);
+		PayloadTypeRegistry.playC2S().register(ChangeTeamIdPacket.ID, ChangeTeamIdPacket.PACKET_CODEC);
 
 
 		PayloadTypeRegistry.playC2S().register(LockoutAddTeamPacket.ID, LockoutAddTeamPacket.PACKET_CODEC);
@@ -127,6 +111,10 @@ public class LockoutBingo implements ModInitializer {
 		ServerPlayNetworking.registerGlobalReceiver(LockoutRemoveTeamPacket.ID, (payload, client) -> {
 			GameState.removeTeam(payload.team());
 			LockoutLogger.log("Removed team " + payload.team());
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(ChangeTeamIdPacket.ID, (payload, client) -> {
+			GameState.changeTeamId(payload.oldIndex(), payload.newIndex());
 		});
 
 		LockoutModItems.initialize();

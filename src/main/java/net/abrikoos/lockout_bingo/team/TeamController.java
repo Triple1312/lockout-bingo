@@ -1,8 +1,14 @@
 package net.abrikoos.lockout_bingo.team;
 
+import net.abrikoos.lockout_bingo.gamestate.GameState;
 import net.abrikoos.lockout_bingo.gui.LockoutScreens;
+import net.abrikoos.lockout_bingo.network.team.AllTeamsPacket;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.world.LevelLoadingScreen;
+import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 
 import java.util.List;
@@ -60,9 +66,26 @@ public class TeamController {
             return;
         }
         else if (Objects.equals(LockoutScreens.getCurrentScreen(), "main")){
-            LockoutScreens.open();
+            if (LockoutScreens.isOpen()) {
+                LockoutScreens.open();
+            }
+
         }
 
+    }
+
+
+    // todo unuseded
+    public static void changeTeamId(int teamindex, int newId) {
+        LockoutTeam team = TeamRegistry.getTeam(teamindex);
+        if (team == null) {
+            return;
+        }
+        team.teamId = newId;
+        for (String playeruuid : team.playeruuids) {
+            PlayerTeamRegistry.getPlayerByUUID(playeruuid).teamIndex = newId;
+        }
+        GameState.sendAllTeams();
     }
 
 }

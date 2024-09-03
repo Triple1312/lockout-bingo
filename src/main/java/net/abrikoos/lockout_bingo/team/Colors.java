@@ -40,4 +40,13 @@ public class Colors {
         return get(player.teamIndex);
     }
 
+    public static int getTeamIndex(int color) {
+        for (int i = 0; i < colors.length; i++) {
+            if (colors[i] == color) {
+                return i + 1;
+            }
+        }
+        return 0;
+    }
+
 }

@@ -125,6 +125,35 @@ public class GameState {
         }
     }
 
+    public static void sendAllTeams() {
+        AllTeamsPacket packet = new AllTeamsPacket(teams);
+        for (ServerPlayerEntity player : players) {
+            ServerPlayNetworking.send(player, packet);
+        }
+    }
+
+    public static LockoutTeam getTeam(int teamindex) {
+        for (LockoutTeam team : teams) {
+            if (team.teamId == teamindex) {
+                return team;
+            }
+        }
+        return null;
+    }
+
+    public static void changeTeamId(int teamindex, int newId) {
+        LockoutTeam team = getTeam(teamindex);
+        LockoutTeam checkTeam = getTeam(newId);
+        if (checkTeam!= null) {
+            return;
+        }
+        if (team == null) {
+            return;
+        }
+        team.teamId = newId;
+        sendAllTeams();
+    }
+
     public static void goalComplete(int team, int goal) {
 //        goals.get(goal).completed(players.get(team));
     }
