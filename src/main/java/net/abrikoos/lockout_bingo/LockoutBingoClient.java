@@ -2,9 +2,11 @@ package net.abrikoos.lockout_bingo;
 
 import net.abrikoos.lockout_bingo.goals.GoalItemRegistry;
 import net.abrikoos.lockout_bingo.gui.LockoutScreens;
+import net.abrikoos.lockout_bingo.gui.screens.ScreenScreen;
 import net.abrikoos.lockout_bingo.gui.widget.CompassesWidget;
 import net.abrikoos.lockout_bingo.item.CustomCompassRenderer;
 import net.abrikoos.lockout_bingo.item.LockoutModItems;
+import net.abrikoos.lockout_bingo.listeners.TickListener;
 import net.abrikoos.lockout_bingo.network.compass.PlayersPositionPacket;
 import net.abrikoos.lockout_bingo.network.game.*;
 import net.abrikoos.lockout_bingo.network.team.AllTeamsPacket;
@@ -16,14 +18,17 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
+import net.fabricmc.fabric.mixin.event.lifecycle.client.ClientWorldMixin;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.WorldEvents;
 import org.lwjgl.glfw.GLFW;
 
 public class LockoutBingoClient implements ClientModInitializer {
@@ -31,6 +36,8 @@ public class LockoutBingoClient implements ClientModInitializer {
     public static GoalItemRegistry goalItemRegistry = new GoalItemRegistry();
 
     public static boolean boardopen = false;
+
+    private boolean hasJoinedWorld = false;
 
     @Override
     public void onInitializeClient() {
@@ -56,6 +63,20 @@ public class LockoutBingoClient implements ClientModInitializer {
             });
         }));
 
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (client.world != null && !hasJoinedWorld) {
+                hasJoinedWorld = true;
+                LockoutLogger.log(client.currentScreen.getTitle().toString());
+                if (client.currentScreen instanceof ScreenScreen) {
+                    client.setScreen(null);
+                }
+            }
+            else if (client.world == null && hasJoinedWorld) {
+                LockoutLogger.log(client.currentScreen.getTitle().toString());
+                hasJoinedWorld = false;
+            }
+        });
+
 
         ClientPlayNetworking.registerGlobalReceiver(LockoutStartGamePacket.ID, ((payload, context) -> {
             context.client().execute(() -> {
@@ -80,7 +101,6 @@ public class LockoutBingoClient implements ClientModInitializer {
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             PlayerTeamRegistry.updatePlayers();
         });
-
 
 
         KeyBinding openBoardScreenKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(

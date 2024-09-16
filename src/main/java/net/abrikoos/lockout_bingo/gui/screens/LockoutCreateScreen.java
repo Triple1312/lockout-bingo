@@ -63,11 +63,11 @@ public class LockoutCreateScreen extends Screen {
                         Text.of("Back"), (btn) -> {
                             client.setScreen(LockoutScreens.mainScreen);
                         }
-                ).dimensions(40, 40, 120, 20).build()
+                ).dimensions(40, 30, 120, 20).build()
         );
         this.end = CheckboxWidget.builder(
                 Text.of("End"), textRenderer
-        ).pos(200, 40).checked(true).build();
+        ).pos(200, 30).checked(true).build();
         this.nether = CheckboxWidget.builder(
                 Text.of("Nether"), textRenderer
         ).pos(200, 80).checked(true).build();
@@ -101,8 +101,19 @@ public class LockoutCreateScreen extends Screen {
                     );
                     ClientPlayNetworking.send(packet);
                 }
-            ).dimensions(300, 300, 120, 20).build()
+            ).dimensions(200, 30, 120, 20).build()
         );
+    }
+
+    private void addGoalTypesWidgets(int x, int y) {
+
+    }
+
+    private void addTeams(int x, int y) {
+
+    }
+
+    private void addPlayers(int x, int y) {
 
     }
 

@@ -2,13 +2,8 @@ package net.abrikoos.lockout_bingo.team;
 
 import net.abrikoos.lockout_bingo.gamestate.GameState;
 import net.abrikoos.lockout_bingo.gui.LockoutScreens;
-import net.abrikoos.lockout_bingo.network.team.AllTeamsPacket;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.abrikoos.lockout_bingo.listeners.TeamsChangeListener;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.world.LevelLoadingScreen;
-import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 
 import java.util.List;
@@ -59,18 +54,26 @@ public class TeamController {
     public static void setAllTeams(List<LockoutTeam> teams) {
         TeamRegistry.setAllTeams(teams);
         PlayerTeamRegistry.setAllTeams(teams);
+        if (teams.isEmpty()) {
+            return;
+        }
         for (LockoutTeam team : teams) {
             MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(Text.of(team.name));
         }
-        if (MinecraftClient.getInstance().currentScreen == null) {
-            return;
-        }
-        else if (Objects.equals(LockoutScreens.getCurrentScreen(), "main")){
-            if (LockoutScreens.isOpen()) {
-                LockoutScreens.open();
+        try {
+            if (MinecraftClient.getInstance().currentScreen == null) {
+                return;
             }
+            else if (Objects.equals(LockoutScreens.getCurrentScreen(), "main")){
+                if (LockoutScreens.isOpen()) {
+                    LockoutScreens.open();
+                }
 
+            }
+        } catch (Exception e) {
+//            e.printStackTrace();
         }
+        TeamsChangeListener.registerEvent(teams);
 
     }
 

@@ -3,6 +3,7 @@ package net.abrikoos.lockout_bingo.gui.screens;
 import net.abrikoos.lockout_bingo.LockoutLogger;
 import net.abrikoos.lockout_bingo.gui.LockoutScreens;
 import net.abrikoos.lockout_bingo.gui.widget.ColorSelectButtonWidget;
+import net.abrikoos.lockout_bingo.gui.widget.ColoredButton;
 import net.abrikoos.lockout_bingo.gui.widget.TeamColorSelectWidget;
 import net.abrikoos.lockout_bingo.modes.team.LockoutTeamDataClass;
 import net.abrikoos.lockout_bingo.network.game.CreateBlackoutRequestPacket;
@@ -82,7 +83,9 @@ public class MainScreen extends Screen {
             if (lt.playeruuids.contains(this.client.player.getUuidAsString())) {
                 if (!this.toggleColorSelector) {
                     this.addDrawableChild(
-                        new ColorSelectButtonWidget(170, 120 + i * 30, 20, Colors.get(lt.teamId), this::toggleColorSelector)
+                        new ColoredButton(170, 120 + i * 30, 20, 20, Text.of(""), (btn) -> {
+                            this.toggleColorSelector(Colors.get(lt.teamId));
+                        }, Colors.get(lt.teamId))
                     );
                 }
                 else {
@@ -148,8 +151,11 @@ public class MainScreen extends Screen {
         for (int i = 0; i < colorcount; i++) {
             int xi = i % 5;
             int yi = i / 5;
-            ColorSelectButtonWidget btn = new ColorSelectButtonWidget(x + xi * (widthheight + padding) + padding, y + yi * (widthheight + padding) + padding, widthheight, Colors.get(i+1), this::colorSelected);
-            this.addDrawableChild(btn);
+            int tmp_color = Colors.get(i+1);
+            ColoredButton bt = new ColoredButton(x + xi * (widthheight + padding) + padding, y + yi * (widthheight + padding) + padding, widthheight, widthheight, Text.of(""), (btn) -> {
+                colorSelected(tmp_color);
+            } , tmp_color);
+            this.addDrawableChild(bt);
         }
     }
 }

@@ -9,8 +9,6 @@ import net.abrikoos.lockout_bingo.listeners.TickListener;
 import net.abrikoos.lockout_bingo.network.compass.PlayersPositionPacket;
 import net.abrikoos.lockout_bingo.network.game.*;
 import net.abrikoos.lockout_bingo.network.team.*;
-import net.abrikoos.lockout_bingo.team.Colors;
-import net.abrikoos.lockout_bingo.team.TeamController;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -19,6 +17,7 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
@@ -41,8 +40,6 @@ public class LockoutBingo implements ModInitializer {
 	public static PlayerDeathListener playerDeathListener = new PlayerDeathListener();
 
 	public static EntityKillListener entityKillListener = new EntityKillListener();
-
-
 
 
 	@Override

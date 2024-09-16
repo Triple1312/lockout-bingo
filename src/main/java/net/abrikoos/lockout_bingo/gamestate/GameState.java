@@ -6,6 +6,7 @@ import net.abrikoos.lockout_bingo.goals.LockoutGoal;
 import net.abrikoos.lockout_bingo.goals.LockoutGoalEvent;
 import net.abrikoos.lockout_bingo.item.LockoutModItems;
 import net.abrikoos.lockout_bingo.listeners.*;
+import net.abrikoos.lockout_bingo.modes.random_block_finder.RandomBlockFinder;
 import net.abrikoos.lockout_bingo.network.compass.CompassPlayerPosition;
 import net.abrikoos.lockout_bingo.network.compass.PlayersPositionPacket;
 import net.abrikoos.lockout_bingo.network.game.*;
@@ -19,6 +20,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerAdvancementLoader;
@@ -44,6 +46,8 @@ public class GameState {
     public static MinecraftServer server;
 
     public static List<Integer> teamIndexes = new ArrayList<>();
+
+    public static RandomBlockFinder rbf;
 
 
     public static void playerServerJoin(ServerPlayerEntity player) {
@@ -237,6 +241,10 @@ public class GameState {
         for (ServerPlayerEntity player : players) {
             ServerPlayNetworking.send(player, pt);
         }
+    }
+
+    public static void newRBF() {
+
     }
 
     public static void destroyGame() {

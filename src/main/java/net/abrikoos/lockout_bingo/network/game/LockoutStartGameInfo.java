@@ -12,10 +12,15 @@ import java.util.List;
 public class LockoutStartGameInfo {
     public List<LockoutTeamDataClass> teams;
     public final GoalListItem[] goals;
+    public List<Integer> disabledGoalTypes;
+    public List<Integer> disabledModifiers;
 
-    public LockoutStartGameInfo(List<LockoutTeamDataClass> teams, GoalListItem[] goals) {
+    public LockoutStartGameInfo(List<LockoutTeamDataClass> teams, GoalListItem[] goals, List<Integer> disabledGoalTypes, List<Integer> disabledModifiers) {
         this.teams = teams;
         this.goals = goals;
+        this.disabledGoalTypes = disabledGoalTypes;
+        this.disabledModifiers = disabledModifiers;
+
     }
 
     public static final PacketCodec<RegistryByteBuf, LockoutStartGameInfo> PACKET_CODEC = new PacketCodec<RegistryByteBuf, LockoutStartGameInfo>() {
@@ -37,6 +42,16 @@ public class LockoutStartGameInfo {
             for (GoalListItem goal : value.goals) {
                 buf.writeByte(goal.id.length());
                 buf.writeCharSequence(goal.id, java.nio.charset.StandardCharsets.UTF_8);
+            }
+
+            buf.writeByte(value.disabledGoalTypes.size());
+            for (Integer i : value.disabledGoalTypes) {
+                buf.writeByte(i);
+            }
+
+            buf.writeByte(value.disabledModifiers.size());
+            for (Integer i : value.disabledModifiers) {
+                buf.writeByte(i);
             }
 
         }
@@ -80,8 +95,21 @@ public class LockoutStartGameInfo {
                 counter += stringlength + 1;
                 goals[i] = GoalItemRegistry.getGoal(name);
             }
+            int disabledGoalTypesSize = bytes[counter]; counter ++;
+            List<Integer> disabledGoalTypes = new ArrayList<>();
+            for (int i = 0; i < disabledGoalTypesSize; i++) {
+                int disabledGoalType = bytes[counter]; counter ++;
+                disabledGoalTypes.add(disabledGoalType);
+            }
 
-            return new LockoutStartGameInfo(teams, goals);
+            int disabledModifiersSize = bytes[counter]; counter ++;
+            List<Integer> disabledModifiers = new ArrayList<>();
+            for (int i = 0; i < disabledModifiersSize; i++) {
+                int disabledModifier = bytes[counter]; counter ++;
+                disabledModifiers.add(disabledModifier);
+            }
+
+            return new LockoutStartGameInfo(teams, goals, disabledGoalTypes, disabledModifiers);
         }
     };
 

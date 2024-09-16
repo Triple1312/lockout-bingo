@@ -1,9 +1,7 @@
 package net.abrikoos.lockout_bingo.gui;
 
 import net.abrikoos.lockout_bingo.LockoutLogger;
-import net.abrikoos.lockout_bingo.gui.screens.LockoutBoardScreen;
-import net.abrikoos.lockout_bingo.gui.screens.LockoutCreateScreen;
-import net.abrikoos.lockout_bingo.gui.screens.MainScreen;
+import net.abrikoos.lockout_bingo.gui.screens.*;
 import net.abrikoos.lockout_bingo.gui.widget.BoardWidget;
 import net.abrikoos.lockout_bingo.modes.team.LockoutTeamDataClass;
 import net.abrikoos.lockout_bingo.network.game.BlackoutStartGameInfo;
@@ -22,6 +20,8 @@ public class LockoutScreens {
     private static LockoutBoardScreen boardScreen = new LockoutBoardScreen(LockoutScreens::leaveScreen);
 
     public static MainScreen mainScreen = new MainScreen(LockoutScreens::leaveScreen);
+
+    public static ScreenScreen completeFullScreen = new ScreenScreen();
 
     private static String currentScreen = "main";
 
@@ -60,7 +60,7 @@ public class LockoutScreens {
         LockoutLogger.log("Opening screen: " + currentScreen);
         switch (currentScreen) {
             case "main" -> {
-                MinecraftClient.getInstance().setScreen(mainScreen);
+                MinecraftClient.getInstance().setScreen(completeFullScreen);
                 _open = true;
                 return true;
             }
