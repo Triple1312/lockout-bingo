@@ -1,8 +1,7 @@
 package net.abrikoos.lockout_bingo.team;
 
-import net.abrikoos.lockout_bingo.gamestate.GameState;
+import net.abrikoos.lockout_bingo.server.gamestate.GameState;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.widget.OptionListWidget;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.Nullable;

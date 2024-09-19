@@ -1,11 +1,11 @@
 package net.abrikoos.lockout_bingo;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import net.abrikoos.lockout_bingo.gamestate.GameState;
+import net.abrikoos.lockout_bingo.server.gamestate.GameState;
 import net.abrikoos.lockout_bingo.item.LockoutModItems;
-import net.abrikoos.lockout_bingo.listeners.EntityKillListener;
-import net.abrikoos.lockout_bingo.listeners.PlayerDeathListener;
-import net.abrikoos.lockout_bingo.listeners.TickListener;
+import net.abrikoos.lockout_bingo.server.listeners.EntityKillListener;
+import net.abrikoos.lockout_bingo.server.listeners.PlayerDeathListener;
+import net.abrikoos.lockout_bingo.server.listeners.TickListener;
 import net.abrikoos.lockout_bingo.network.compass.PlayersPositionPacket;
 import net.abrikoos.lockout_bingo.network.game.*;
 import net.abrikoos.lockout_bingo.network.team.*;
@@ -17,7 +17,6 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
@@ -62,7 +61,7 @@ public class LockoutBingo implements ModInitializer {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 			dispatcher.register(CommandManager.literal("blackout").executes(context -> {
 				context.getSource().sendFeedback(() -> Text.literal("Called /blackout with no arguments."), false);
-				GameState.newBlackout();
+//				GameState.newBlackout();
 				return 1;
 			}));
 		});
@@ -91,7 +90,7 @@ public class LockoutBingo implements ModInitializer {
 		});
 
 		ServerPlayNetworking.registerGlobalReceiver(CreateBlackoutRequestPacket.ID, (payload, client) -> {
-			GameState.newBlackout();
+//			GameState.newBlackout();
 			LockoutLogger.log("Started blackout game");
 		});
 

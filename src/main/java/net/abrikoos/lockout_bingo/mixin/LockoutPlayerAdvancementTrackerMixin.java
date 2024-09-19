@@ -1,8 +1,7 @@
 package net.abrikoos.lockout_bingo.mixin;
 
 import net.abrikoos.lockout_bingo.LockoutLogger;
-import net.abrikoos.lockout_bingo.goals.advancement.PlayerAdvancementTrackerMixin;
-import net.abrikoos.lockout_bingo.listeners.AdvancementListener;
+import net.abrikoos.lockout_bingo.server.listeners.AdvancementListener;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.server.network.ServerPlayerEntity;

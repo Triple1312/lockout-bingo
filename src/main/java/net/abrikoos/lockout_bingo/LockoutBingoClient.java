@@ -1,15 +1,18 @@
 package net.abrikoos.lockout_bingo;
 
-import net.abrikoos.lockout_bingo.goals.GoalItemRegistry;
-import net.abrikoos.lockout_bingo.gui.LockoutScreens;
-import net.abrikoos.lockout_bingo.gui.screens.ScreenScreen;
-import net.abrikoos.lockout_bingo.gui.widget.CompassesWidget;
+import net.abrikoos.lockout_bingo.client.ClientGameState;
+import net.abrikoos.lockout_bingo.server.goals.GoalItemRegistry;
+import net.abrikoos.lockout_bingo.client.gui.LockoutScreens;
+import net.abrikoos.lockout_bingo.client.gui.screens.ScreenScreen;
+import net.abrikoos.lockout_bingo.client.gui.widget.CompassesWidget;
 import net.abrikoos.lockout_bingo.item.CustomCompassRenderer;
 import net.abrikoos.lockout_bingo.item.LockoutModItems;
-import net.abrikoos.lockout_bingo.listeners.TickListener;
+import net.abrikoos.lockout_bingo.client.modes.LockoutGame;
+import net.abrikoos.lockout_bingo.client.modes.lockout.Lockout;
 import net.abrikoos.lockout_bingo.network.compass.PlayersPositionPacket;
 import net.abrikoos.lockout_bingo.network.game.*;
 import net.abrikoos.lockout_bingo.network.team.AllTeamsPacket;
+import net.abrikoos.lockout_bingo.team.LockoutTeam;
 import net.abrikoos.lockout_bingo.team.PlayerTeamRegistry;
 import net.abrikoos.lockout_bingo.team.TeamController;
 import net.fabricmc.api.ClientModInitializer;
@@ -18,18 +21,17 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
-import net.fabricmc.fabric.mixin.event.lifecycle.client.ClientWorldMixin;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.WorldEvents;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.List;
 
 public class LockoutBingoClient implements ClientModInitializer {
 
@@ -38,6 +40,8 @@ public class LockoutBingoClient implements ClientModInitializer {
     public static boolean boardopen = false;
 
     private boolean hasJoinedWorld = false;
+
+    LockoutGame game;
 
     @Override
     public void onInitializeClient() {
@@ -50,6 +54,7 @@ public class LockoutBingoClient implements ClientModInitializer {
                 MinecraftClient client = MinecraftClient.getInstance();
                 BlackoutStartGameInfo boardInfo = payload.goalboard();
                 LockoutScreens.setBoard(boardInfo);
+
             });
         }));
 
@@ -58,8 +63,16 @@ public class LockoutBingoClient implements ClientModInitializer {
                 MinecraftClient client = MinecraftClient.getInstance();
                 LockoutUpdateBoardInfo boardInfo = payload.goalboard();
                 assert client.player != null;
+                LockoutUpdateBoardInfo old = ClientGameState.latestUpdate();
+                List<LockoutTeam> teams = ClientGameState.getTeams();
+                int t1old = 0;
+                int t2old = 0;
+
+
+
                 client.player.playSound(SoundEvent.of(Identifier.of("lockout-bingo:goal_complete")));
-                LockoutScreens.updateBoard(boardInfo);
+                ClientGameState.updateBoard(boardInfo);
+
             });
         }));
 
@@ -80,8 +93,9 @@ public class LockoutBingoClient implements ClientModInitializer {
 
         ClientPlayNetworking.registerGlobalReceiver(LockoutStartGamePacket.ID, ((payload, context) -> {
             context.client().execute(() -> {
-                MinecraftClient client = MinecraftClient.getInstance();
-                client.setScreen(new ChatScreen("Lockout Bingo Goals"));
+                ClientGameState.startLockout(payload.info());
+//                MinecraftClient client = MinecraftClient.getInstance();
+//                client.setScreen(new ChatScreen("Lockout Bingo Goals"));
             });
         }));
 

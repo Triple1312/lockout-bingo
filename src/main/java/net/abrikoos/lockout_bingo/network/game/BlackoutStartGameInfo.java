@@ -1,8 +1,8 @@
 package net.abrikoos.lockout_bingo.network.game;
 
 import io.netty.buffer.ByteBuf;
-import net.abrikoos.lockout_bingo.goals.GoalItemRegistry;
-import net.abrikoos.lockout_bingo.goals.GoalListItem;
+import net.abrikoos.lockout_bingo.server.goals.GoalItemRegistry;
+import net.abrikoos.lockout_bingo.server.goals.GoalListItem;
 import net.minecraft.network.codec.PacketCodec;
 
 import java.util.ArrayList;

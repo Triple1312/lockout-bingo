@@ -1,8 +1,8 @@
 package net.abrikoos.lockout_bingo.team;
 
-import net.abrikoos.lockout_bingo.gamestate.GameState;
-import net.abrikoos.lockout_bingo.gui.LockoutScreens;
-import net.abrikoos.lockout_bingo.listeners.TeamsChangeListener;
+import net.abrikoos.lockout_bingo.server.gamestate.GameState;
+import net.abrikoos.lockout_bingo.client.gui.LockoutScreens;
+import net.abrikoos.lockout_bingo.client.TeamsChangeListener;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 

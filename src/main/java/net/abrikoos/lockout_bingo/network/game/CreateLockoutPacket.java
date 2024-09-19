@@ -8,11 +8,30 @@ import net.minecraft.util.Identifier;
 import java.util.ArrayList;
 import java.util.List;
 
+/// Disabled goal types:
+/// 0 - end
+/// 1 - nether
+/// 2 - redstone
+/// 3 - death
+/// 4 - opponent
+/// 5 - biome
+/// 6 - advancement
+/// 7 - food
+/// 8 - kill
+/// 9 - movement
+/// 10 - breed
+/// 11 - obtain
+/// 12 - armor
+/// 13 - tools
+/// 14 - ride
+
+
 public record CreateLockoutPacket(
         List<Integer> teams,
         int difficulty,
-        boolean end,
-        boolean nether
+        int goalCount,
+        List<Integer> disabledGoalTypes,
+        List<Integer> disabledModifiers
 ) implements CustomPayload {
 
     public final static Id<CreateLockoutPacket> ID = new CustomPayload.Id<>(Identifier.of("lockout-bingo", "create_lockout"));
@@ -36,15 +55,26 @@ public record CreateLockoutPacket(
                 ts.add((int) buf.readByte());
             }
             int difficulty = buf.readByte();
-            boolean end = buf.readBoolean();
-            boolean nether = buf.readBoolean();
+            int goalcount = buf.readByte();
+            int dgoaltypes_count = buf.readByte();
+            List<Integer> dgoaltypes = new ArrayList<>();
+            for (int i = 0; i < dgoaltypes_count; i++) {
+                dgoaltypes.add((int) buf.readByte());
+            }
+
+            int dmodifiers_count = buf.readByte();
+            List<Integer> dmodifiers = new ArrayList<>();
+            for (int i = 0; i < dmodifiers_count; i++) {
+                dmodifiers.add((int) buf.readByte());
+            }
 
 
             return new CreateLockoutPacket(
                     ts,
                     difficulty,
-                    end,
-                    nether
+                    goalcount,
+                    dgoaltypes,
+                    dmodifiers
             );
         }
 
@@ -57,8 +87,15 @@ public record CreateLockoutPacket(
 //                buf.writeCharSequence(team, java.nio.charset.StandardCharsets.UTF_8);
             }
             buf.writeByte(value.difficulty());
-            buf.writeBoolean(value.end());
-            buf.writeBoolean(value.nether());
+            buf.writeByte(value.goalCount());
+            buf.writeByte(value.disabledGoalTypes().size());
+            for (Integer dgt : value.disabledGoalTypes) {
+                buf.writeByte(dgt);
+            }
+            buf.writeByte(value.disabledModifiers().size());
+            for (Integer dm : value.disabledModifiers) {
+                buf.writeByte(dm);
+            }
         }
     };
 }
