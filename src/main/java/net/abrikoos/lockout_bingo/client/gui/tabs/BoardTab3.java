@@ -81,6 +81,10 @@ public class BoardTab3 implements Tab {
                     }
 
                 }
+                if(!ClientGameState.boardTimeOver) {
+
+                    LockoutUtils.drawCenteredText(context, client.textRenderer, "Start in: " + ClientGameState.countDown() + 's', tabsizewidth / 2, topY - goalwidthheight/2, 0xffffffff, true);
+                }
             }
             else {
                 int tabsizewidth = this.width;

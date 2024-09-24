@@ -6,16 +6,22 @@ import net.abrikoos.lockout_bingo.client.modes.team.LockoutTeamDataClass;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class LockoutStartGameInfo {
     public List<LockoutTeamDataClass> teams;
     public final GoalListItem[] goals;
+    public boolean freeze = false;
+    public long startTime;
 
-    public LockoutStartGameInfo(List<LockoutTeamDataClass> teams, GoalListItem[] goals) {
+    public LockoutStartGameInfo(List<LockoutTeamDataClass> teams, GoalListItem[] goals, boolean freeze, long startTime) {
         this.teams = teams;
         this.goals = goals;
+        this.freeze = freeze;
+        this.startTime = startTime;
 
     }
 
@@ -39,6 +45,8 @@ public class LockoutStartGameInfo {
                 buf.writeByte(goal.id.length());
                 buf.writeCharSequence(goal.id, java.nio.charset.StandardCharsets.UTF_8);
             }
+            buf.writeBoolean(value.freeze);
+            buf.writeLong(value.startTime);
 
         }
 
@@ -81,8 +89,9 @@ public class LockoutStartGameInfo {
                 counter += stringlength + 1;
                 goals[i] = GoalItemRegistry.getGoal(name);
             }
+            long startTime = ByteBuffer.wrap(Arrays.copyOfRange(bytes, bytes.length -8, bytes.length)).getLong();
 
-            return new LockoutStartGameInfo(teams, goals);
+            return new LockoutStartGameInfo(teams, goals, bytes[bytes.length -9] == 1, startTime);
         }
     };
 

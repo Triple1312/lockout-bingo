@@ -1,0 +1,6 @@
+{
+  "parent": "item/compass",
+  "textures": {
+    "layer0": "lockout-bingo:item/player_tracker_compass"
+  }
+}

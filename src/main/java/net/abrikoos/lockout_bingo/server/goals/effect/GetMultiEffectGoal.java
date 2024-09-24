@@ -16,6 +16,7 @@ public class GetMultiEffectGoal extends LockoutGoal {
     }
 
     private void checkCompletion(MinecraftServer minecraftServer) {
+        if (completed != null) { return; }
         for (PlayerEntity player : minecraftServer.getPlayerManager().getPlayerList()) {
             if (player.getActiveStatusEffects().size() >= count) {
                 this.completed(player);

@@ -1,5 +1,6 @@
 package net.abrikoos.lockout_bingo.server.goals;
 
+import net.abrikoos.lockout_bingo.server.gamestate.GameState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -52,5 +53,19 @@ public abstract class LockoutGoal {
         completed = player;
         notifyListeners(new LockoutGoalEvent(player.getUuidAsString(), recipiant(), id));
         destory();
+    }
+
+    public void complete(String playername) {
+        ServerPlayerEntity player = null;
+        for (ServerPlayerEntity p : GameState.players) {
+            if (p.getPlayerListName().getString().equals(playername)) {
+                player = p;
+                break;
+            }
+        }
+        if (player == null) {
+            return;
+        }
+        completed(player);
     }
 }

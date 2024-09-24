@@ -64,11 +64,21 @@ public class BoardHud {
 
             context.fill(topX, bottombarY, topX + goalwidthheight * 2 + goalpadding, bottombarY + goalwidthheight/2, Colors.get(0) - 0x47000000);
             context.fill(topX + 2*(goalwidthheight + goalpadding), bottombarY, topX + goalwidthheight * 5 + goalpadding*4, bottombarY + goalwidthheight/2, Colors.get(0) - 0x47000000);
+            String timeString = "";
+            long time = ClientGameState.getPlayTime();
+            if (time > 3600000) { // hours
+                timeString += time / 3600000 + ":";
+            }
+            if (time > 60000) { // minutes
+                timeString += time / 60000 + ":";
+            }
+            timeString += time / 1000 % 60; // seconds
+            LockoutUtils.drawCenteredText(context, client.textRenderer, timeString,topX + (goalwidthheight * 3 + goalpadding * 3 + goalwidthheight/2),bottombarY + goalwidthheight/4, 0xffffffff, false  );
 
 //            context.drawTextWithBackground(client.textRenderer, Text.of(String.valueOf(t1)), topX + goalwidthheight/2, bottombarY + goalpadding, 200, Colors.get(ClientGameState.getTeams().get(0).teamId));
 //            context.drawTextWithBackground(client.textRenderer, Text.of(String.valueOf(t2)), topX + goalwidthheight + goalpadding + goalwidthheight/2, bottombarY + goalpadding, 200, Colors.get(ClientGameState.getTeams().get(1).teamId));
-            LockoutUtils.drawCenteredText(context, client.textRenderer, String.valueOf(t1), topX + goalwidthheight/2, bottombarY+ goalwidthheight/4, Colors.get(ClientGameState.getTeams().get(0).teamId), true);
-            LockoutUtils.drawCenteredText(context, client.textRenderer, String.valueOf(t2), topX + 3* goalwidthheight/2 + goalpadding, bottombarY + goalwidthheight/4, Colors.get(ClientGameState.getTeams().get(1).teamId), true);
+            LockoutUtils.drawCenteredText(context, client.textRenderer, String.valueOf(t1), topX + goalwidthheight/2, bottombarY+ goalwidthheight/4, Colors.get(ClientGameState.getTeams().get(0).teamId), false);
+            LockoutUtils.drawCenteredText(context, client.textRenderer, String.valueOf(t2), topX + 3* goalwidthheight/2 + goalpadding, bottombarY + goalwidthheight/4, Colors.get(ClientGameState.getTeams().get(1).teamId), false);
 
             CompassesWidget.drawHud(context);
 
@@ -80,13 +90,6 @@ public class BoardHud {
 
         }
 
-
-    }
-    public static void drawCenteredText(DrawContext context, int x, int y, Text text ) {
-
-        MinecraftClient client = MinecraftClient.getInstance();
-        int textwidth = client.textRenderer.getWidth(text);
-        int textheight = client.textRenderer.fontHeight;
 
     }
 

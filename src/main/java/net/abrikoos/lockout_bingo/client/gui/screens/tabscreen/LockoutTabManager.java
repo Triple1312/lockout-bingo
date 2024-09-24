@@ -24,7 +24,6 @@ public class LockoutTabManager extends TabManager {
         listeners.forEach(consumer -> consumer.accept(tab));
     }
 
-
     public void subscribeTabChangeEvent(Consumer<Tab> consumer) {
         listeners.add(consumer);
     }

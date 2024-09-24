@@ -77,6 +77,7 @@ public class LockoutBingo implements ModInitializer {
 			);
 		});
 
+		
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			GameState.playerServerJoin(handler.getPlayer());
 		});

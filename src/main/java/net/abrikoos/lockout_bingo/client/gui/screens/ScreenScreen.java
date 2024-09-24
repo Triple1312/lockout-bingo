@@ -2,14 +2,14 @@ package net.abrikoos.lockout_bingo.client.gui.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.abrikoos.lockout_bingo.LockoutLogger;
+import net.abrikoos.lockout_bingo.client.ClientGameState;
+import net.abrikoos.lockout_bingo.client.gui.LockoutScreens;
 import net.abrikoos.lockout_bingo.client.gui.screens.tabscreen.LockoutTabManager;
 import net.abrikoos.lockout_bingo.client.gui.screens.tabscreen.LockoutTabNavigationWidget;
-import net.abrikoos.lockout_bingo.client.gui.tabs.BoardTab2;
 import net.abrikoos.lockout_bingo.client.gui.tabs.BoardTab3;
 import net.abrikoos.lockout_bingo.client.gui.tabs.TeamsTab;
 import net.abrikoos.lockout_bingo.client.gui.widget.AddTeamWidget;
 import net.abrikoos.lockout_bingo.client.TeamsChangeListener;
-import net.abrikoos.lockout_bingo.client.modes.LockoutGame;
 import net.abrikoos.lockout_bingo.team.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -21,6 +21,7 @@ import net.minecraft.client.gui.tab.Tab;
 import net.minecraft.client.gui.widget.*;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,40 @@ public class ScreenScreen extends Screen {
         });
         this.tabNavigation.selectTab(CompleteFullScreenState.selectedTab, false);
         this.initTabNavigation();
+    }
 
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_B) {
+            if (ClientGameState.boardTimeOver ) {
+                this.close();
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        if (keyCode == GLFW.GLFW_KEY_P) {
+
+            this.close();
+            return true;
+
+        }
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+            if (ClientGameState.boardTimeOver) {
+                return super.keyPressed(keyCode, scanCode, modifiers);
+            }
+            else {
+                return false;
+            }
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    public void open() {
+        tabNavigation.selectTab(CompleteFullScreenState.selectedTab, false);
+        assert client != null;
+        client.setScreen(this);
     }
 
     @Override

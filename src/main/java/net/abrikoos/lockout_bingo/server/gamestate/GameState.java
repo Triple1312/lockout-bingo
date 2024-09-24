@@ -1,6 +1,7 @@
 package net.abrikoos.lockout_bingo.server.gamestate;
 
 import net.abrikoos.lockout_bingo.client.modes.team.LockoutTeamDataClass;
+import net.abrikoos.lockout_bingo.item.LockoutModItems;
 import net.abrikoos.lockout_bingo.server.builder.LockoutFinalBuilder;
 import net.abrikoos.lockout_bingo.server.builder.LockoutRandBuilder;
 import net.abrikoos.lockout_bingo.server.goals.LockoutGoal;
@@ -10,8 +11,10 @@ import net.abrikoos.lockout_bingo.client.modes.random_block_finder.RandomBlockFi
 import net.abrikoos.lockout_bingo.network.compass.CompassPlayerPosition;
 import net.abrikoos.lockout_bingo.network.compass.PlayersPositionPacket;
 import net.abrikoos.lockout_bingo.network.game.*;
+import net.abrikoos.lockout_bingo.team.Colors;
 import net.abrikoos.lockout_bingo.team.LockoutTeam;
 import net.abrikoos.lockout_bingo.network.team.AllTeamsPacket;
+import net.abrikoos.lockout_bingo.team.PlayerTeamRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.advancement.PlayerAdvancementTracker;
@@ -25,6 +28,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stat;
 import net.minecraft.stat.StatHandler;
 import net.minecraft.stat.Stats;
+import net.minecraft.text.Text;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -52,7 +56,7 @@ public class GameState {
         players.add(player);
         ServerPlayNetworking.send(player, new AllTeamsPacket(teams));
         if (inGame()) {
-            ServerPlayNetworking.send(player, new LockoutStartGamePacket(info));
+            ServerPlayNetworking.send(player, new LockoutStartGamePacket(new LockoutStartGameInfo(info.teams, info.goals, false, System.currentTimeMillis())));
             ServerPlayNetworking.send(player, new LockoutUpdateBoardPacket(getBoard()));
         }
     }
@@ -236,6 +240,7 @@ public class GameState {
                 sh.setStat(player, stat, 0);
             } //todo needs to remove more stuff
             player.heal(player.getMaxHealth());
+            player.giveItemStack(LockoutModItems.PLAYER_TRACKING_COMPASS.getDefaultStack());
         }
 
         LockoutStartGamePacket pt = new LockoutStartGamePacket(li);
@@ -276,6 +281,12 @@ public class GameState {
         LockoutUpdateBoardPacket packet = new LockoutUpdateBoardPacket(update);
         for (ServerPlayerEntity player : players) {
             ServerPlayNetworking.send(player, packet);
+            player.sendMessage(
+                    Text.empty().append("Goal \"")
+                        .append(GameState.goals.get(event.goalId).name())
+                        .append("\" completed by ")
+                        .append(Text.literal(PlayerTeamRegistry.getPlayerByUUID(event.puuid).getName()).withColor(Colors.getPlayerColor(event.puuid))),
+                    false);
         }
         return "";
     }

@@ -16,12 +16,6 @@ import java.util.List;
 
 public class LockoutScreens {
 
-    private static LockoutCreateScreen createScreen;
-
-    private static LockoutBoardScreen boardScreen = new LockoutBoardScreen(LockoutScreens::leaveScreen);
-
-    public static MainScreen mainScreen = new MainScreen(LockoutScreens::leaveScreen);
-
     public static ScreenScreen completeFullScreen = new ScreenScreen();
 
     private static String currentScreen = "main";
@@ -35,7 +29,6 @@ public class LockoutScreens {
     private static LockoutScreens instance;
 
     private  LockoutScreens() {
-        createScreen = new LockoutCreateScreen(new ArrayList<>());
     }
 
 
@@ -59,7 +52,7 @@ public class LockoutScreens {
     // returns if successfully opened
     public static boolean open() {
         LockoutLogger.log("Opening screen: " + currentScreen);
-        MinecraftClient.getInstance().setScreen(completeFullScreen); // todo make auto go to board
+        MinecraftClient.getInstance().setScreen(completeFullScreen);
 //        switch (currentScreen) {
 //            case "main" -> {
 //                MinecraftClient.getInstance().setScreen(completeFullScreen);
@@ -99,7 +92,7 @@ public class LockoutScreens {
     }
 
     public static void setBoard(BlackoutStartGameInfo info) {
-        boardScreen.setBoardwidget(new BoardWidget(info));
+//        boardScreen.setBoardwidget(new BoardWidget(info));
         currentScreen = "board";
         open();
     }
@@ -110,10 +103,10 @@ public class LockoutScreens {
     }
 
     public static void drawHud(DrawContext context) {
-        if (boardScreen.boardwidget == null) {
-            return;
-        }
-        boardScreen.boardwidget.drawHud(context);
+//        if (boardScreen.boardwidget == null) {
+//            return;
+//        }
+//        boardScreen.boardwidget.drawHud(context);
     }
 
     public static void setState(String state) {

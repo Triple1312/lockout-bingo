@@ -1,0 +1,231 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "item/clock"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.000
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_00"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.014
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_01"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.041777777777777775
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_02"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.06955555555555555
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_03"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.09733333333333333
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_04"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.12511111111111112
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_05"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.1528888888888889
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_06"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.18066666666666667
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_07"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.20844444444444443
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_08"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.23622222222222222
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_09"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.264
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_10"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.2917777777777778
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_11"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.31955555555555554
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_12"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.3473333333333333
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_13"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.3751111111111111
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_14"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.40288888888888885
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_15"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.43066666666666664
+        },
+        "model": "lockout-bingo:item/player_tracker_compass_16"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.45844444444444443
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_17"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.4862222222222222
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_18"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.514
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_19"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.5417777777777778
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_20"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.5695555555555556
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_21"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.5973333333333333
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_22"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.6251111111111111
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_23"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.6528888888888889
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_24"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.6806666666666666
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_25"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.7084444444444444
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_26"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.7362222222222222
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_27"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.764
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_28"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.7917777777777777
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_29"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.8195555555555555
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_30"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.8473333333333333
+        },
+        "model": "lockout-bingo:item/player_tracker_compass_31"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.8751111111111111
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_32"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.9028888888888889
+
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_33"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.9306666666666666
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_34"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.9584444444444444
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_35"
+    },
+    {
+      "predicate": {
+        "lockout-bingo:angle": 0.9862222222222222
+      },
+      "model": "lockout-bingo:item/player_tracker_compass_00"
+    }
+  ]
+}

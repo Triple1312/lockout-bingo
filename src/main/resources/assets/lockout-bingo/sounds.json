@@ -3,5 +3,25 @@
     "sounds": [
       "lockout-bingo:goal_complete"
     ]
+  },
+  "goal_fail": {
+      "sounds": [
+      "lockout-bingo:goal_fail"
+      ]
+  },
+  "goal_success": {
+      "sounds": [
+      "lockout-bingo:goal_success"
+      ]
+  },
+  "race_start": {
+    "sounds": [
+      "lockout-bingo:race_start"
+    ]
+  },
+  "finish_countdown": {
+    "sounds": [
+      "lockout-bingo:finish_countdown"
+    ]
   }
 }
