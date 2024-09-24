@@ -1,5 +1,6 @@
 package net.abrikoos.lockout_bingo.server.gamestate;
 
+import net.abrikoos.lockout_bingo.LockoutLogger;
 import net.abrikoos.lockout_bingo.client.modes.team.LockoutTeamDataClass;
 import net.abrikoos.lockout_bingo.item.LockoutModItems;
 import net.abrikoos.lockout_bingo.server.builder.LockoutFinalBuilder;
@@ -160,47 +161,13 @@ public class GameState {
         sendAllTeams();
     }
 
-    public static void goalComplete(int team, int goal) {
-//        goals.get(goal).completed(players.get(team));
+    public static void goalComplete(String playerName, int goal) {
+        if (goal >= goals.size()) {
+            LockoutLogger.log("Goal index out of bounds of goals list");
+            return;
+        }
+        goals.get(goal).complete(playerName);
     }
-
-//    public static void newBlackout() {
-//        if (!goals.isEmpty()) {
-//            destroyGame();
-//        }
-//        LockoutRandBuilder builder = new LockoutRandBuilder();
-//        info = builder.generateBoard();
-//        goals = builder.buildBoard(info);
-//        for (LockoutGoal goal : goals) {
-//            goal.subscribe(GameState::onGoalComplete);
-//        }
-//
-//        for (ServerPlayerEntity player : players) {
-//            player.getInventory().clear();
-//
-//            PlayerAdvancementTracker tracker = player.getAdvancementTracker();
-//            MinecraftServer server = player.getServer();
-//            assert server != null;
-//            ServerAdvancementLoader loader = server.getAdvancementLoader();
-//            for (AdvancementEntry advancement : loader.getAdvancements()) {
-//                advancement.value().criteria().forEach((criterion, conditions) -> {
-//                    tracker.revokeCriterion(advancement, criterion);
-//                });
-//            }
-//
-//            StatHandler sh = player.getStatHandler();
-//            for (Stat<?> stat : Stats.CUSTOM) {
-//                sh.setStat(player, stat, 0);
-//            } //todo needs to remove more stuff
-//        }
-//
-//
-//
-//        BlackoutStartGamePacket packet = new BlackoutStartGamePacket(info);
-//        for (ServerPlayerEntity player : players) {
-//            ServerPlayNetworking.send(player, packet);
-//        }
-//    }
 
     public static void newLockout(CreateLockoutPacket packet) {
         if (!goals.isEmpty()) {

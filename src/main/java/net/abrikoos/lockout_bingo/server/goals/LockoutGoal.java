@@ -58,7 +58,7 @@ public abstract class LockoutGoal {
     public void complete(String playername) {
         ServerPlayerEntity player = null;
         for (ServerPlayerEntity p : GameState.players) {
-            if (p.getPlayerListName().getString().equals(playername)) {
+            if (p.getName().getString().equals(playername)) {
                 player = p;
                 break;
             }

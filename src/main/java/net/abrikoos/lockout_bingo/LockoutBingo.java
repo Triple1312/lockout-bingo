@@ -1,6 +1,7 @@
 package net.abrikoos.lockout_bingo;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import net.abrikoos.lockout_bingo.server.gamestate.GameState;
 import net.abrikoos.lockout_bingo.item.LockoutModItems;
 import net.abrikoos.lockout_bingo.server.listeners.EntityKillListener;
@@ -16,6 +17,7 @@ import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
@@ -68,16 +70,18 @@ public class LockoutBingo implements ModInitializer {
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 			dispatcher.register(CommandManager.literal("goalComplete")
-					.then(CommandManager.argument("team", IntegerArgumentType.integer())
-							.then(CommandManager.argument("goal", IntegerArgumentType.integer())
-									.executes(context -> {
-										GameState.goalComplete(context.getArgument("team", Integer.class), context.getArgument("goal", Integer.class));
-										return 1;
-									})))
+				.then(CommandManager.argument("player", EntityArgumentType.player())
+					.then(CommandManager.argument("goalId", IntegerArgumentType.integer())
+						.executes(context -> {
+							String playerName = EntityArgumentType.getPlayer(context, "player").getName().getString();
+							int goalId = IntegerArgumentType.getInteger(context, "goalId");
+							GameState.goalComplete(playerName, goalId);
+							return 1;
+						})))
 			);
 		});
 
-		
+
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			GameState.playerServerJoin(handler.getPlayer());
 		});
