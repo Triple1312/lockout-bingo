@@ -1,6 +1,7 @@
 package net.abrikoos.lockout_bingo.server.goals;
 
 import net.abrikoos.lockout_bingo.LockoutLogger;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -20,8 +21,11 @@ public class GoalItemRegistry {
         items.add(new GoalListItem("Opponent obtains obsidian", "opponent obtains obsidian", 2, List.of(dont), "no_obsidian", List.of(Identifier.of("lockout-bingo:goalicon/block/obsidian.png"))));
         items.add(new GoalListItem("Opponent obtains netherrack", "opponent obtains netherrack", 4, List.of(dont), "no_netherrack", List.of(Identifier.of("lockout-bingo:goalicon/block/netherrack.png"))));
         items.add(new GoalListItem("Opponent obtains seeds", "opponent obtains seeds", 2, List.of(dont), "no_seeds", List.of(Identifier.of("minecraft:textures/item/wheat_seeds.png"))));
+        items.add(new GoalListItem("Opponent gets hit by a snowball", "opponent gets hit by a snowball", 2, List.of(opponent), "snowball_hit", List.of(Identifier.of("minecraft:textures/item/snowball.png"))));
+        items.add(new GoalListItem("Opponent takes fall damage", "opponent takes fall damage", 2, List.of(dont), "fall_damage", List.of(Identifier.of("lockout-bingo:goalicon/block/stone.png")))); // todo icon
         items.add(new GoalListItem("obtain end crystal", "", 3, List.of(nether), "obtain_end_crystal", List.of(Identifier.of("minecraft:textures/item/end_crystal.png"))));
         items.add(new GoalListItem("obtain bell", "", 2, List.of(village), "obtain_bell", List.of(Identifier.of("lockout-bingo:goalicon/block/bell.png"))));
+        items.add(new GoalListItem("dont touch water", "dont touch water", 1, List.of(dont), "no_water", List.of(Identifier.of("lockout-bingo:goalicon/block/water.png")))); // todo icon
         items.add(new GoalListItem("obtain a bottle o enchanting", "obtain bottle o enchanting", 1, List.of(), "obtain_bottle_o_enchanting", List.of(Identifier.of("lockout-bingo:goalicon/item/bottle_o_enchanting.png"))));
         items.add(new GoalListItem("obtain a slime block", "", 1, List.of(), "obtain_slime_block", List.of(Identifier.of("lockout-bingo:goalicon/block/slime_block.png"))));
         items.add(new GoalListItem("obtain a cake", "", 3, List.of(), "obtain_cake", List.of(Identifier.of("minecraft:textures/item/cake.png"))));
@@ -270,7 +274,7 @@ public class GoalItemRegistry {
         // position goals
         items.add(new GoalListItem("reach bedrock", "", 1, List.of(), "reach_bedrock", List.of(Identifier.of("lockout-bingo:goalicon/block/bedrock.png"))));
         items.add(new GoalListItem("reach the sky limit", "", 1, List.of(), "reach_sky_limit", List.of(Identifier.of("lockout-bingo:goalicon/item/sun.png"))));
-        items.add(new GoalListItem("fall for 300 blocks", "", 2, List.of(C300), "fall_300", List.of(Identifier.of("lockout-bingo:goalicon/item/feather.png"))));
+        items.add(new GoalListItem("fall for 300 blocks", "", 2, List.of(C300), "fall_300", List.of(Identifier.of("lockout-bingo:goalicon/effect/slow_falling.png"))));
 
         //wool goals
         items.add(new GoalListItem("obtain a stack of lime wool", "", 3, List.of(wool, C64), "64_lime_wool", List.of(Identifier.of("lockout-bingo:goalicon/block/wool/lime_wool.png"))));
@@ -302,6 +306,9 @@ public class GoalItemRegistry {
         // inventory goals
         items.add(new GoalListItem("fill inventory with unique items", "", 3, List.of(), "fill_inventory_unique", List.of(Identifier.of("lockout-bingo:goalicon/block/chest.png")))); // todo icon
         items.add(new GoalListItem("fill your inventory", "", 1, List.of(), "fill_inventory", List.of(Identifier.of("lockout-bingo:goalicon/block/chest.png")))); // todo icon
+
+
+        items.add(new GoalListItem("empty your hunger bar", "", 1, List.of(), "empty_hunger", List.of(Identifier.of("lockout-bingo:goalicon/effect/hunger.png"))));
 
         LockoutLogger.log("Registered " + items.size() + " goals");
         int nether_count = (int) items.stream().filter(item -> item.tags.contains(nether)).count();

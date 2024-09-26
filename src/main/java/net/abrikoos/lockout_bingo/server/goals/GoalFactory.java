@@ -1,7 +1,8 @@
 package net.abrikoos.lockout_bingo.server.goals;
 
+import net.abrikoos.lockout_bingo.server.goals.advancement.AdvancementGoal;
 import net.abrikoos.lockout_bingo.server.goals.advancement.GetAdvancementGoal;
-import net.abrikoos.lockout_bingo.server.goals.advancement.MultiAdvancementGoal;
+import net.abrikoos.lockout_bingo.server.goals.advancement.MultiCriterionAdvancementGoal;
 import net.abrikoos.lockout_bingo.server.goals.armor.WearArmorSetGoal;
 import net.abrikoos.lockout_bingo.server.goals.biome.BiomeGoal;
 import net.abrikoos.lockout_bingo.server.goals.breed.BreedAnimalGoal;
@@ -9,10 +10,13 @@ import net.abrikoos.lockout_bingo.server.goals.breed.BreedMultiAnimalsGoal;
 import net.abrikoos.lockout_bingo.server.goals.brew.BrewPotionGoal;
 import net.abrikoos.lockout_bingo.server.goals.craft.DuplicateTemplateGoal;
 import net.abrikoos.lockout_bingo.server.goals.damage.DealDamageGoal;
+import net.abrikoos.lockout_bingo.server.goals.damage.DontFallDamageGoal;
+import net.abrikoos.lockout_bingo.server.goals.damage.SnowBallHitGoal;
 import net.abrikoos.lockout_bingo.server.goals.die.DieFromEntityGoal;
 import net.abrikoos.lockout_bingo.server.goals.die.DieFromWeaponGoal;
 import net.abrikoos.lockout_bingo.server.goals.eat.EatFoodGoal;
 import net.abrikoos.lockout_bingo.server.goals.eat.EatMultiFoodGoal;
+import net.abrikoos.lockout_bingo.server.goals.eat.EmptyHungerGoal;
 import net.abrikoos.lockout_bingo.server.goals.effect.DontGetAnyEffects;
 import net.abrikoos.lockout_bingo.server.goals.effect.DontGetEffectGoal;
 import net.abrikoos.lockout_bingo.server.goals.effect.GetEffectGoal;
@@ -45,7 +49,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potions;
 import net.minecraft.screen.ScreenHandlerType;
@@ -64,7 +67,9 @@ public class GoalFactory {
             case "no_obsidian" -> new DontObtainItemGoal(id, Items.OBSIDIAN);
             case "no_netherrack" -> new DontObtainItemGoal(id, Items.NETHERRACK);
             case "no_seeds" -> new DontObtainItemGoal(id, Items.WHEAT_SEEDS);
-
+            case "no_water" -> new AdvancementGoal(id, null, "enemy", "in_water");
+            case "no_fall" -> new DontFallDamageGoal(id);
+            case "snowball_hit" -> new SnowBallHitGoal(id);
             // obtain goals
             case "obtain_end_crystal" -> new ObtainItemGoal(id, Items.END_CRYSTAL);
             case "obtain_bell" -> new ObtainItemGoal(id, Items.BELL);
@@ -234,9 +239,9 @@ public class GoalFactory {
             case "beelocation_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "husbandry/silk_touch_nest"));
             case "tadpole_bucket_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "husbandry/tadpole_in_a_bucket"));
             case "sniffer_egg_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "husbandry/obtain_sniffer_egg"));
-            case "catalogue_4_adv" -> new MultiAdvancementGoal(id, Identifier.of("minecraft", "husbandry/complete_catalogue"), 4);
+            case "catalogue_4_adv" -> new MultiCriterionAdvancementGoal(id, Identifier.of("minecraft", "husbandry/complete_catalogue"), 4);
 //            case "tame_cat" -> new MultiAdvancementGoal(id, Identifier.of("minecraft", "husbandry/complete_catalogue"), 1);
-            case "whole_pack_3_adv" -> new MultiAdvancementGoal(id, Identifier.of("minecraft", "husbandry/whole_pack"), 3);
+            case "whole_pack_3_adv" -> new MultiCriterionAdvancementGoal(id, Identifier.of("minecraft", "husbandry/whole_pack"), 3);
 //            case "tame_wolf" -> new MultiAdvancementGoal(id, Identifier.of("minecraft", "husbandry/whole_pack"), 1);
             case "tactical_fishing_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "husbandry/tactical_fishing"));
             case "wax_off_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "husbandry/wax_off"));
@@ -259,10 +264,10 @@ public class GoalFactory {
             // biome goals
             case "biome_ice_spikes" -> new BiomeGoal(id, "minecraft:ice_spikes");
             case "biome_badlands" -> new BiomeGoal(id, "minecraft:badlands");
-            case "biomes_15" -> new MultiAdvancementGoal(id, Identifier.of("minecraft", "adventure/adventuring_time"), 15);
-            case "biomes_20" -> new MultiAdvancementGoal(id, Identifier.of("minecraft", "adventure/adventuring_time"), 20);
-            case "biomes_25" -> new MultiAdvancementGoal(id, Identifier.of("minecraft", "adventure/adventuring_time"), 25);
-            case "biomes_30" -> new MultiAdvancementGoal(id, Identifier.of("minecraft", "adventure/adventuring_time"), 30);
+            case "biomes_15" -> new MultiCriterionAdvancementGoal(id, Identifier.of("minecraft", "adventure/adventuring_time"), 15);
+            case "biomes_20" -> new MultiCriterionAdvancementGoal(id, Identifier.of("minecraft", "adventure/adventuring_time"), 20);
+            case "biomes_25" -> new MultiCriterionAdvancementGoal(id, Identifier.of("minecraft", "adventure/adventuring_time"), 25);
+            case "biomes_30" -> new MultiCriterionAdvancementGoal(id, Identifier.of("minecraft", "adventure/adventuring_time"), 30);
 
             // die goals
             case "die_golem" -> new DieFromEntityGoal(id, EntityType.IRON_GOLEM);
@@ -316,6 +321,8 @@ public class GoalFactory {
             case "dont_effect" -> new DontGetAnyEffects(id);
             case "dont_glowing" -> new DontGetEffectGoal(id, StatusEffects.GLOWING);
 
+
+            case "empty_hunger" -> new EmptyHungerGoal(id);
 
             case "get_them_in_a_bucket" -> new ObtainXofSetItemsGoal(id, List.of(Items.COD_BUCKET, Items.SALMON_BUCKET, Items.PUFFERFISH_BUCKET, Items.TROPICAL_FISH_BUCKET, Items.AXOLOTL_BUCKET, Items.TADPOLE_BUCKET), 6);
 

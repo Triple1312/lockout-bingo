@@ -3,10 +3,10 @@ package net.abrikoos.lockout_bingo.server.goals.advancement;
 import net.minecraft.advancement.AdvancementProgress;
 import net.minecraft.util.Identifier;
 
-public class MultiAdvancementGoal extends AdvancementGoal {
+public class MultiCriterionAdvancementGoal extends AdvancementGoal {
     public final int count;
 
-    public MultiAdvancementGoal(int id, Identifier advancementid, int count) {
+    public MultiCriterionAdvancementGoal(int id, Identifier advancementid, int count) {
         super(id, advancementid, "ally", "");
         this.count = count;
     }

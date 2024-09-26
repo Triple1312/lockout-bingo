@@ -18,12 +18,12 @@ these are for goals that are checked by an advancement
 they dont need to be an advancement, just use the progress of an advancement
  */
 
-public abstract class AdvancementGoal extends LockoutGoal {
+public class AdvancementGoal extends LockoutGoal {
     Identifier advancementId;
     String recipiant;
     String criterionName;
 
-    protected AdvancementGoal(int id, Identifier advancementid, String recipiant, String criterionName){
+    public AdvancementGoal(int id, Identifier advancementid, String recipiant, String criterionName){
         super(id);
         this.advancementId = advancementid;
         this.recipiant = recipiant;

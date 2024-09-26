@@ -3,6 +3,9 @@ package net.abrikoos.lockout_bingo.server.goals.mine;
 import net.abrikoos.lockout_bingo.server.goals.stats.StatGoal;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.damage.DamageSources;
+import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
 

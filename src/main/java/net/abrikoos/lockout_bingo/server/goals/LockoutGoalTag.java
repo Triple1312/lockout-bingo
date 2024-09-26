@@ -8,6 +8,7 @@ public enum LockoutGoalTag {
     die,
     silk_touch,
     dont,
+    opponent,
     advancement,
     eat,
     breed,

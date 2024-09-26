@@ -12,9 +12,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerInventory.class)
-public class PlayerInventorymixin {
+public abstract class PlayerInventorymixin {
 
     @Shadow @Final public PlayerEntity player;
+
+    @Shadow public abstract ItemStack getStack(int slot);
 
     @Inject(method = "addStack(Lnet/minecraft/item/ItemStack;)I", at = @At("HEAD"))
     private void onAddStack(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
@@ -23,10 +25,14 @@ public class PlayerInventorymixin {
     }
 
 
-    @Inject(method = "removeStack(I)Lnet/minecraft/item/ItemStack;", at = @At("RETURN"))
+    @Inject(method = "removeStack(I)Lnet/minecraft/item/ItemStack;", at = @At("HEAD"))
     private void onRemoveStack(int slot, CallbackInfoReturnable<ItemStack> cir) {
         PlayerInventorymixin inventory =  this;
-        PlayerInventoryListener.registerEvent(inventory.player, cir.getReturnValue(), false); // todo idk if return works
+        ItemStack stack = inventory.getStack(slot);
+        if (stack == ItemStack.EMPTY) {
+            return;
+        }
+        PlayerInventoryListener.registerEvent(inventory.player, stack, false); // todo idk if return works
     }
 
 }
