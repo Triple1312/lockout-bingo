@@ -25,6 +25,7 @@ public class ClientGameState {
     static int nextCountDownEvent;
     static int countDownTime = 0;
     static MinecraftClient client;
+    public static boolean compass_enabled = true;
 
     public static void startLockout(LockoutStartGameInfo info) {
         gameState = new Lockout(info);

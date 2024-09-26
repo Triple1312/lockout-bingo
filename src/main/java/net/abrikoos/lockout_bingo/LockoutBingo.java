@@ -31,7 +31,9 @@ import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.loot.provider.number.UniformLootNumberProvider;
 import net.minecraft.potion.Potions;
 import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 
 public class LockoutBingo implements ModInitializer {
@@ -41,6 +43,9 @@ public class LockoutBingo implements ModInitializer {
 	public static PlayerDeathListener playerDeathListener = new PlayerDeathListener();
 
 	public static EntityKillListener entityKillListener = new EntityKillListener();
+
+
+
 
 
 	@Override
@@ -58,6 +63,7 @@ public class LockoutBingo implements ModInitializer {
 		PayloadTypeRegistry.playC2S().register(LockoutJoinTeamPacket.ID, LockoutJoinTeamPacket.PACKET_CODEC);
 		PayloadTypeRegistry.playC2S().register(CreateLockoutPacket.ID, CreateLockoutPacket.CODEC);
 		PayloadTypeRegistry.playC2S().register(LockoutRemoveTeamPacket.ID, LockoutRemoveTeamPacket.PACKET_CODEC);
+		PayloadTypeRegistry.playC2S().register(GivePlayerCompass.ID, GivePlayerCompass.CODEC);
 
 		LockoutLogger.log("Hello Fabric world!");
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
@@ -87,6 +93,16 @@ public class LockoutBingo implements ModInitializer {
 		});
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
 			GameState.playerServerLeave(handler.getPlayer());
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(GivePlayerCompass.ID, (payload, client) -> {
+			ServerPlayerEntity player = client.player();
+			if (player.getInventory().contains(LockoutModItems.PLAYER_TRACKING_COMPASS.getDefaultStack())) {
+
+			}
+			else {
+				player.giveItemStack(LockoutModItems.PLAYER_TRACKING_COMPASS.getDefaultStack());
+			}
 		});
 
 		ServerPlayNetworking.registerGlobalReceiver(LockoutAddTeamPacket.ID, (payload, client) -> {

@@ -1,9 +1,13 @@
 package net.abrikoos.lockout_bingo.client.gui.tabs;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.abrikoos.lockout_bingo.client.ClientGameState;
 import net.abrikoos.lockout_bingo.client.gui.LockoutUtils;
+import net.abrikoos.lockout_bingo.network.game.GivePlayerCompass;
+import net.abrikoos.lockout_bingo.server.gamestate.GameState;
 import net.abrikoos.lockout_bingo.server.goals.GoalListItem;
 import net.abrikoos.lockout_bingo.team.Colors;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenRect;
@@ -11,6 +15,7 @@ import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.tab.Tab;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import java.util.function.Consumer;
 
@@ -37,6 +42,8 @@ public class BoardTab3 implements Tab {
 
     class BoardTabWidget extends ClickableWidget {
         MinecraftClient client;
+        CompassButton compassButton = new CompassButton(0, 0, 16, 16);
+
 
         public BoardTabWidget() {
             super(0, 0, 0, 0, Text.of("Board"));
@@ -45,6 +52,13 @@ public class BoardTab3 implements Tab {
 
         private boolean intersect(int x1, int y1, int x2, int y2, int mouseX, int mouseY) {
             return mouseX >= x1 && mouseX <= x2 && mouseY >= y1 && mouseY <= y2;
+        }
+
+        @Override
+        public void onClick(double mouseX, double mouseY) {
+            if (intersect(compassButton.getX(), compassButton.getY(), compassButton.getX() + compassButton.getWidth(), compassButton.getY() + compassButton.getHeight(), (int) mouseX, (int) mouseY)) {
+                compassButton.onClick(mouseX, mouseY);
+            }
         }
 
         @Override
@@ -84,6 +98,10 @@ public class BoardTab3 implements Tab {
                 if(!ClientGameState.boardTimeOver) {
 
                     LockoutUtils.drawCenteredText(context, client.textRenderer, "Start in: " + ClientGameState.countDown() + 's', tabsizewidth / 2, topY - goalwidthheight/2, 0xffffffff, true);
+                } else if (ClientGameState.compass_enabled) {
+                    compassButton.setX(this.getX() + 16);
+                    compassButton.setY(this.getY() + 16);
+                    compassButton.render(context, mouseX, mouseY, delta);
                 }
             }
             else {
@@ -101,6 +119,32 @@ public class BoardTab3 implements Tab {
         @Override
         protected void appendClickableNarrations(NarrationMessageBuilder builder) {
 
+        }
+
+        static class CompassButton extends ClickableWidget{
+
+            public CompassButton(int x, int y, int width, int height) {
+                super(x, y, width, height, Text.of(""));
+            }
+
+            @Override
+            protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+                context.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
+                RenderSystem.enableBlend();
+                context.drawBorder(this.getX(), this.getY(), this.width, this.height, 0xFFFFFFFF);
+                context.drawTexture(Identifier.of("lockout-bingo", "textures/item/compass03.png"), this.getX(), this.getY(), 0, 0, this.width, this.height, 16, 16);
+            }
+
+            @Override
+            protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+
+            }
+
+            @Override
+            public void onClick(double mouseX, double mouseY) {
+                ClientPlayNetworking.send(new GivePlayerCompass());
+                MinecraftClient.getInstance().setScreen(null);
+            }
         }
     }
 }

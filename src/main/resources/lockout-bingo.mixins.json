@@ -3,10 +3,11 @@
   "package": "net.abrikoos.lockout_bingo.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "GammaMixin",
     "LockoutLivingEntityMixin",
     "LockoutPlayerAdvancementTrackerMixin",
-    "ScreenMixin",
-    "GammaMixin"
+    "PlayerInventorymixin",
+    "ScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
