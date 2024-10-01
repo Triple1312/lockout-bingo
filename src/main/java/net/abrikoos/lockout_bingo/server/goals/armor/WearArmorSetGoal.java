@@ -29,7 +29,7 @@ public class WearArmorSetGoal extends LockoutGoal {
         PlayerInventoryListener.subscribe(this::checkCompletion);
     }
 
-    private void checkCompletion(PlayerEntity player, ItemStack stack, boolean added) {
+    private void checkCompletion(PlayerEntity player, ItemStack stack, int slot, boolean added) {
         if (completed != null) { return; }
         if (added) {
             if (stack.getItem() instanceof ArmorItem armorItem) {

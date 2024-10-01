@@ -16,7 +16,7 @@ public class FillUniqueItemsInventoryGoal extends LockoutGoal {
         PlayerInventoryListener.subscribe(this::validateProgress);
     }
 
-    public void validateProgress(PlayerEntity player, ItemStack stack, Boolean added) {
+    public void validateProgress(PlayerEntity player, ItemStack stack, int slot, Boolean added) {
         if (this.completed != null) {
             return;
         }

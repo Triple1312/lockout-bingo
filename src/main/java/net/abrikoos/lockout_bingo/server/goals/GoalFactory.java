@@ -1,8 +1,6 @@
 package net.abrikoos.lockout_bingo.server.goals;
 
-import net.abrikoos.lockout_bingo.server.goals.advancement.AdvancementGoal;
-import net.abrikoos.lockout_bingo.server.goals.advancement.GetAdvancementGoal;
-import net.abrikoos.lockout_bingo.server.goals.advancement.MultiCriterionAdvancementGoal;
+import net.abrikoos.lockout_bingo.server.goals.advancement.*;
 import net.abrikoos.lockout_bingo.server.goals.armor.WearArmorSetGoal;
 import net.abrikoos.lockout_bingo.server.goals.biome.BiomeGoal;
 import net.abrikoos.lockout_bingo.server.goals.breed.BreedAnimalGoal;
@@ -252,6 +250,14 @@ public class GoalFactory {
             case "sound_of_music_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "adventure/play_jukebox_in_meadows"));
             case "fishy_business_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "husbandry/fishy_business"));
             case "dragon_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "end/kill_dragon"));
+            case "spyglass_adv" -> new MultiPossibilityAdvancementGoal(id, List.of(
+                    new GetAdvancementGoal(id, Identifier.of("minecraft", "adventure/spyglass_at_parrot")),
+                    new GetAdvancementGoal(id, Identifier.of("minecraft", "adventure/spyglass_at_ghast")),
+                    new GetAdvancementGoal(id, Identifier.of("minecraft", "adventure/spyglass_at_dragon"))));
+
+            case "adv_15" -> new AdvancementCountGoal(id, 15);
+            case "adv_35" -> new AdvancementCountGoal(id, 35);
+            case "adv_25" -> new AdvancementCountGoal(id, 25);
 
             // tame goals
             case "tame_cat" -> new TameAnimalGoal(id, EntityType.CAT);

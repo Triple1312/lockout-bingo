@@ -194,7 +194,11 @@ public class GoalItemRegistry {
         items.add(new GoalListItem("Sound of music: play a music disk in a meadow", "", 3, List.of(advancement), "sound_of_music_adv", List.of(Identifier.of("lockout-bingo:goalicon/block/jukebox.png"))));
         items.add(new GoalListItem("catch a fish", "", 1, List.of(advancement), "fishy_business_adv", List.of(Identifier.of("minecraft:textures/item/fishing_rod.png"))));
         items.add(new GoalListItem("kill the dragon", "", 5, List.of(advancement, kill), "dragon_adv", List.of(Identifier.of("lockout-bingo:goalicon/entity/ender_dragon.png"))));
+        items.add(new GoalListItem("get any spyglass advancement", "", 3, List.of(advancement), "spyglass_adv", List.of(Identifier.of("minecraft:textures/item/spyglass.png"))));
 
+        items.add(new GoalListItem("complete 15 advancements", "", 3, List.of(C15, advancement), "adv_15", List.of(Identifier.of("lockout-bingo:goalicon/advancement/challenge_done.png"))));
+        items.add(new GoalListItem("complete 25 advancements", "", 3, List.of(C25, advancement), "adv_25", List.of(Identifier.of("lockout-bingo:goalicon/advancement/challenge_done.png"))));
+        items.add(new GoalListItem("complete 35 advancements", "", 3, List.of(C35, advancement), "adv_35", List.of(Identifier.of("lockout-bingo:goalicon/advancement/challenge_done.png"))));
         // biome goals
         items.add(new GoalListItem("find an ice spikes biome", "", 3, List.of(biomes), "biome_ice_spikes", List.of(Identifier.of("lockout-bingo:goalicon/biome/ice_spikes.png"))));
         items.add(new GoalListItem("finad a badlands biome", "", 3, List.of(biomes), "biome_badlands", List.of(Identifier.of("lockout-bingo:goalicon/biome/badlands.png"))));

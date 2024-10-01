@@ -97,6 +97,10 @@ public class GoalListItem {
                     break;
                 case ride:
                     ctx.drawTexture(Identifier.of("minecraft", "textures/item/saddle.png"), 2*(x2-x1)/3 +x1-1, y1+1, 0, 0, (x2-x1)/3, (y2-y1)/3, (x2-x1)/3, (y2-y1)/3);
+                    break;
+                case broken:
+                    ctx.drawTexture(Identifier.of("lockout-bingo", "goalicon/modifiers/broken.png"), x1+1, y1+1, 0, 0, (x2-x1)/3, (y2-y1)/3, (x2-x1)/3, (y2-y1)/3);
+                    break;
             }
             if (tag == LockoutGoalTag.C6) {
                 ctx.drawText(textRenderer,"6", x2-2-(x2-x1)/5, y2 -(x2-x1)/3 -1, 0xffffffff, true);
@@ -122,6 +126,9 @@ public class GoalListItem {
             else if (tag == LockoutGoalTag.C30) {
                 ctx.drawText(textRenderer,"30", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
             }
+            else if (tag == LockoutGoalTag.C35) {
+                ctx.drawText(textRenderer,"35", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+            }
             else if (tag == LockoutGoalTag.C64) {
                 ctx.drawText(textRenderer,"64", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
             }
@@ -145,6 +152,9 @@ public class GoalListItem {
             }
             else if (tag == LockoutGoalTag.C300) {
                 ctx.drawText(textRenderer,"300", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+            }
+            else if (tag == LockoutGoalTag.C400) {
+                ctx.drawText(textRenderer,"400", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
             }
             else if (tag == LockoutGoalTag.km1) {
                 ctx.drawText(textRenderer,"1km", x2-2-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);

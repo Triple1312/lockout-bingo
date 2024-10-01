@@ -13,6 +13,8 @@ import net.abrikoos.lockout_bingo.network.team.*;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -30,6 +32,7 @@ import net.minecraft.loot.function.SetPotionLootFunction;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.loot.provider.number.UniformLootNumberProvider;
 import net.minecraft.potion.Potions;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -73,6 +76,10 @@ public class LockoutBingo implements ModInitializer {
 				return 1;
 			}));
 		});
+
+		ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarted);
+
+
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 			dispatcher.register(CommandManager.literal("goalComplete")
@@ -167,6 +174,10 @@ public class LockoutBingo implements ModInitializer {
 
 
 
+	}
+
+	public void onServerStarted(MinecraftServer server) {
+		GameState.server = server;
 	}
 
 
