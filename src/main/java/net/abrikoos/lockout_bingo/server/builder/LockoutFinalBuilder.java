@@ -7,10 +7,13 @@ import net.abrikoos.lockout_bingo.server.goals.GoalItemRegistry;
 import net.abrikoos.lockout_bingo.server.goals.GoalListItem;
 import net.abrikoos.lockout_bingo.server.goals.LockoutGoalTag;
 import net.abrikoos.lockout_bingo.network.game.BlackoutStartGameInfo;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Environment(EnvType.SERVER)
 public class LockoutFinalBuilder extends LockoutRandBuilder {
 
     CreateLockoutPacket info;

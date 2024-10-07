@@ -1,7 +1,11 @@
 package net.abrikoos.lockout_bingo.team;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import java.util.Objects;
 
+@Environment(EnvType.CLIENT)
 public class Colors {
     final static int[] colors = new int[] {
         0xFF4169E1, // royalblue

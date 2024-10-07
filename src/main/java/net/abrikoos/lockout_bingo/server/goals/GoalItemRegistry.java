@@ -1,8 +1,8 @@
 package net.abrikoos.lockout_bingo.server.goals;
 
 import net.abrikoos.lockout_bingo.LockoutLogger;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.ai.goal.Goal;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -10,6 +10,7 @@ import java.util.List;
 
 import static net.abrikoos.lockout_bingo.server.goals.LockoutGoalTag.*;
 
+@Environment(EnvType.CLIENT)
 public class GoalItemRegistry {
     public List<GoalListItem> items;
 

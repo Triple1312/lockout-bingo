@@ -11,6 +11,8 @@ import net.abrikoos.lockout_bingo.client.gui.tabs.TeamsTab;
 import net.abrikoos.lockout_bingo.client.gui.widget.AddTeamWidget;
 import net.abrikoos.lockout_bingo.client.TeamsChangeListener;
 import net.abrikoos.lockout_bingo.team.*;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+@Environment(EnvType.CLIENT)
 public class ScreenScreen extends Screen {
 
     private LockoutTabNavigationWidget tabNavigation;

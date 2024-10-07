@@ -37,6 +37,8 @@ import net.abrikoos.lockout_bingo.server.goals.use.ComposterGoal;
 import net.abrikoos.lockout_bingo.server.goals.use.UseBlockGoal;
 
 import net.abrikoos.lockout_bingo.server.goals.use.UseEntityGoal;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ComposterBlock;
 import net.minecraft.entity.EntityType;
@@ -49,7 +51,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
-
+@Environment(EnvType.SERVER)
 public class GoalFactory {
 
     public static LockoutGoal buildGoal(String goalid, int id) {

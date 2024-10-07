@@ -1,6 +1,8 @@
 package net.abrikoos.lockout_bingo.server.goals;
 
 import net.abrikoos.lockout_bingo.server.gamestate.GameState;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -8,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+@Environment(EnvType.SERVER)
 public abstract class LockoutGoal {
     public static int difficulty;
     public static String dimension; // make enum // selects the dimension where the goal is easiest to achieve

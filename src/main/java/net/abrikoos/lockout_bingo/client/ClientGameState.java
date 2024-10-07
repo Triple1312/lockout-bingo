@@ -11,12 +11,15 @@ import net.abrikoos.lockout_bingo.team.LockoutTeam;
 import net.abrikoos.lockout_bingo.team.PlayerTeamRegistry;
 import net.abrikoos.lockout_bingo.team.TeamPlayer;
 import net.abrikoos.lockout_bingo.team.TeamRegistry;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
 
+@Environment(EnvType.CLIENT)
 public class ClientGameState {
     static Lockout gameState; // todo needs to be LockoutGame in future
     static public long gameStartTime;

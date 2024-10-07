@@ -5,10 +5,13 @@ import net.abrikoos.lockout_bingo.client.gui.LockoutUtils;
 import net.abrikoos.lockout_bingo.client.gui.widget.CompassesWidget;
 import net.abrikoos.lockout_bingo.team.Colors;
 import net.abrikoos.lockout_bingo.team.PlayerTeamRegistry;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import org.jetbrains.annotations.NotNull;
 
+@Environment(EnvType.CLIENT)
 public class BoardHud {
 
     public static void drawHud(@NotNull DrawContext context, float delta) {

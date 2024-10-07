@@ -7,6 +7,8 @@ import net.abrikoos.lockout_bingo.network.game.CreateLockoutPacket;
 import net.abrikoos.lockout_bingo.team.Colors;
 import net.abrikoos.lockout_bingo.team.LockoutTeam;
 import net.abrikoos.lockout_bingo.team.TeamRegistry;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -23,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Environment(EnvType.CLIENT)
 public class NewLockoutScreen extends Screen {
     final Screen parent;
     private static final int field_42170 = 10;

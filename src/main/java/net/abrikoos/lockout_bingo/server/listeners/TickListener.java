@@ -1,5 +1,7 @@
 package net.abrikoos.lockout_bingo.server.listeners;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.MinecraftServer;
 
@@ -7,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+@Environment(EnvType.SERVER)
 public class TickListener {
 
     public static final List<Consumer<MinecraftServer>> listeners = new ArrayList<>();

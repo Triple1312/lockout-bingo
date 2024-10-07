@@ -14,6 +14,8 @@ import net.abrikoos.lockout_bingo.team.LockoutTeam;
 import net.abrikoos.lockout_bingo.team.PlayerTeamRegistry;
 import net.abrikoos.lockout_bingo.team.TeamController;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -41,6 +43,7 @@ import java.util.UUID;
 
 import static net.abrikoos.lockout_bingo.item.LockoutModItems.PLAYER_COMPASS;
 
+@Environment(EnvType.CLIENT)
 public class LockoutBingoClient implements ClientModInitializer {
 
     public static GoalItemRegistry goalItemRegistry = new GoalItemRegistry();

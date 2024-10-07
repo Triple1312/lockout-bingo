@@ -1,6 +1,8 @@
 package net.abrikoos.lockout_bingo.server.listeners;
 
 import net.abrikoos.lockout_bingo.util.QuadConsumer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import org.apache.logging.log4j.util.TriConsumer;
@@ -8,6 +10,7 @@ import org.apache.logging.log4j.util.TriConsumer;
 import java.util.ArrayList;
 import java.util.List;
 
+@Environment(EnvType.SERVER)
 public class PlayerInventoryListener {
 
     private final List<QuadConsumer<PlayerEntity, ItemStack, Integer, Boolean>> listeners;
