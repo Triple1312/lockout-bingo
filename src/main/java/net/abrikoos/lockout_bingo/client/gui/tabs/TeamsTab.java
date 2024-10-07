@@ -1,7 +1,9 @@
 package net.abrikoos.lockout_bingo.client.gui.tabs;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.abrikoos.lockout_bingo.LockoutLogger;
 import net.abrikoos.lockout_bingo.client.gui.screens.ScreenScreen;
+import net.abrikoos.lockout_bingo.network.team.LockoutAddPlayerToTeamPacket;
 import net.abrikoos.lockout_bingo.network.team.LockoutAddTeamPacket;
 import net.abrikoos.lockout_bingo.network.team.LockoutJoinTeamPacket;
 import net.abrikoos.lockout_bingo.network.team.LockoutRemoveTeamPacket;
@@ -25,20 +27,24 @@ public class TeamsTab implements Tab {
     protected PlayerList playerList;
     protected List<ClickableWidget> children = new ArrayList<>();
 
+    public void addSelectedToTeam(Integer teamId) {
+        PlayerList.PlayerEntry selected = playerList.selected();
+        if (selected != null) {
+            ClientPlayNetworking.send(new LockoutAddPlayerToTeamPacket(teamId, selected.player.getPlayerUUID().toString()));
+        }
+        else {
+            ClientPlayNetworking.send(new LockoutJoinTeamPacket(teamId));
+        }
+    }
 
     public TeamsTab(ScreenScreen screen) {
         this.screen = screen;
         this.playerList = new PlayerList(0, 24, screen.width/10, screen.height-48);
-        TeamsTabWidget teamsTabWidget = new TeamsTabWidget(0, 0, screen.width, screen.height);
+        TeamsTabWidget teamsTabWidget = new TeamsTabWidget(0, 0, screen.width, screen.height, this::addSelectedToTeam);
         this.children.add(teamsTabWidget);
         this.children.add(playerList);
         this.children.add(teamsTabWidget.teamNameField);
     }
-
-    public void addSelectedToTeam(LockoutTeam team) {
-
-    }
-
 
 
 
@@ -54,9 +60,9 @@ public class TeamsTab implements Tab {
 
     @Override
     public void refreshGrid(ScreenRect tabArea) {
-        this.children.get(0).setDimensionsAndPosition(tabArea.width(), tabArea.height(), tabArea.position().x(), tabArea.position().y() + 40);
+        this.children.get(0).setDimensionsAndPosition(tabArea.width(), tabArea.height(), (int) (tabArea.position().x() * tabArea.width() * 0.85), tabArea.position().y() );
+        playerList.setDimensionsAndPosition((int) (tabArea.width() * 0.15), tabArea.height(), tabArea.position().x(), tabArea.position().y());
     }
-
 
     class PlayerList extends AlwaysSelectedEntryListWidget<PlayerList.PlayerEntry> {
         public PlayerList(int x, int y, int width, int height) {
@@ -64,6 +70,10 @@ public class TeamsTab implements Tab {
             for (TeamPlayer player : PlayerTeamRegistry.getAllPlayers()) {
                 this.addEntry(new PlayerEntry(player));
             }
+        }
+
+        public PlayerEntry selected() {
+            return this.getFocused();
         }
 
         public static class PlayerEntry extends AlwaysSelectedEntryListWidget.Entry<PlayerEntry> {
@@ -104,14 +114,27 @@ public class TeamsTab implements Tab {
 
     class TeamsTabWidget extends ClickableWidget {
         final static int TeamCardWidth = 15;
-        final static int TeamCardHeight = 45;
+        final static int TeamCardHeight = 47;
+        final static int teamcardXpadding = 3;
+        final static int teamcardYpadding = 2;
         public TextFieldWidget teamNameField;
         List<ClickableWidget> clickables = new ArrayList<>();
-        public TeamsTabWidget(int x, int y, int width, int height) {
+
+        Consumer<Integer> JoinTeam;
+
+        public TeamsTabWidget(int x, int y, int width, int height, Consumer<Integer> JoinTeam) {
             super(x, y, width, height, Text.of("Teams"));
             this.teamNameField = new TextFieldWidget(MinecraftClient.getInstance().textRenderer, 120, 20, Text.of(""));
             this.teamNameField.setPlaceholder(Text.of("Team Name"));
             this.teamNameField.setHeight(12);
+            this.JoinTeam = JoinTeam;
+        }
+
+        @Override
+        public void setDimensionsAndPosition(int width, int height, int x, int y) {
+            super.setDimensionsAndPosition(width, height, x, y);
+            LockoutLogger.log("setDimensionsAndPosition");
+
         }
 
         protected boolean clicked(double mouseX, double mouseY) {
@@ -145,7 +168,8 @@ public class TeamsTab implements Tab {
                 clickables.add(btn);
             }
             ButtonWidget btn2 = ButtonWidget.builder(Text.of("+"), (button) -> {
-                ClientPlayNetworking.send(new LockoutJoinTeamPacket(team.teamId));
+                this.JoinTeam.accept(team.teamId);
+//                ClientPlayNetworking.send(new LockoutJoinTeamPacket(team.teamId));
             }).dimensions(x+ width - 12, y+2, 10, 10).build();
             btn2.render(context, mouseX, mouseY, delta);
             clickables.add(btn2);
@@ -177,14 +201,12 @@ public class TeamsTab implements Tab {
         }
 
         public int calculateCardX(int index) {
-            return ((index % 4) * TeamCardWidth + ((index%4)+1) * 5 + 12) * width / 100;
+            return this.getX() +((index % 4 + 1) * TeamCardWidth + ((index % 4 +1) * teamcardXpadding))  * width / 100;
         }
 
         public int calculateCardY(int index) {
-            return ((index / 4) * TeamCardHeight + (index/4 + 1) * 5 + 7) * height / 100;
+            return this.getY() + ((index / 4) * TeamCardHeight + ((index / 4 +1) * teamcardYpadding)) * height / 100;
         }
-
-
 
 
         @Override

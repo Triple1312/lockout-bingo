@@ -45,6 +45,7 @@ public class ScreenScreen extends Screen {
     public void init() {
         this.clearChildren();
         this.layout = new ThreePartsLayoutWidget(this);
+        this.layout.setFooterHeight(0);
         this.tabManager = new LockoutTabManager(this::addDrawableChild, this::remove);
         this.tabManager.subscribeTabChangeEvent(this::tabchanged);
         this.tabNavigation = LockoutTabNavigationWidget.builder(this.tabManager, this.width)
@@ -62,11 +63,13 @@ public class ScreenScreen extends Screen {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == GLFW.GLFW_KEY_B) {
-            if (ClientGameState.boardTimeOver ) {
+            if (ClientGameState.boardTimeOver) {
+                if (this.tabManager.getCurrentTab().getTitle().getString().equals("TeamsTab")) {
+                    return false;
+                }
                 this.close();
                 return true;
-            }
-            else {
+            } else {
                 return false;
             }
         }
@@ -79,8 +82,7 @@ public class ScreenScreen extends Screen {
         if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
             if (ClientGameState.boardTimeOver) {
                 return super.keyPressed(keyCode, scanCode, modifiers);
-            }
-            else {
+            } else {
                 return false;
             }
         }
@@ -113,11 +115,11 @@ public class ScreenScreen extends Screen {
     }
 
     public int vw(int p) {
-        return this.width *p / 100;
+        return this.width * p / 100;
     }
 
     public int vh(int p) {
-        return this.height *p / 100;
+        return this.height * p / 100;
     }
 
     public void setTabIndex(int index) {
@@ -226,7 +228,6 @@ public class ScreenScreen extends Screen {
     }
 
 
-
     class TeamGTab implements Tab {
         List<ClickableWidget> children = new ArrayList<>();
         int TOP_MARGIN = 100;
@@ -245,7 +246,9 @@ public class ScreenScreen extends Screen {
         public void addTeamsWidgets() {
             int X_MARGIN = ScreenScreen.this.width - 2 * 300 / 3;
             children.add(new TextWidget(X_MARGIN, TOP_MARGIN, Text.of("Teams"), MinecraftClient.getInstance().textRenderer));
-            AddTeamWidget atw = new AddTeamWidget(); atw.setX(X_MARGIN); atw.setY(TOP_MARGIN + 20);
+            AddTeamWidget atw = new AddTeamWidget();
+            atw.setX(X_MARGIN);
+            atw.setY(TOP_MARGIN + 20);
 //            children.add(new AddTeamWidget(), atw);
 
         }
@@ -278,17 +281,6 @@ public class ScreenScreen extends Screen {
             }
 
 
-
-
-
-
-
-
-
-
-
-
-
             public abstract static class Entry extends AlwaysSelectedEntryListWidget.Entry<Entry> {
                 public Entry() {
                     super();
@@ -298,7 +290,6 @@ public class ScreenScreen extends Screen {
             public final class PlayerEntry extends Entry implements AutoCloseable {
                 MinecraftClient client = MinecraftClient.getInstance();
                 private final TeamPlayer player;
-
 
 
                 public PlayerEntry(TeamPlayer player) {
@@ -320,11 +311,8 @@ public class ScreenScreen extends Screen {
                 public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
                     context.fill(x, y, x + entryWidth, y + entryHeight, 0x80FF0000);
                     context.drawTexture(player.getPlayerListEntry().getSkinTextures().texture(), x, y, 8, 8, 8, 8, entryHeight, entryHeight);
-                    context.drawText(client.textRenderer, player.getName(), x + entryHeight+2, y + 2, player.teamIndex ==0 ? 0xFFFFFFFF : Colors.get(player.teamIndex),false);
-                    context.drawText(client.textRenderer, "Team: "+ (player.teamIndex == 0 ? "No" : TeamRegistry.getTeams().get(player.teamIndex).name), x + entryHeight+2, y + 12, 0x77FFFFFF,false);
-
-
-
+                    context.drawText(client.textRenderer, player.getName(), x + entryHeight + 2, y + 2, player.teamIndex == 0 ? 0xFFFFFFFF : Colors.get(player.teamIndex), false);
+                    context.drawText(client.textRenderer, "Team: " + (player.teamIndex == 0 ? "No" : TeamRegistry.getTeams().get(player.teamIndex).name), x + entryHeight + 2, y + 12, 0x77FFFFFF, false);
 
 
                 }
@@ -340,67 +328,4 @@ public class ScreenScreen extends Screen {
         }
 
     }
-//            private static final Text TEAM_TAB_TITLE = Text.of("Teams");
-//            private final TeamPlayer teamPlayer;
-//            private static final MinecraftClient client = MinecraftClient.getInstance();
-//            private final AddTeamWidget atw;
-//
-//            TeamGTab(AddTeamWidget atz) {
-//                super(TEAM_TAB_TITLE);
-//                this.teamPlayer = PlayerTeamRegistry.getPlayerByUUID(client.player.getUuidAsString());
-//                this.atw = atz;
-//                redraw();
-//            }
-//
-//            public void redraw() {
-//                GridWidget.Adder adder = this.grid.setRowSpacing(10).setColumnSpacing(40).createAdder(2);
-//                Positioner positioner = adder.copyPositioner();
-//                adder.add(new TeamListWidget(this.teamPlayer), positioner.alignLeft());
-//                adder.add(new PlayerListTeamWidget(), positioner.alignRight());
-//            }
-//
-//            class TeamListWidget extends GridWidget {
-//                TeamListWidget(TeamPlayer teamPlayer) {
-//                    super();
-//                    GridWidget.Adder adder = this.setColumnSpacing(10).setRowSpacing(8).createAdder(1);
-//                    adder.add(new TextWidget(Text.of("Teams"), MinecraftClient.getInstance().textRenderer));
-//                    adder.add(atw);
-//                    for (int i = 1; i <= TeamRegistry.getTeams().size(); i++) {
-//                        adder.add(TeamSettingsWidget.builder(i, teamPlayer).build());
-//                    }
-//                }
-//            }
-//
-//            class PlayerListTeamWidget extends GridWidget {
-//                PlayerListTeamWidget() {
-//                    super();
-//                    GridWidget.Adder adder = this.setColumnSpacing(10).setRowSpacing(8).createAdder(1);
-//                    Positioner positioner = adder.copyPositioner();
-//                    TextWidget w = adder.add(new TextWidget(Text.of("Players"), MinecraftClient.getInstance().textRenderer), positioner.alignLeft());
-//                    w.setWidth(200);
-//                    for (int i = 0; i < PlayerTeamRegistry.getAllPlayers().size(); i++) {
-//                        adder.add(new PlayerTeamSelectWidget(PlayerTeamRegistry.getAllPlayers().get(i)), positioner.alignLeft());
-//                    }
-////                    for (int i = 0; i < PlayerTeamRegistry.getAllPlayers().size(); i++) {
-////                        adder.add(new PlayerTeamSelectWidget(PlayerTeamRegistry.getAllPlayers().get(i)), positioner.alignRight());
-////                    }
-//                }
-//
-//            }
-
-
-
 }
-
-
-//    class ScreenWrapper extends WrapperWidget {
-//
-//        public ScreenWrapper(int x, int y, int width, int height) {
-//            super(x, y, width, height);
-//        }
-//
-//        @Override
-//        public void forEachElement(Consumer<Widget> consumer) {
-//
-//        }
-

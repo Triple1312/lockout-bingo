@@ -87,7 +87,7 @@ public class BoardTab3 implements Tab {
                     }
                     context.fill(goalTopX, goalTopY, goalTopX + goalwidthheight, goalTopY + goalwidthheight, color - 0x47000000);
 
-                    goal.draw(context, 0, goalTopX, goalTopY, goalwidthheight, goalwidthheight);
+                    goal.draw(context, delta/3, goalTopX, goalTopY, goalwidthheight, goalwidthheight);
 
                     if (intersect(goalTopX, goalTopY, goalTopX + goalwidthheight, goalTopY + goalwidthheight, mouseX, mouseY)) { // onhover
 

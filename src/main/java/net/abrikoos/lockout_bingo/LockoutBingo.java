@@ -67,6 +67,7 @@ public class LockoutBingo implements ModInitializer {
 		PayloadTypeRegistry.playC2S().register(CreateLockoutPacket.ID, CreateLockoutPacket.CODEC);
 		PayloadTypeRegistry.playC2S().register(LockoutRemoveTeamPacket.ID, LockoutRemoveTeamPacket.PACKET_CODEC);
 		PayloadTypeRegistry.playC2S().register(GivePlayerCompass.ID, GivePlayerCompass.CODEC);
+		PayloadTypeRegistry.playC2S().register(LockoutAddPlayerToTeamPacket.ID, LockoutAddPlayerToTeamPacket.PACKET_CODEC);
 
 		LockoutLogger.log("Hello Fabric world!");
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
@@ -125,6 +126,12 @@ public class LockoutBingo implements ModInitializer {
 		ServerPlayNetworking.registerGlobalReceiver(LockoutJoinTeamPacket.ID, (payload, client) -> {
 			GameState.playerJoinTeam(client.player(), payload.teamid());
 			LockoutLogger.log("Player " + client.player().getUuidAsString() + " joined team " + payload.teamid());
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(LockoutAddPlayerToTeamPacket.ID, (payload, client) -> {
+			if (payload.uuid() == null){return;}
+			GameState.playerJoinTeam(payload.uuid(),  payload.teamid());
+			LockoutLogger.log("player joined team from other player");
 		});
 
 		ServerPlayNetworking.registerGlobalReceiver(CreateLockoutPacket.ID, (payload, client) -> {

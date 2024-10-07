@@ -1,5 +1,6 @@
 package net.abrikoos.lockout_bingo.server.builder;
 
+import net.abrikoos.lockout_bingo.LockoutLogger;
 import net.abrikoos.lockout_bingo.network.game.CreateLockoutPacket;
 import net.abrikoos.lockout_bingo.network.game.LockoutStartGameInfo;
 import net.abrikoos.lockout_bingo.server.goals.GoalItemRegistry;
@@ -76,6 +77,7 @@ public class LockoutFinalBuilder extends LockoutRandBuilder {
         for (int i = 0; i < 25; i++) {
             int randomIndex = (int) (Math.random() * items.size());
             GoalListItem goal = items.get(randomIndex);
+            LockoutLogger.log("constructing goal " + goal.name);
             boolean same = false;
             List<GoalListItem> goals = new ArrayList<>();
             for (int j = 0; j < i; j++) {

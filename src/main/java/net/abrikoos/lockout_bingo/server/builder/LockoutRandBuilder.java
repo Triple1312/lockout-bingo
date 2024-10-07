@@ -1,5 +1,6 @@
 package net.abrikoos.lockout_bingo.server.builder;
 
+import net.abrikoos.lockout_bingo.LockoutLogger;
 import net.abrikoos.lockout_bingo.network.game.LockoutStartGameInfo;
 import net.abrikoos.lockout_bingo.server.goals.*;
 import net.abrikoos.lockout_bingo.network.game.BlackoutStartGameInfo;
@@ -25,12 +26,14 @@ public class LockoutRandBuilder extends LockoutGoalBuilder {
                 goals.add(info.goals[j]);
                 if (info.goals[j].id.equals(goal.id)) {
                     same = true;
+                    LockoutLogger.log("goal removed because double");
                     break;
                 }
             }
             goals.add(goal);
             if (!validateAddGoal(goals)) {
                 i--;
+                LockoutLogger.log("goal deleted because of validation");
                 continue;
             }
             if (same) {
@@ -52,6 +55,7 @@ public class LockoutRandBuilder extends LockoutGoalBuilder {
             }
             catch (Exception e) {
                 e.printStackTrace();
+                LockoutLogger.log("Building goal " + goals.get(i).name + " failed");
             }
         }
         return ret;

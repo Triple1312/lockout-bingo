@@ -3,9 +3,12 @@
   "package": "net.abrikoos.lockout_bingo.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "AbstractCauldronMixin",
+    "ComposterMixin",
     "GammaMixin",
     "LockoutLivingEntityMixin",
     "LockoutPlayerAdvancementTrackerMixin",
+    "MilkBucketMixin",
     "PlayerEntityMixin",
     "PlayerInventorymixin",
     "ScreenMixin"

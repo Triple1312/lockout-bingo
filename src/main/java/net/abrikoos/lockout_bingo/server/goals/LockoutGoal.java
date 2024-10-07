@@ -52,7 +52,7 @@ public abstract class LockoutGoal {
     protected void completed(PlayerEntity player) {
         completed = player;
         notifyListeners(new LockoutGoalEvent(player.getUuidAsString(), recipiant(), id));
-        destory();
+//        destory();
     }
 
     public void complete(String playername) {

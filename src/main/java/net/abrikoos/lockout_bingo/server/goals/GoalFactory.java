@@ -10,19 +10,12 @@ import net.abrikoos.lockout_bingo.server.goals.craft.DuplicateTemplateGoal;
 import net.abrikoos.lockout_bingo.server.goals.damage.DealDamageGoal;
 import net.abrikoos.lockout_bingo.server.goals.damage.DontFallDamageGoal;
 import net.abrikoos.lockout_bingo.server.goals.damage.SnowBallHitGoal;
-import net.abrikoos.lockout_bingo.server.goals.die.DieFromEntityGoal;
-import net.abrikoos.lockout_bingo.server.goals.die.DieFromWeaponGoal;
+import net.abrikoos.lockout_bingo.server.goals.die.*;
 import net.abrikoos.lockout_bingo.server.goals.eat.EatFoodGoal;
 import net.abrikoos.lockout_bingo.server.goals.eat.EatMultiFoodGoal;
 import net.abrikoos.lockout_bingo.server.goals.eat.EmptyHungerGoal;
-import net.abrikoos.lockout_bingo.server.goals.effect.DontGetAnyEffects;
-import net.abrikoos.lockout_bingo.server.goals.effect.DontGetEffectGoal;
-import net.abrikoos.lockout_bingo.server.goals.effect.GetEffectGoal;
-import net.abrikoos.lockout_bingo.server.goals.effect.GetMultiEffectGoal;
-import net.abrikoos.lockout_bingo.server.goals.kill.KillEntityGoal;
-import net.abrikoos.lockout_bingo.server.goals.kill.KillHostileEntityGoal;
-import net.abrikoos.lockout_bingo.server.goals.kill.KillJeb;
-import net.abrikoos.lockout_bingo.server.goals.kill.MultiKillHostilesGoal;
+import net.abrikoos.lockout_bingo.server.goals.effect.*;
+import net.abrikoos.lockout_bingo.server.goals.kill.*;
 import net.abrikoos.lockout_bingo.server.goals.lvl.ReachLvlGoal;
 import net.abrikoos.lockout_bingo.server.goals.mine.MineDiamondOre;
 import net.abrikoos.lockout_bingo.server.goals.mine.MineEmeraldOre;
@@ -40,10 +33,12 @@ import net.abrikoos.lockout_bingo.server.goals.ride.RideMinecartGoal;
 import net.abrikoos.lockout_bingo.server.goals.ride.RidePigGoal;
 import net.abrikoos.lockout_bingo.server.goals.tame.TameAnimalGoal;
 import net.abrikoos.lockout_bingo.server.goals.tools.BreakXPickaxes;
+import net.abrikoos.lockout_bingo.server.goals.use.ComposterGoal;
 import net.abrikoos.lockout_bingo.server.goals.use.UseBlockGoal;
 
 import net.abrikoos.lockout_bingo.server.goals.use.UseEntityGoal;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.ComposterBlock;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffects;
@@ -68,6 +63,10 @@ public class GoalFactory {
             case "no_water" -> new AdvancementGoal(id, null, "enemy", "in_water");
             case "no_fall" -> new DontFallDamageGoal(id);
             case "snowball_hit" -> new SnowBallHitGoal(id);
+            case "no_die" -> new DieGoal(id);
+            case "no_die_3" -> new DieMulGoal(id, 3);
+            case "no_fire" -> new DontBurnGoal(id);
+
             // obtain goals
             case "obtain_end_crystal" -> new ObtainItemGoal(id, Items.END_CRYSTAL);
             case "obtain_bell" -> new ObtainItemGoal(id, Items.BELL);
@@ -115,6 +114,8 @@ public class GoalFactory {
             case "obtain_ender_chest" -> new ObtainItemGoal(id, Items.ENDER_CHEST);
             case "obtain_dragon_egg" -> new ObtainItemGoal(id, Items.DRAGON_EGG);
             case "obtain_all_raw_ore_blocks" -> new ObtainXofSetItemsGoal(id, List.of(Items.RAW_IRON_BLOCK, Items.RAW_COPPER_BLOCK, Items.RAW_GOLD_BLOCK), 3);
+            case "obtain_flowering_azelia" -> new ObtainItemGoal(id, Items.FLOWERING_AZALEA);
+
 
             // tool goals
             case "obtain_wooden_toolset" -> new ObtainToolSetGoal(id, "wooden");
@@ -134,7 +135,7 @@ public class GoalFactory {
             // armor goals
             case "wear_chainmail" -> new WearArmorSetGoal(id, List.of(Items.CHAINMAIL_HELMET, Items.CHAINMAIL_CHESTPLATE, Items.CHAINMAIL_LEGGINGS, Items.CHAINMAIL_BOOTS), 1);
             case "wear_full_diamond" -> new WearArmorSetGoal(id, List.of(Items.DIAMOND_HELMET, Items.DIAMOND_CHESTPLATE, Items.DIAMOND_LEGGINGS, Items.DIAMOND_BOOTS), 4);
-            case "wear_full_gold" -> new WearArmorSetGoal(id, List.of(Items.GOLDEN_HELMET, Items.GOLDEN_CHESTPLATE, Items.GOLDEN_LEGGINGS, Items.GOLDEN_BOOTS), 4);
+            case "wear_full_golden" -> new WearArmorSetGoal(id, List.of(Items.GOLDEN_HELMET, Items.GOLDEN_CHESTPLATE, Items.GOLDEN_LEGGINGS, Items.GOLDEN_BOOTS), 4);
             case "wear_full_iron" -> new WearArmorSetGoal(id, List.of(Items.IRON_HELMET, Items.IRON_CHESTPLATE, Items.IRON_LEGGINGS, Items.IRON_BOOTS), 4);
             case "wear_full_leather" -> new WearArmorSetGoal(id, List.of(Items.LEATHER_HELMET, Items.LEATHER_CHESTPLATE, Items.LEATHER_LEGGINGS, Items.LEATHER_BOOTS), 4);
             case "wear_netherite" -> new WearArmorSetGoal(id, List.of(Items.NETHERITE_HELMET, Items.NETHERITE_CHESTPLATE, Items.NETHERITE_LEGGINGS, Items.NETHERITE_BOOTS), 1);
@@ -204,6 +205,8 @@ public class GoalFactory {
             case "kill_15" -> new MultiKillHostilesGoal(id, 15);
             case "kill_jeb_" -> new KillJeb(id);
 
+            case "kill_100" -> new KillXMobsGoal(id, 100);
+
             // use entity goals
             case "shear_bogged" -> new UseEntityGoal(id, EntityType.BOGGED, Items.SHEARS);
 
@@ -250,6 +253,7 @@ public class GoalFactory {
             case "sound_of_music_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "adventure/play_jukebox_in_meadows"));
             case "fishy_business_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "husbandry/fishy_business"));
             case "dragon_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "end/kill_dragon"));
+            case "sniper_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "adventure/sniper_duel"));
             case "spyglass_adv" -> new MultiPossibilityAdvancementGoal(id, List.of(
                     new GetAdvancementGoal(id, Identifier.of("minecraft", "adventure/spyglass_at_parrot")),
                     new GetAdvancementGoal(id, Identifier.of("minecraft", "adventure/spyglass_at_ghast")),
@@ -265,7 +269,6 @@ public class GoalFactory {
             case "tame_parrot" -> new TameAnimalGoal(id, EntityType.PARROT);
             case "tame_horse" -> new TameAnimalGoal(id, EntityType.HORSE);
             case "tame_llama" -> new TameAnimalGoal(id, EntityType.LLAMA);
-
 
             // biome goals
             case "biome_ice_spikes" -> new BiomeGoal(id, "minecraft:ice_spikes");
@@ -288,6 +291,8 @@ public class GoalFactory {
             case "die_stalagmite" -> new DieFromWeaponGoal(id, DamageTypes.STALAGMITE);
             case "die_fireworks" -> new DieFromWeaponGoal(id, DamageTypes.FIREWORKS);
             case "die_freeze" -> new DieFromWeaponGoal(id, DamageTypes.FREEZE);
+            case "die_bed" -> new DieGameDesignGoal(id);
+            case "die_tnt_minecart" -> new DieFromEntityGoal(id, EntityType.TNT_MINECART);
 
             case "ride_pig" -> new RidePigGoal(id);
             case "ride_horse" -> new RideHorseGoal(id);
@@ -305,6 +310,7 @@ public class GoalFactory {
             case "use_blast_furnace" -> new UseBlockGoal(id, ScreenHandlerType.BLAST_FURNACE, 2);
             case "use_grindstone" -> new UseBlockGoal(id, ScreenHandlerType.GRINDSTONE, 2);
             case "use_anvil" -> new UseBlockGoal(id, ScreenHandlerType.ANVIL, 2);
+            case "use_composter" -> new ComposterGoal(id);
 
             // mine goals
             case "mine_diamond" -> new MineDiamondOre(id);
@@ -320,12 +326,13 @@ public class GoalFactory {
             case "effect_glowing" -> new GetEffectGoal(id, StatusEffects.GLOWING);
             case "effect_nausea" -> new GetEffectGoal(id, StatusEffects.NAUSEA);
             case "effect_absorption" -> new GetEffectGoal(id, StatusEffects.ABSORPTION);
-            case "effect_fatigue" -> new GetEffectGoal(id, StatusEffects.MINING_FATIGUE);
+            case "effect_mining_fatigue" -> new GetEffectGoal(id, StatusEffects.MINING_FATIGUE);
             case "effect_bad_omen" -> new GetEffectGoal(id, StatusEffects.BAD_OMEN);
             case "effect_3" -> new GetMultiEffectGoal(id, 3);
             case "effect_6" -> new GetMultiEffectGoal(id, 6);
             case "dont_effect" -> new DontGetAnyEffects(id);
             case "dont_glowing" -> new DontGetEffectGoal(id, StatusEffects.GLOWING);
+            case "milk_effect" -> new MilkRemoveEffectsGoal(id);
 
 
             case "empty_hunger" -> new EmptyHungerGoal(id);
@@ -361,10 +368,10 @@ public class GoalFactory {
             case "brew_invis" -> new BrewPotionGoal(id, Potions.INVISIBILITY);
             case "brew_leaping" -> new BrewPotionGoal(id, Potions.LEAPING);
             case "brew_healing" -> new BrewPotionGoal(id, Potions.HEALING);
-            case "brew_fire_res" -> new BrewPotionGoal(id, Potions.FIRE_RESISTANCE);
-            case "brew_swiftness" -> new BrewPotionGoal(id, Potions.SWIFTNESS);
-            case "brew_breathing" -> new BrewPotionGoal(id, Potions.WATER_BREATHING);
+            case "brew_water_breathing" -> new BrewPotionGoal(id, Potions.WATER_BREATHING);
             case "brew_harming" -> new BrewPotionGoal(id, Potions.HARMING);
+            case "brew_fire_resistance" -> new BrewPotionGoal(id, Potions.FIRE_RESISTANCE);
+            case "brew_swiftness" -> new BrewPotionGoal(id, Potions.SWIFTNESS);
 
             default ->
 

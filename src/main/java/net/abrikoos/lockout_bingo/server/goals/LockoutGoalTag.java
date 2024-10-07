@@ -36,6 +36,7 @@ public enum LockoutGoalTag {
     C4,
     C3,
     C2,
+    C100,
     C200,
     C500,
     C300,

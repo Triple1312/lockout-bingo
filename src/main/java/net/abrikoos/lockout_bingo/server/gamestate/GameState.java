@@ -66,6 +66,22 @@ public class GameState {
         players.remove(player);
     }
 
+    public static void playerJoinTeam(String player, int team) {
+        for (LockoutTeam t : teams) {
+            if (t.playeruuids.contains(player)) {
+                t.removePlayer(player);
+            }
+            if (t.teamId == team) {
+                t.addPlayer(player);
+            }
+        }
+
+        AllTeamsPacket packet = new AllTeamsPacket(teams);
+        for (ServerPlayerEntity plr : players) {
+            ServerPlayNetworking.send(plr, packet);
+        }
+    }
+
     public static void playerJoinTeam(ServerPlayerEntity player, int team) {
         if (!players.contains(player)) {
             players.add(player);
@@ -250,7 +266,7 @@ public class GameState {
             ServerPlayNetworking.send(player, packet);
             player.sendMessage(
                     Text.empty().append("Goal \"")
-                        .append(GameState.goals.get(event.goalId).name())
+                        .append(Text.literal(GameState.goals.get(event.goalId).name()))
                         .append("\" completed by ")
                         .append(Text.literal(PlayerTeamRegistry.getPlayerByUUID(event.puuid).getName()).withColor(Colors.getPlayerColor(event.puuid))),
                     false);

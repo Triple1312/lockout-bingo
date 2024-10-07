@@ -12,7 +12,7 @@ import java.util.List;
 
 public class WearArmorSetGoal extends LockoutGoal {
 
-    final List<ArmorItem> armorPieces = new ArrayList<>();
+    List<ArmorItem> armorPieces = new ArrayList<>();
     final int count;
 
     public WearArmorSetGoal(int id, List<Item> armorPieces, int count) {
@@ -22,7 +22,7 @@ public class WearArmorSetGoal extends LockoutGoal {
                 throw new IllegalArgumentException("Item must be an ArmorItem");
             }
             else {
-                armorPieces.add(item);
+                this.armorPieces.add((ArmorItem) item);
             }
         }
         this.count = count;

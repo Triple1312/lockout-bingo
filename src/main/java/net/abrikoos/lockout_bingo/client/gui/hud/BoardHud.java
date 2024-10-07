@@ -7,12 +7,11 @@ import net.abrikoos.lockout_bingo.team.Colors;
 import net.abrikoos.lockout_bingo.team.PlayerTeamRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
 public class BoardHud {
 
-    public static void drawHud(@NotNull DrawContext context) {
+    public static void drawHud(@NotNull DrawContext context, float delta) {
         if (ClientGameState.isGameRunning()) {
             MinecraftClient client = MinecraftClient.getInstance();
             int screensizex = context.getScaledWindowWidth();
@@ -38,7 +37,7 @@ public class BoardHud {
                     color = Colors.getPlayerColor(ClientGameState.latestUpdate().goals[i]);
                 }
                 context.fill(goalTopX, goalTopY, goalTopX + goalwidthheight, goalTopY + goalwidthheight, color - 0x47000000);
-                ClientGameState.getGoals().get(i).draw(context, 0, goalTopX, goalTopY, goalwidthheight, goalwidthheight);
+                ClientGameState.getGoals().get(i).draw(context, delta/3, goalTopX, goalTopY, goalwidthheight, goalwidthheight);
                 if (ClientGameState.latestUpdate() == null) {
                     continue;
                 }

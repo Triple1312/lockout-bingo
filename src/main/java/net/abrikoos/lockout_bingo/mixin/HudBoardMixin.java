@@ -1,7 +1,5 @@
 package net.abrikoos.lockout_bingo.mixin;
 
-
-import net.abrikoos.lockout_bingo.client.gui.LockoutScreens;
 import net.abrikoos.lockout_bingo.client.gui.hud.BoardHud;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -16,7 +14,7 @@ public class HudBoardMixin {
 
     @Inject(method = "render", at = @At("RETURN"))
     public void render(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        BoardHud.drawHud(context);
+        BoardHud.drawHud(context, tickCounter.getLastDuration());
     }
 
 }

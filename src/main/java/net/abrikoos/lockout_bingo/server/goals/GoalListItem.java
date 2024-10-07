@@ -71,6 +71,9 @@ public class GoalListItem {
 
     public void draw(@NotNull DrawContext ctx, float delta, int x, int y, int width, int height) {
         this.delta += delta;
+        if (tags.contains(LockoutGoalTag.advancement)) {
+            ctx.drawTexture(Identifier.of("lockout-bingo:goalicon/advancement/challenge_done.png"), x+3, y+3, 0, 0, width-6, height-6, width-6, height-6);
+        }
         renderTexture(ctx, delta, x, y, width, height);
         drawModifiers(ctx, x, y, x+width, y+height);
     }
@@ -143,6 +146,9 @@ public class GoalListItem {
             }
             else if (tag == LockoutGoalTag.C2) {
                 ctx.drawText(textRenderer,"2", x2-2-(x2-x1)/5, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+            }
+            else if(tag == LockoutGoalTag.C100) {
+                ctx.drawText(textRenderer, "100",x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
             }
             else if (tag == LockoutGoalTag.C200) {
                 ctx.drawText(textRenderer,"200", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
