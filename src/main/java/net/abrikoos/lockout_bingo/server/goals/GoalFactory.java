@@ -2,6 +2,9 @@ package net.abrikoos.lockout_bingo.server.goals;
 
 import net.abrikoos.lockout_bingo.server.goals.advancement.*;
 import net.abrikoos.lockout_bingo.server.goals.armor.WearArmorSetGoal;
+import net.abrikoos.lockout_bingo.server.goals.armor.WearArmorTrimGoal;
+import net.abrikoos.lockout_bingo.server.goals.armor.WearColoredArmorGoal;
+import net.abrikoos.lockout_bingo.server.goals.armor.WearFullyTrimmedArmorSetGoal;
 import net.abrikoos.lockout_bingo.server.goals.biome.BiomeGoal;
 import net.abrikoos.lockout_bingo.server.goals.breed.BreedAnimalGoal;
 import net.abrikoos.lockout_bingo.server.goals.breed.BreedMultiAnimalsGoal;
@@ -37,8 +40,6 @@ import net.abrikoos.lockout_bingo.server.goals.use.ComposterGoal;
 import net.abrikoos.lockout_bingo.server.goals.use.UseBlockGoal;
 
 import net.abrikoos.lockout_bingo.server.goals.use.UseEntityGoal;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ComposterBlock;
 import net.minecraft.entity.EntityType;
@@ -51,7 +52,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.List;
 
-@Environment(EnvType.SERVER)
+
 public class GoalFactory {
 
     public static LockoutGoal buildGoal(String goalid, int id) {
@@ -141,6 +142,9 @@ public class GoalFactory {
             case "wear_full_iron" -> new WearArmorSetGoal(id, List.of(Items.IRON_HELMET, Items.IRON_CHESTPLATE, Items.IRON_LEGGINGS, Items.IRON_BOOTS), 4);
             case "wear_full_leather" -> new WearArmorSetGoal(id, List.of(Items.LEATHER_HELMET, Items.LEATHER_CHESTPLATE, Items.LEATHER_LEGGINGS, Items.LEATHER_BOOTS), 4);
             case "wear_netherite" -> new WearArmorSetGoal(id, List.of(Items.NETHERITE_HELMET, Items.NETHERITE_CHESTPLATE, Items.NETHERITE_LEGGINGS, Items.NETHERITE_BOOTS), 1);
+            case "wear_colored" -> new WearColoredArmorGoal(id);
+            case "wear_trimmed" -> new WearArmorTrimGoal(id);
+            case "wear_trimmed_set" -> new WearFullyTrimmedArmorSetGoal(id);
 
             case "obtain_all_seeds" -> new ObtainEverySeedGoal(id);
             case "obtain_6_flowers" -> new ObtainXFlowers(id, 6);

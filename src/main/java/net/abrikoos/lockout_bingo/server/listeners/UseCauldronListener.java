@@ -1,8 +1,6 @@
 package net.abrikoos.lockout_bingo.server.listeners;
 
 import net.abrikoos.lockout_bingo.util.HeptConsumer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -14,7 +12,7 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-@Environment(EnvType.SERVER)
+
 public class UseCauldronListener {
 
     private final List<HeptConsumer<ItemStack, BlockState, World, BlockPos, PlayerEntity, Hand, BlockHitResult>> listeners;

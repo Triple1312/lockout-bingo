@@ -16,8 +16,6 @@ import net.abrikoos.lockout_bingo.team.Colors;
 import net.abrikoos.lockout_bingo.team.LockoutTeam;
 import net.abrikoos.lockout_bingo.network.team.AllTeamsPacket;
 import net.abrikoos.lockout_bingo.team.PlayerTeamRegistry;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.advancement.PlayerAdvancementTracker;
@@ -38,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Environment(EnvType.SERVER)
+
 public class GameState {
 
     public static List<LockoutTeam> teams = new ArrayList<>();

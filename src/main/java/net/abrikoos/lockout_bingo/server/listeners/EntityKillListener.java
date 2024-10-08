@@ -1,7 +1,5 @@
 package net.abrikoos.lockout_bingo.server.listeners;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -12,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-@Environment(EnvType.SERVER)
 public class EntityKillListener {
     private final List<BiConsumer<ServerPlayerEntity, LivingEntity>> listeners;
 

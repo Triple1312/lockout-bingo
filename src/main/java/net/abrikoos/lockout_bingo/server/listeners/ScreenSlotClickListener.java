@@ -1,7 +1,5 @@
 package net.abrikoos.lockout_bingo.server.listeners;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
@@ -10,7 +8,7 @@ import net.minecraft.screen.slot.SlotActionType;
 import java.util.ArrayList;
 import java.util.List;
 
-@Environment(EnvType.SERVER)
+
 public class ScreenSlotClickListener {
     private final List<HexConsumer<Integer, Integer, SlotActionType, PlayerEntity, ScreenHandlerType<?>, Slot>> listeners;
     

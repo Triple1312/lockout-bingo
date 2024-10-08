@@ -1,8 +1,6 @@
 package net.abrikoos.lockout_bingo.server.listeners;
 
 import net.abrikoos.lockout_bingo.server.gamestate.GameState;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
@@ -18,7 +16,6 @@ import org.apache.logging.log4j.util.BiConsumer;
 import java.util.ArrayList;
 import java.util.List;
 
-@Environment(EnvType.SERVER)
 public class PlayerDeathListener {
 
     private static final List<BiConsumer<ServerPlayerEntity, DamageSource>> listeners = new ArrayList<>();

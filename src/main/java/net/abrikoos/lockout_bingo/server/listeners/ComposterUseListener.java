@@ -1,8 +1,6 @@
 package net.abrikoos.lockout_bingo.server.listeners;
 
 import net.abrikoos.lockout_bingo.util.QuadConsumer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
@@ -11,7 +9,6 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-@Environment(EnvType.SERVER)
 public class ComposterUseListener {
     private final List<QuadConsumer<Entity, BlockState, World, BlockPos>> listeners;
 

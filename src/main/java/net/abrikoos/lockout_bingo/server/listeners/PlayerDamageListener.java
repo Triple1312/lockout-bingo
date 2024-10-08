@@ -1,7 +1,5 @@
 package net.abrikoos.lockout_bingo.server.listeners;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import org.apache.logging.log4j.util.TriConsumer;
@@ -9,7 +7,6 @@ import org.apache.logging.log4j.util.TriConsumer;
 import java.util.ArrayList;
 import java.util.List;
 
-@Environment(EnvType.SERVER)
 public class PlayerDamageListener {
 
     private static final List<TriConsumer<PlayerEntity, DamageSource, Float>> listeners = new ArrayList<>();

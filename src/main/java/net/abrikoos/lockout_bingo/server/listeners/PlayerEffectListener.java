@@ -1,6 +1,4 @@
 package net.abrikoos.lockout_bingo.server.listeners;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 
@@ -8,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-@Environment(EnvType.SERVER)
 public class PlayerEffectListener {
 
     private static final List<BiConsumer<PlayerEntity, StatusEffectInstance>> listeners = new ArrayList<>();

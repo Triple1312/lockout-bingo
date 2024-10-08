@@ -1,7 +1,5 @@
 package net.abrikoos.lockout_bingo.server.listeners;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.advancement.AdvancementProgress;
@@ -14,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-@Environment(EnvType.SERVER)
+
 public class AdvancementListener {
 
     private final List<TriConsumer<ServerPlayerEntity, Advancement, String>> listeners;
