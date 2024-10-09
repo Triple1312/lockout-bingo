@@ -3,6 +3,7 @@ package net.abrikoos.lockout_bingo.server.goals;
 import net.abrikoos.lockout_bingo.LockoutLogger;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -97,6 +98,7 @@ public class GoalItemRegistry {
         items.add(new GoalListItem("wear a piece of colored armor", "", 2, List.of(armor), "wear_colored", List.of(Identifier.of("lockout-bingo:goalicon/item/armor/red_leather_cap.png"), Identifier.of("lockout-bingo:goalicon/item/armor/purple_leather_boots.png"), Identifier.of("lockout-bingo:goalicon/item/armor/green_leather_pants.png"), Identifier.of("lockout-bingo:goalicon/item/armor/orange_leather_chestplate.png"))));
         items.add(new GoalListItem("wear a trimmed armor piece", "", 3, List.of(armor), "wear_trimmed", List.of(Identifier.of("lockout-bingo:goalicon/item/armor/emerald_trimmed_iron_cap.png"), Identifier.of("lockout-bingo:goalicon/item/armor/copper_trimmed_diamond_leggings.png"),Identifier.of("lockout-bingo:goalicon/item/armor/redstone_trimmed_gold_chestplate.png"), Identifier.of("lockout-bingo:goalicon/item/armor/quartz_trimmed_netherite_boots.png")) ));
         items.add(new GoalListItem("wear a fully trimmed armor set", "", 3, List.of(armor, C4), "wear_trimmed_set", List.of(Identifier.of("lockout-bingo:goalicon/item/armor/emerald_trimmed_iron_cap.png"), Identifier.of("lockout-bingo:goalicon/item/armor/copper_trimmed_diamond_leggings.png"),Identifier.of("lockout-bingo:goalicon/item/armor/redstone_trimmed_gold_chestplate.png"), Identifier.of("lockout-bingo:goalicon/item/armor/quartz_trimmed_netherite_boots.png")) ));
+        items.add(new GoalListItem("wear a carved pumpkin for 1 minute", "", 3, List.of(armor), "wear_pumpkin", List.of(Identifier.of("lockout-bingo:goalicon/block/carved_pumpkin")))); // todo change time
 
 
         items.add(new GoalListItem("obtain 4 types of seeds", "", 3, List.of(C4), "obtain_all_seeds", List.of(Identifier.of("minecraft:textures/item/wheat_seeds.png"), Identifier.of("minecraft:textures/item/beetroot_seeds.png"), Identifier.of("minecraft:textures/item/melon_seeds.png"), Identifier.of("minecraft:textures/item/pumpkin_seeds.png"), Identifier.of("minecraft:textures/item/torchflower_seeds.png"))));
@@ -163,8 +165,9 @@ public class GoalItemRegistry {
         items.add(new GoalListItem("kill 15 unique mobs", "", 4, List.of(kill, C15), "kill_15", List.of(Identifier.of("lockout-bingo:goalicon/entity/zombie.png"))));
         items.add(new GoalListItem("kill jeb_", "", 4, List.of(kill), "kill_jeb_", List.of(Identifier.of("lockout-bingo:goalicon/entity/jeb.png"))));
 
-        items.add(new GoalListItem("kill 100 mobs", "", 3, List.of(kill, C100), "kill_100", List.of(Identifier.of("lockout-bingo:goalicon/entity/zombie.png"), Identifier.of("lockout-bingo:goalicon/entity/spider.png"), Identifier.of("lockout-bingo:goalicon/entity/bee.png"), Identifier.of("lockout-bingo:goalicon/entity/sheep.png"), Identifier.of("lockout-bingo:goalicon/entity/drowned.png"), Identifier.of("lockout-bingo:goalicon/entity/enderman.png"))));
-
+        items.add(new GoalListItem("kill 100 mobs", "", 4, List.of(kill, C100), "kill_100", List.of(Identifier.of("lockout-bingo:goalicon/entity/zombie.png"), Identifier.of("lockout-bingo:goalicon/entity/spider.png"), Identifier.of("lockout-bingo:goalicon/entity/bee.png"), Identifier.of("lockout-bingo:goalicon/entity/sheep.png"), Identifier.of("lockout-bingo:goalicon/entity/drowned.png"), Identifier.of("lockout-bingo:goalicon/entity/enderman.png"))));
+        items.add(new GoalListItem("kill 30 undead mobs", "", 3, List.of(kill, C30), "undead_30", List.of(Identifier.of("lockout-bingo:goalicon/entity/zombie.png"), Identifier.of("lockout-bingo:goalicon/entity/zoglin.png"), Identifier.of("lockout-bingo:goalicon/entity/skeleton.png"), Identifier.of("lockout-bingo:goalicon/entity/zombified_piglin.png"), Identifier.of("lockout-bingo:goalicon/entity/phantom.png"), Identifier.of("lockout-bingo:goalicon/entity/bogged.png"), Identifier.of("lockout-bingo:goalicon/entity/zillager.png"))));
+        items.add(new GoalListItem("kill 20 arthropods", "", 3, List.of(kill, C20), "arthropod_20", List.of(Identifier.of("lockout-bingo:goalicon/entity/spider.png"), Identifier.of("lockout-bingo:goalicon/entity/bee.png"), Identifier.of("lockout-bingo:goalicon/entity/endermite.png"), Identifier.of("lockout-bingo:goalicon/entity/cave_spider.png"), Identifier.of("lockout-bingo:goalicon/entity/silverfish.png"))));
 
         //use entity goals
         items.add(new GoalListItem("shear a bogged", "", 2, List.of(), "shear_bogged", List.of(Identifier.of("lockout-bingo:goalicon/entity/bogged.png"))));
@@ -336,6 +339,16 @@ public class GoalItemRegistry {
 
 
         items.add(new GoalListItem("empty your hunger bar", "", 1, List.of(), "empty_hunger", List.of(Identifier.of("lockout-bingo:goalicon/effect/hunger.png"))));
+
+        // more goals
+        items.add(new GoalListItem("get more lvls than opponent", "", 1, List.of(more), "more_lvl", List.of(Identifier.of("lockout-bingo:goalicon/entity/experience_orb.png"))));
+        items.add(new GoalListItem("get more hoppers than opponent", "", 2, List.of(more), "more_hoppers", List.of(Identifier.of("lockout-bingo:goalicon/block/hopper.png"))));
+        items.add(new GoalListItem("get more dried kelp blocks than opponent", "", 3, List.of(more), "more_hoppers", List.of(Identifier.of("lockout-bingo:goalicon/block/dried_kelp_block.png"))));
+        items.add(new GoalListItem("get more white concrete than opponent", "", 3, List.of(more), "more_hoppers", List.of(Identifier.of("lockout-bingo:goalicon/block/white_concrete.png"))));
+
+        // break goals
+        
+
 
         LockoutLogger.log("Registered " + items.size() + " goals");
         int nether_count = (int) items.stream().filter(item -> item.tags.contains(nether)).count();

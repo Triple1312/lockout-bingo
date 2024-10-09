@@ -1,10 +1,7 @@
 package net.abrikoos.lockout_bingo.server.goals;
 
 import net.abrikoos.lockout_bingo.server.goals.advancement.*;
-import net.abrikoos.lockout_bingo.server.goals.armor.WearArmorSetGoal;
-import net.abrikoos.lockout_bingo.server.goals.armor.WearArmorTrimGoal;
-import net.abrikoos.lockout_bingo.server.goals.armor.WearColoredArmorGoal;
-import net.abrikoos.lockout_bingo.server.goals.armor.WearFullyTrimmedArmorSetGoal;
+import net.abrikoos.lockout_bingo.server.goals.armor.*;
 import net.abrikoos.lockout_bingo.server.goals.biome.BiomeGoal;
 import net.abrikoos.lockout_bingo.server.goals.breed.BreedAnimalGoal;
 import net.abrikoos.lockout_bingo.server.goals.breed.BreedMultiAnimalsGoal;
@@ -23,6 +20,8 @@ import net.abrikoos.lockout_bingo.server.goals.lvl.ReachLvlGoal;
 import net.abrikoos.lockout_bingo.server.goals.mine.MineDiamondOre;
 import net.abrikoos.lockout_bingo.server.goals.mine.MineEmeraldOre;
 import net.abrikoos.lockout_bingo.server.goals.mine.MineGoal;
+import net.abrikoos.lockout_bingo.server.goals.more.MoreLVLsGoal;
+import net.abrikoos.lockout_bingo.server.goals.more.ObtainMoreItemGoal;
 import net.abrikoos.lockout_bingo.server.goals.movement.DontCrouch;
 import net.abrikoos.lockout_bingo.server.goals.movement.DontJumpGoal;
 import net.abrikoos.lockout_bingo.server.goals.movement.SprintGoal;
@@ -145,6 +144,7 @@ public class GoalFactory {
             case "wear_colored" -> new WearColoredArmorGoal(id);
             case "wear_trimmed" -> new WearArmorTrimGoal(id);
             case "wear_trimmed_set" -> new WearFullyTrimmedArmorSetGoal(id);
+            case "wear_pumpkin" -> new WearCarvedPumpkinGoal(id, 60); // todo change time after test
 
             case "obtain_all_seeds" -> new ObtainEverySeedGoal(id);
             case "obtain_6_flowers" -> new ObtainXFlowers(id, 6);
@@ -212,6 +212,8 @@ public class GoalFactory {
             case "kill_jeb_" -> new KillJeb(id);
 
             case "kill_100" -> new KillXMobsGoal(id, 100);
+            case "undead_30" -> new KillXUndeadGoal(id, 30);
+            case "arthropod_20" -> new KillXArthropodGoal(id, 20);
 
             // use entity goals
             case "shear_bogged" -> new UseEntityGoal(id, EntityType.BOGGED, Items.SHEARS);
@@ -378,6 +380,12 @@ public class GoalFactory {
             case "brew_harming" -> new BrewPotionGoal(id, Potions.HARMING);
             case "brew_fire_resistance" -> new BrewPotionGoal(id, Potions.FIRE_RESISTANCE);
             case "brew_swiftness" -> new BrewPotionGoal(id, Potions.SWIFTNESS);
+
+            // more goals
+            case "more_kelp_block" -> new ObtainMoreItemGoal(id, Items.DRIED_KELP_BLOCK);
+            case "more_hoppers" -> new ObtainMoreItemGoal(id, Items.HOPPER);
+            case "more_concrete" -> new ObtainMoreItemGoal(id, Items.WHITE_CONCRETE);
+            case "more_lvl" -> new MoreLVLsGoal(id);
 
             default ->
 

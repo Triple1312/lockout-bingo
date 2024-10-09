@@ -51,7 +51,13 @@ public abstract class LockoutGoal {
 
     protected void completed(PlayerEntity player) {
         completed = player;
-        notifyListeners(new LockoutGoalEvent(player.getUuidAsString(), recipiant(), id));
+        if (player == null) {
+            notifyListeners(new LockoutGoalEvent("00000000-0000-0000-0000-000000000000", recipiant(), id));
+        }
+        else {
+            notifyListeners(new LockoutGoalEvent(player.getUuidAsString(), recipiant(), id));
+        }
+
 //        destory();
     }
 
