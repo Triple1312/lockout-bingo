@@ -1,0 +1,66 @@
+package net.abrikoos.lockout_bingo.server.goals.obtain;
+
+import java.util.List;
+import net.minecraft.item.Items;
+
+public class ObtainsXStairsGoal extends ObtainXofSetItemsGoal{
+    public ObtainsXStairsGoal(int id, int count) {
+        super(id, List.of(
+                Items.ACACIA_STAIRS,
+                Items.ANDESITE_STAIRS,
+                Items.BIRCH_STAIRS,
+                Items.BAMBOO_STAIRS,
+                Items.BRICK_STAIRS,
+                Items.BAMBOO_MOSAIC_STAIRS,
+                Items.BLACKSTONE_STAIRS,
+                Items.CHERRY_STAIRS,
+                Items.COBBLED_DEEPSLATE_STAIRS,
+                Items.COBBLESTONE_STAIRS,
+                Items.CRIMSON_STAIRS,
+                Items.CUT_COPPER_STAIRS,
+                Items.DARK_OAK_STAIRS,
+                Items.POLISHED_TUFF_STAIRS,
+                Items.TUFF_STAIRS,
+                Items.DARK_PRISMARINE_STAIRS,
+                Items.DEEPSLATE_BRICK_STAIRS,
+                Items.DEEPSLATE_TILE_STAIRS,
+                Items.DIORITE_STAIRS,
+                Items.END_STONE_BRICK_STAIRS,
+                Items.EXPOSED_CUT_COPPER_STAIRS,
+                Items.GRANITE_STAIRS,
+                Items.JUNGLE_STAIRS,
+                Items.MANGROVE_STAIRS,
+                Items.MOSSY_COBBLESTONE_STAIRS,
+                Items.MOSSY_STONE_BRICK_STAIRS,
+                Items.MUD_BRICK_STAIRS,
+                Items.WEATHERED_CUT_COPPER_STAIRS,
+                Items.WAXED_WEATHERED_CUT_COPPER_STAIRS,
+                Items.WAXED_OXIDIZED_CUT_COPPER_STAIRS,
+                Items.WAXED_EXPOSED_CUT_COPPER_STAIRS,
+                Items.WARPED_STAIRS,
+                Items.TUFF_BRICK_STAIRS,
+                Items.STONE_STAIRS,
+                Items.SPRUCE_STAIRS,
+                Items.WAXED_CUT_COPPER_STAIRS,
+                Items.STONE_BRICK_STAIRS,
+                Items.RED_SANDSTONE_STAIRS,
+                Items.SMOOTH_SANDSTONE_STAIRS,
+                Items.SMOOTH_RED_SANDSTONE_STAIRS,
+                Items.SMOOTH_QUARTZ_STAIRS,
+                Items.SANDSTONE_STAIRS,
+                Items.RED_NETHER_BRICK_STAIRS,
+                Items.QUARTZ_STAIRS,
+                Items.PURPUR_STAIRS,
+                Items.PRISMARINE_STAIRS,
+                Items.PRISMARINE_BRICK_STAIRS,
+                Items.POLISHED_GRANITE_STAIRS,
+                Items.POLISHED_DIORITE_STAIRS,
+                Items.POLISHED_BLACKSTONE_STAIRS,
+                Items.POLISHED_ANDESITE_STAIRS,
+                Items.OAK_STAIRS,
+                Items.NETHER_BRICK_STAIRS,
+                Items.OXIDIZED_CUT_COPPER_STAIRS,
+                Items.POLISHED_DEEPSLATE_STAIRS
+        ), count);
+    }
+}

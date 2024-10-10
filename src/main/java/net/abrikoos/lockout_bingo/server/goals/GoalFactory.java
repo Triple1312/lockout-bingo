@@ -34,6 +34,7 @@ import net.abrikoos.lockout_bingo.server.goals.ride.RideHorseGoal;
 import net.abrikoos.lockout_bingo.server.goals.ride.RideMinecartGoal;
 import net.abrikoos.lockout_bingo.server.goals.ride.RidePigGoal;
 import net.abrikoos.lockout_bingo.server.goals.tame.TameAnimalGoal;
+import net.abrikoos.lockout_bingo.server.goals.tools.BreakItemsGoal;
 import net.abrikoos.lockout_bingo.server.goals.tools.BreakXPickaxes;
 import net.abrikoos.lockout_bingo.server.goals.use.ComposterGoal;
 import net.abrikoos.lockout_bingo.server.goals.use.UseBlockGoal;
@@ -117,6 +118,9 @@ public class GoalFactory {
             case "obtain_dragon_egg" -> new ObtainItemGoal(id, Items.DRAGON_EGG);
             case "obtain_all_raw_ore_blocks" -> new ObtainXofSetItemsGoal(id, List.of(Items.RAW_IRON_BLOCK, Items.RAW_COPPER_BLOCK, Items.RAW_GOLD_BLOCK), 3);
             case "obtain_flowering_azelia" -> new ObtainItemGoal(id, Items.FLOWERING_AZALEA);
+            case "stairs_15" -> new ObtainsXStairsGoal(id, 15);
+            case "stairs_5" -> new ObtainsXStairsGoal(id, 5);
+            case "stairs_10" -> new ObtainsXStairsGoal(id, 10);
 
 
             // tool goals
@@ -348,6 +352,7 @@ public class GoalFactory {
             case "get_them_in_a_bucket" -> new ObtainXofSetItemsGoal(id, List.of(Items.COD_BUCKET, Items.SALMON_BUCKET, Items.PUFFERFISH_BUCKET, Items.TROPICAL_FISH_BUCKET, Items.AXOLOTL_BUCKET, Items.TADPOLE_BUCKET), 6);
 
             case "break_5_pickaxes" -> new BreakXPickaxes(id, 5);
+            case "break_diamond" -> new BreakItemsGoal(id, Items.DIAMOND_PICKAXE, 1);
 
             case "lvl_15" -> new ReachLvlGoal(id, 15);
             case "lvl_30" -> new ReachLvlGoal(id, 30);

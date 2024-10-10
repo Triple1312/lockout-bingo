@@ -87,26 +87,31 @@ public class GoalListItem {
         for (LockoutGoalTag tag : this.tags) {
             switch (tag) {
                 case die:
-                    ctx.drawTexture(Identifier.of("lockout-bingo", "goalicon/modifiers/skull.png"), 2*(x2-x1)/3 +x1 -1, y1+1, 0, 0, (x2-x1)/3, (y2-y1)/3,(x2-x1)/3, (y2-y1)/3);
+                    ctx.drawTexture(Identifier.of("lockout-bingo", "goalicon/modifiers/skull.png"), x1+1, y1+1, 0, 0, (x2-x1)/4, (y2-y1)/4,(x2-x1)/4, (y2-y1)/4);
                     break;
                 case kill:
-                    ctx.drawTexture(Identifier.of("lockout-bingo", "goalicon/modifiers/kill.png"), x1+1, y1+1, 0, 0, (x2-x1)/3, (y2-y1)/3, (x2-x1)/3, (y2-y1)/3);
+                    ctx.drawTexture(Identifier.of("lockout-bingo", "goalicon/modifiers/kill.png"), x1+1, y1+1, 0, 0, (x2-x1)/4, (y2-y1)/4, (x2-x1)/4, (y2-y1)/4);
                     break;
                 case breed:
-                    ctx.drawTexture(Identifier.of("lockout-bingo", "goalicon/modifiers/heart.png"), 2*(x2-x1)/3  + x1-1, y1+1, 0, 0, (x2-x1)/3, (y2-y1)/3, (x2-x1)/3, (y2-y1)/3);
+                    ctx.drawTexture(Identifier.of("lockout-bingo", "goalicon/modifiers/heart.png"), x1+1, y1+1, y1+1, 0, 0, (x2-x1)/4, (y2-y1)/4, (x2-x1)/4, (y2-y1)/4);
                     break;
                 case dont:
-                    ctx.drawTexture(Identifier.of("lockout-bingo", "goalicon/modifiers/dont.png"), 2*(x2-x1)/3 + x1-1, y1+1, 0, 0, (x2-x1)/3, (y2-y1)/3, (x2-x1)/3, (y2-y1)/3);
+                    ctx.drawTexture(Identifier.of("lockout-bingo", "goalicon/modifiers/dont.png"), 3*(x2-x1)/4 + x1-1, y1+1, 0, 0, (x2-x1)/4, (y2-y1)/4, (x2-x1)/4, (y2-y1)/4);
                     break;
                 case tame:
-                    ctx.drawTexture(Identifier.of("lockout-bingo", "goalicon/modifiers/tame.png"), 2*(x2-x1)/3 +x1-1, y1+1, 0, 0, (x2-x1)/3, (y2-y1)/3, (x2-x1)/3, (y2-y1)/3);
+                    ctx.drawTexture(Identifier.of("lockout-bingo", "goalicon/modifiers/tame.png"), x1+1, y1+1, 0, 0, (x2-x1)/4, (y2-y1)/4, (x2-x1)/4, (y2-y1)/4);
                     break;
                 case ride:
-                    ctx.drawTexture(Identifier.of("minecraft", "textures/item/saddle.png"), 2*(x2-x1)/3 +x1-1, y1+1, 0, 0, (x2-x1)/3, (y2-y1)/3, (x2-x1)/3, (y2-y1)/3);
+                    ctx.drawTexture(Identifier.of("minecraft", "textures/item/saddle.png"), 3*(x2-x1)/4 +x1-1, y1+1, 0, 0, (x2-x1)/4, (y2-y1)/4, (x2-x1)/4, (y2-y1)/4);
                     break;
                 case broken:
-                    ctx.drawTexture(Identifier.of("lockout-bingo", "goalicon/modifiers/broken.png"), x1+1, y1+1, 0, 0, (x2-x1)/3, (y2-y1)/3, (x2-x1)/3, (y2-y1)/3);
+                    ctx.drawTexture(Identifier.of("lockout-bingo", "goalicon/modifiers/broken.png"), x1+1, y1+1, 0, 0, (x2-x1)/4, (y2-y1)/4, (x2-x1)/4, (y2-y1)/4);
                     break;
+                case more:
+                    ctx.drawTexture(Identifier.of("lockout-bingo", "goalicon/modifiers/up-arrow.png"), x2-2-(x2-x1)/5, y2 -(x2-x1)/4 -1, 0, 0, (x2-x1)/4, (y2-y1)/4, (x2-x1)/4, (y2-y1)/4);
+                case unique:
+                    ctx.drawTexture(Identifier.of("lockout-bingo", "goalicon/modifiers/unique.png"), 3*(x2-x1)/4 +x1-1, y1+1, 0, 0, (x2-x1)/4, (y2-y1)/4, (x2-x1)/4, (y2-y1)/4);
+
             }
             if (tag == LockoutGoalTag.C6) {
                 ctx.drawText(textRenderer,"6", x2-2-(x2-x1)/5, y2 -(x2-x1)/3 -1, 0xffffffff, true);

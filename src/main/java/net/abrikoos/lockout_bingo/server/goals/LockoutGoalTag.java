@@ -48,5 +48,6 @@ public enum LockoutGoalTag {
     km1,
     luck,
     village,
-    more
+    more,
+    unique
 }
