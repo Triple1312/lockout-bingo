@@ -4,8 +4,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import java.util.Objects;
+import java.util.UUID;
 
-@Environment(EnvType.CLIENT)
+
 public class Colors {
     final static int[] colors = new int[] {
         0xFF4169E1, // royalblue
@@ -37,7 +38,7 @@ public class Colors {
         if (puuid.equals("22222222-2222-2222-2222-222222222222")) {
             return get(2);
         }
-        TeamPlayer player = PlayerTeamRegistry.getPlayerByUUID(puuid);
+        UTeamPlayer player = UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(puuid));
         if (player == null) {
             return get(1);
         }

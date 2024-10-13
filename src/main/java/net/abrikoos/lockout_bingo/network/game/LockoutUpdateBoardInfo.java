@@ -19,7 +19,12 @@ public class LockoutUpdateBoardInfo {
         @Override
         public void encode(ByteBuf buf, LockoutUpdateBoardInfo value) {
             for (String goal : value.goals) {
-                buf.writeCharSequence(goal, Charset.defaultCharset());
+                try {
+                    buf.writeCharSequence(goal, Charset.defaultCharset());
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 

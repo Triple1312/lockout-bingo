@@ -30,7 +30,7 @@ public class TeamsTab implements Tab {
     public void addSelectedToTeam(Integer teamId) {
         PlayerList.PlayerEntry selected = playerList.selected();
         if (selected != null) {
-            ClientPlayNetworking.send(new LockoutAddPlayerToTeamPacket(teamId, selected.player.getPlayerUUID().toString()));
+            ClientPlayNetworking.send(new LockoutAddPlayerToTeamPacket(teamId, selected.player.puuidstr()));
         }
         else {
             ClientPlayNetworking.send(new LockoutJoinTeamPacket(teamId));
@@ -67,7 +67,7 @@ public class TeamsTab implements Tab {
     class PlayerList extends AlwaysSelectedEntryListWidget<PlayerList.PlayerEntry> {
         public PlayerList(int x, int y, int width, int height) {
             super(MinecraftClient.getInstance(), width, height, y, 15);
-            for (TeamPlayer player : PlayerTeamRegistry.getAllPlayers()) {
+            for (UTeamPlayer player : UnitedTeamRegistry.getPlayers()) {
                 this.addEntry(new PlayerEntry(player));
             }
         }
@@ -77,10 +77,10 @@ public class TeamsTab implements Tab {
         }
 
         public static class PlayerEntry extends AlwaysSelectedEntryListWidget.Entry<PlayerEntry> {
-            TeamPlayer player;
+            UTeamPlayer player;
 
 
-            public PlayerEntry(TeamPlayer player) {
+            public PlayerEntry(UTeamPlayer player) {
                 this.player = player;
             }
 
@@ -90,7 +90,7 @@ public class TeamsTab implements Tab {
                 x = 2;
                 try {
                     RenderSystem.enableBlend();
-                    context.drawTexture(player.getPlayerListEntry().getSkinTextures().texture(), x, y, 0, 0, texture_width, texture_width);
+//                    context.drawTexture(player.getPlayerListEntry().getSkinTextures().texture(), x, y, 0, 0, texture_width, texture_width); // todo
                     RenderSystem.disableBlend();
                 }
                 catch (Exception ignored) {}
@@ -155,31 +155,31 @@ public class TeamsTab implements Tab {
             return TeamCardHeight * height / 100;
         }
 
-        public void drawTeamCard(DrawContext context, int mouseX, int mouseY, float delta, int x, int y, int width, int height, LockoutTeam team) {
+        public void drawTeamCard(DrawContext context, int mouseX, int mouseY, float delta, int x, int y, int width, int height, UnitedTeamRegistry.Team team) {
             context.fill(x, y, x + width, y + height, 0x66000000);
-            List<TeamPlayer> players = PlayerTeamRegistry.getTeamPlayers(team.teamId);
+            List<UTeamPlayer> players = UnitedTeamRegistry.getTeamPlayers(team.teamId());
 
             // header
             if (players.isEmpty()) {
                 ButtonWidget btn = ButtonWidget.builder(Text.of("X"), (button) -> {
-                    ClientPlayNetworking.send(new LockoutRemoveTeamPacket(team.name));
+                    ClientPlayNetworking.send(new LockoutRemoveTeamPacket(team.teamName()));
                 }).dimensions(x+2, y+2, 10, 10).build();
                 btn.render(context, mouseX, mouseY, delta);
                 clickables.add(btn);
             }
             ButtonWidget btn2 = ButtonWidget.builder(Text.of("+"), (button) -> {
-                this.JoinTeam.accept(team.teamId);
+                this.JoinTeam.accept(team.teamId());
 //                ClientPlayNetworking.send(new LockoutJoinTeamPacket(team.teamId));
             }).dimensions(x+ width - 12, y+2, 10, 10).build();
             btn2.render(context, mouseX, mouseY, delta);
             clickables.add(btn2);
-            TextWidget tw = new TextWidget( x, y+2, width, 10, Text.literal(team.name).withColor(Colors.get(team.teamId)), MinecraftClient.getInstance().textRenderer );
+            TextWidget tw = new TextWidget( x, y+2, width, 10, Text.literal(team.teamName()).withColor(Colors.get(team.teamId())), MinecraftClient.getInstance().textRenderer );
             tw.renderWidget(context, mouseX, mouseY, delta);
             context.fill(x, y+14, x + width, y + 16, 0x88FFFFFF);
 
             // names
             for (int i = 0; i < players.size(); i++) {
-                TeamPlayer player = players.get(i);
+                UTeamPlayer player = players.get(i);
                 TextWidget tw2 = new TextWidget( x+2, y+20 + i*15, width - 4, 10, Text.of(player.getName()), MinecraftClient.getInstance().textRenderer );
                 tw2.renderWidget(context, mouseX, mouseY, delta);
             }
@@ -212,16 +212,21 @@ public class TeamsTab implements Tab {
         @Override
         protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
             clickables.clear();
-            List<LockoutTeam> teams = TeamRegistry.getTeams();
-            for (int i = 0; i < teams.size(); i++) {
-                drawTeamCard(context, mouseX, mouseY, delta, calculateCardX(i), calculateCardY(i), getTeamCardWidth(), getTeamCardHeight(), teams.get(i));
+            try {
+                List<UnitedTeamRegistry.Team> teams = UnitedTeamRegistry.getTeams();
+                for (int i = 0; i < teams.size(); i++) {
+                    drawTeamCard(context, mouseX, mouseY, delta, calculateCardX(i), calculateCardY(i), getTeamCardWidth(), getTeamCardHeight(), teams.get(i));
+                }
+                if(teams.size() < 8) {
+                    this.teamNameField.setVisible(true);
+                    drawNewTeamCard(context, mouseX, mouseY, delta, calculateCardX(teams.size()), calculateCardY(teams.size()), getTeamCardWidth(), getTeamCardHeight());
+                }
+                else {
+                    this.teamNameField.setVisible(false);
+                }
             }
-            if(teams.size() < 8) {
-                this.teamNameField.setVisible(true);
-                drawNewTeamCard(context, mouseX, mouseY, delta, calculateCardX(teams.size()), calculateCardY(teams.size()), getTeamCardWidth(), getTeamCardHeight());
-            }
-            else {
-                this.teamNameField.setVisible(false);
+            catch (Exception e) {
+                e.printStackTrace();
             }
 
         }

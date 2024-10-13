@@ -1,6 +1,9 @@
 package net.abrikoos.lockout_bingo.server.goals;
 
+import com.mojang.authlib.GameProfile;
 import net.abrikoos.lockout_bingo.server.gamestate.GameState;
+import net.abrikoos.lockout_bingo.team.UTeamPlayer;
+import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -63,8 +66,9 @@ public abstract class LockoutGoal {
 
     public void complete(String playername) {
         ServerPlayerEntity player = null;
-        for (ServerPlayerEntity p : GameState.players) {
-            if (p.getName().getString().equals(playername)) {
+
+        for (ServerPlayerEntity p : GameState.players()) {
+            if (p.getName().equals(playername)) {
                 player = p;
                 break;
             }

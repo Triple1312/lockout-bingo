@@ -1,24 +1,21 @@
 package net.abrikoos.lockout_bingo.server.goals;
 
 import net.abrikoos.lockout_bingo.LockoutLogger;
+import net.abrikoos.lockout_bingo.util.BlockoutList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.Identifier;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import static net.abrikoos.lockout_bingo.server.goals.LockoutGoalTag.*;
 
-@Environment(EnvType.CLIENT)
 public class GoalItemRegistry {
-    public List<GoalListItem> items;
+    public BlockoutList<GoalListItem> items;
 
     private static GoalItemRegistry instance;
 
     public GoalItemRegistry() {
-        items = new ArrayList<>();
+        items = new BlockoutList<>();
 
         items.add(new GoalListItem("Opponent obtains crafting table", "An enemy obtains a crafting table", 3, List.of(dont), "no_crafting_table", List.of(Identifier.of("lockout-bingo:goalicon/block/crafting_table.png"))));
         items.add(new GoalListItem("Opponent obtains obsidian", "opponent obtains obsidian", 2, List.of(dont), "no_obsidian", List.of(Identifier.of("lockout-bingo:goalicon/block/obsidian.png"))));
@@ -95,14 +92,14 @@ public class GoalItemRegistry {
 
         // armor goals
         items.add(new GoalListItem("wear a piece of chainmail armor", "", 2, List.of(armor), "wear_chainmail", List.of(Identifier.of("minecraft:textures/item/chainmail_helmet.png"), Identifier.of("minecraft:textures/item/chainmail_chestplate.png"), Identifier.of("minecraft:textures/item/chainmail_leggings.png"), Identifier.of("minecraft:textures/item/chainmail_boots.png"))));
-        items.add(new GoalListItem("wear a full set of leather armor", "", 1, List.of(armor), "wear_full_leather", List.of(Identifier.of("minecraft:textures/item/leather_helmet.png"), Identifier.of("minecraft:textures/item/leather_chestplate.png"), Identifier.of("minecraft:textures/item/leather_leggings.png"), Identifier.of("minecraft:textures/item/leather_boots.png"))));
+        items.add(new GoalListItem("wear a full set of leather armor", "", 1, List.of(armor), "wear_full_leather", List.of(Identifier.of("lockout-bingo:goalicon/item/armor/leather_cap.png"), Identifier.of("lockout-bingo:goalicon/item/armor/leather_chestplate.png"), Identifier.of("lockout-bingo:goalicon/item/armor/leather_pants.png"), Identifier.of("lockout-bingo:goalicon/item/armor/leather_boots.png"))));
         items.add(new GoalListItem("wear a full set of iron armor", "", 3, List.of(armor), "wear_full_iron", List.of(Identifier.of("minecraft:textures/item/iron_helmet.png"), Identifier.of("minecraft:textures/item/iron_chestplate.png"), Identifier.of("minecraft:textures/item/iron_leggings.png"), Identifier.of("minecraft:textures/item/iron_boots.png"))));
         items.add(new GoalListItem("wear a full set of golden armor", "", 4, List.of(armor), "wear_full_golden", List.of(Identifier.of("minecraft:textures/item/golden_helmet.png"), Identifier.of("minecraft:textures/item/golden_chestplate.png"), Identifier.of("minecraft:textures/item/golden_leggings.png"), Identifier.of("minecraft:textures/item/golden_boots.png"))));
         items.add(new GoalListItem("wear a full set of diamond armor", "", 5, List.of(armor), "wear_full_diamond", List.of(Identifier.of("minecraft:textures/item/diamond_helmet.png"), Identifier.of("minecraft:textures/item/diamond_chestplate.png"), Identifier.of("minecraft:textures/item/diamond_leggings.png"), Identifier.of("minecraft:textures/item/diamond_boots.png"))));
         items.add(new GoalListItem("wear a piece of netherite armor", "", 6, List.of(armor), "wear_netherite", List.of(Identifier.of("minecraft:textures/item/netherite_helmet.png"), Identifier.of("minecraft:textures/item/netherite_chestplate.png"), Identifier.of("minecraft:textures/item/netherite_leggings.png"), Identifier.of("minecraft:textures/item/netherite_boots.png"))));
         items.add(new GoalListItem("wear a piece of colored armor", "", 2, List.of(armor), "wear_colored", List.of(Identifier.of("lockout-bingo:goalicon/item/armor/red_leather_cap.png"), Identifier.of("lockout-bingo:goalicon/item/armor/purple_leather_boots.png"), Identifier.of("lockout-bingo:goalicon/item/armor/green_leather_pants.png"), Identifier.of("lockout-bingo:goalicon/item/armor/orange_leather_chestplate.png"))));
-        items.add(new GoalListItem("wear a trimmed armor piece", "", 3, List.of(armor), "wear_trimmed", List.of(Identifier.of("lockout-bingo:goalicon/item/armor/emerald_trimmed_iron_cap.png"), Identifier.of("lockout-bingo:goalicon/item/armor/copper_trimmed_diamond_leggings.png"),Identifier.of("lockout-bingo:goalicon/item/armor/redstone_trimmed_gold_chestplate.png"), Identifier.of("lockout-bingo:goalicon/item/armor/quartz_trimmed_netherite_boots.png")) ));
-        items.add(new GoalListItem("wear a fully trimmed armor set", "", 3, List.of(armor, C4), "wear_trimmed_set", List.of(Identifier.of("lockout-bingo:goalicon/item/armor/emerald_trimmed_iron_cap.png"), Identifier.of("lockout-bingo:goalicon/item/armor/copper_trimmed_diamond_leggings.png"),Identifier.of("lockout-bingo:goalicon/item/armor/redstone_trimmed_gold_chestplate.png"), Identifier.of("lockout-bingo:goalicon/item/armor/quartz_trimmed_netherite_boots.png")) ));
+        items.add(new GoalListItem("wear a trimmed armor piece", "", 3, List.of(armor), "wear_trimmed", List.of(Identifier.of("lockout-bingo:goalicon/item/armor/emerald_trimmed_iron_helmet.png"), Identifier.of("lockout-bingo:goalicon/item/armor/copper_trimmed_diamond_leggings.png"),Identifier.of("lockout-bingo:goalicon/item/armor/redstone_trimmed_gold_chestplate.png"), Identifier.of("lockout-bingo:goalicon/item/armor/quartz_trimmed_netherite_boots.png")) ));
+        items.add(new GoalListItem("wear a fully trimmed armor set", "", 3, List.of(armor, C4), "wear_trimmed_set", List.of(Identifier.of("lockout-bingo:goalicon/item/armor/emerald_trimmed_iron_helmet.png"), Identifier.of("lockout-bingo:goalicon/item/armor/copper_trimmed_diamond_leggings.png"),Identifier.of("lockout-bingo:goalicon/item/armor/redstone_trimmed_gold_chestplate.png"), Identifier.of("lockout-bingo:goalicon/item/armor/quartz_trimmed_netherite_boots.png")) ));
         items.add(new GoalListItem("wear a carved pumpkin for 1 minute", "", 3, List.of(armor), "wear_pumpkin", List.of(Identifier.of("lockout-bingo:goalicon/block/carved_pumpkin")))); // todo change time
 
 
@@ -223,7 +220,7 @@ public class GoalItemRegistry {
         items.add(new GoalListItem("complete 35 advancements", "", 3, List.of(C35, advancement), "adv_35", List.of(Identifier.of("lockout-bingo:goalicon/advancement/challenge_done.png"))));
         // biome goals
         items.add(new GoalListItem("find an ice spikes biome", "", 3, List.of(biomes), "biome_ice_spikes", List.of(Identifier.of("lockout-bingo:goalicon/biome/ice_spikes.png"))));
-        items.add(new GoalListItem("finad a badlands biome", "", 3, List.of(biomes), "biome_badlands", List.of(Identifier.of("lockout-bingo:goalicon/biome/badlands.png"))));
+        items.add(new GoalListItem("find a badlands biome", "", 3, List.of(biomes), "biome_badlands", List.of(Identifier.of("lockout-bingo:goalicon/biome/badlands.png"))));
         items.add(new GoalListItem("find 15 unique biomes", "", 2, List.of(C15, biomes, unique), "biomes_15", List.of(Identifier.of("minecraft:textures/item/diamond_boots.png"))));
         items.add(new GoalListItem("find 20 unique biomes", "", 3, List.of(C20, biomes, unique), "biomes_20", List.of(Identifier.of("minecraft:textures/item/diamond_boots.png"))));
         items.add(new GoalListItem("find 25 unique biomes", "", 4, List.of(C25, biomes, unique), "biomes_25", List.of(Identifier.of("minecraft:textures/item/diamond_boots.png"))));

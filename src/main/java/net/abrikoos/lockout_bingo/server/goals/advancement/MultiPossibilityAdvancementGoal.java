@@ -25,7 +25,7 @@ public class MultiPossibilityAdvancementGoal extends LockoutGoal {
             return "";
         }
         ServerPlayerEntity player = null;
-        for (ServerPlayerEntity p : GameState.players) {
+        for (ServerPlayerEntity p : GameState.players()) {
             if (p.getName().getString().equals(lockoutGoalEvent.puuid)) {
                 player = p;
                 break;

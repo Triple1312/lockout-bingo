@@ -7,6 +7,7 @@ import net.abrikoos.lockout_bingo.server.goals.GoalItemRegistry;
 import net.abrikoos.lockout_bingo.server.goals.GoalListItem;
 import net.abrikoos.lockout_bingo.server.goals.LockoutGoalTag;
 import net.abrikoos.lockout_bingo.network.game.BlackoutStartGameInfo;
+import net.abrikoos.lockout_bingo.util.BlockoutList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +74,7 @@ public class LockoutFinalBuilder extends LockoutRandBuilder {
         }
         // todo I'm ignoring difficulty for now
         // todo I'm ignoring goal count for now
-        LockoutStartGameInfo info = new LockoutStartGameInfo(new ArrayList<>(), new GoalListItem[25], true, System.currentTimeMillis() );
+        LockoutStartGameInfo info = new LockoutStartGameInfo(new BlockoutList<>(), new GoalListItem[25], true, System.currentTimeMillis() );
         for (int i = 0; i < 25; i++) {
             int randomIndex = (int) (Math.random() * items.size());
             GoalListItem goal = items.get(randomIndex);

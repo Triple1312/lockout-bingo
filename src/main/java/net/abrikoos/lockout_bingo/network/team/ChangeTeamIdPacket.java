@@ -1,6 +1,7 @@
 package net.abrikoos.lockout_bingo.network.team;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
@@ -16,15 +17,15 @@ public record ChangeTeamIdPacket(int oldIndex, int newIndex) implements CustomPa
 
 
 
-    public final static PacketCodec<ByteBuf, ChangeTeamIdPacket> PACKET_CODEC = new PacketCodec<ByteBuf, ChangeTeamIdPacket>() {
+    public final static PacketCodec<RegistryByteBuf, ChangeTeamIdPacket> PACKET_CODEC = new PacketCodec<RegistryByteBuf, ChangeTeamIdPacket>() {
         @Override
-        public void encode(ByteBuf buf, ChangeTeamIdPacket value) {
+        public void encode(RegistryByteBuf buf, ChangeTeamIdPacket value) {
             buf.writeByte(value.oldIndex);
             buf.writeByte(value.newIndex);
         }
 
         @Override
-        public ChangeTeamIdPacket decode(ByteBuf byteBuf) {
+        public ChangeTeamIdPacket decode(RegistryByteBuf byteBuf) {
             return new ChangeTeamIdPacket(byteBuf.readByte(), byteBuf.readByte());
         }
     };

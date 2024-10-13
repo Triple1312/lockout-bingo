@@ -2,15 +2,13 @@ package net.abrikoos.lockout_bingo.client;
 
 import net.abrikoos.lockout_bingo.client.gui.LockoutScreens;
 import net.abrikoos.lockout_bingo.client.gui.screens.CompleteFullScreenState;
-import net.abrikoos.lockout_bingo.client.gui.screens.ScreenScreen;
 import net.abrikoos.lockout_bingo.client.modes.lockout.Lockout;
 import net.abrikoos.lockout_bingo.network.game.LockoutStartGameInfo;
 import net.abrikoos.lockout_bingo.network.game.LockoutUpdateBoardInfo;
 import net.abrikoos.lockout_bingo.server.goals.GoalListItem;
-import net.abrikoos.lockout_bingo.team.LockoutTeam;
-import net.abrikoos.lockout_bingo.team.PlayerTeamRegistry;
-import net.abrikoos.lockout_bingo.team.TeamPlayer;
-import net.abrikoos.lockout_bingo.team.TeamRegistry;
+import net.abrikoos.lockout_bingo.team.UTeamPlayer;
+import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
+import net.abrikoos.lockout_bingo.util.BlockoutList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -18,6 +16,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
+import java.util.UUID;
 
 @Environment(EnvType.CLIENT)
 public class ClientGameState {
@@ -49,11 +48,11 @@ public class ClientGameState {
         return gameState != null;
     }
 
-    public static List<GoalListItem> getGoals() {
+    public static BlockoutList<GoalListItem> getGoals() {
         return gameState.getGoals();
     }
 
-    public static List<LockoutTeam> getTeams() {
+    public static BlockoutList<UnitedTeamRegistry.Team> getTeams() {
         return gameState.getTeams();
     }
 
@@ -66,8 +65,8 @@ public class ClientGameState {
     }
 
     public static int getTeamScore(String teamName) {
-        assert TeamRegistry.getTeamString(teamName) != null;
-        return getTeamScore(TeamRegistry.getTeamString(teamName).teamId);
+        int teamIndex = getTeams().firstIndexWhere(team -> team.teamName() == teamName);
+        return gameState.getScores().get(teamIndex);
     }
 
     public static int getTeamScore(int teamIndex) {
@@ -77,7 +76,7 @@ public class ClientGameState {
         int score = 0;
         for (String goal : gameState.lubi.goals) {
             if (goal != null) {
-                TeamPlayer player = PlayerTeamRegistry.getPlayerByUUID(goal);
+                UTeamPlayer player = UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(goal));
                 if (player == null) {
                     continue;
                 } else if ( player.teamIndex == teamIndex) {
@@ -102,7 +101,7 @@ public class ClientGameState {
                 client.player.playSound(SoundEvent.of(Identifier.of("lockout-bingo:race_start")));
                 nextCountDownEvent = 0;
             }
-            if (countDownTime == 0) {
+            if (countDownTime <= 0) {
                 boardTimeOver = true;
                 MinecraftClient.getInstance().setScreen(null);
             }

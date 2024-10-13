@@ -1,23 +1,23 @@
 package net.abrikoos.lockout_bingo.client.gui.widget;
 
 import net.abrikoos.lockout_bingo.team.Colors;
-import net.abrikoos.lockout_bingo.team.LockoutTeam;
 import net.abrikoos.lockout_bingo.network.game.BlackoutStartGameInfo;
 import net.abrikoos.lockout_bingo.network.game.LockoutUpdateBoardInfo;
-import net.abrikoos.lockout_bingo.team.PlayerTeamRegistry;
+import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
 import java.util.List;
+import java.util.UUID;
 
 
 public class BoardWidget {
 
     public final BlackoutStartGameInfo lsgi;
     public LockoutUpdateBoardInfo lubi;
-    public List<LockoutTeam> teams;
+    public List<UnitedTeamRegistry.Team> teams;
 
     public BoardWidget(BlackoutStartGameInfo lsgi) {
         this.lsgi = lsgi;
@@ -55,10 +55,10 @@ public class BoardWidget {
                 if (lubi.goals[i] == null || lubi.goals[i].equals("00000000-0000-0000-0000-000000000000")) {
 
                 }
-                else if (PlayerTeamRegistry.getPlayerByUUID(lubi.goals[i]).teamIndex == lsgi.teamIndexes.get(0)) {
+                else if (UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(lubi.goals[i])).teamIndex == lsgi.teamIndexes.get(0)) {
                     t1++;
                 }
-                else if (PlayerTeamRegistry.getPlayerByUUID(lubi.goals[i]).teamIndex == lsgi.teamIndexes.get(1)) {
+                else if (UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(lubi.goals[i])).teamIndex == lsgi.teamIndexes.get(1)) {
                     t2++;
                 }
             }

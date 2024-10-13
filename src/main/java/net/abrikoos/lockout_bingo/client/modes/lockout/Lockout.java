@@ -4,28 +4,27 @@ import net.abrikoos.lockout_bingo.server.goals.GoalListItem;
 import net.abrikoos.lockout_bingo.client.modes.LockoutGame;
 import net.abrikoos.lockout_bingo.network.game.LockoutStartGameInfo;
 import net.abrikoos.lockout_bingo.network.game.LockoutUpdateBoardInfo;
-import net.abrikoos.lockout_bingo.team.LockoutTeam;
-import net.abrikoos.lockout_bingo.team.TeamRegistry;
+import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
+import net.abrikoos.lockout_bingo.util.BlockoutList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 public class Lockout extends LockoutGame {
     public LockoutStartGameInfo lsgi;
-    public List<LockoutTeam> teams;
+    public BlockoutList<UnitedTeamRegistry.Team> teams;
     public LockoutUpdateBoardInfo lubi;
 
     public Lockout(LockoutStartGameInfo lsgi) {
         this.lsgi = lsgi;
-        this.teams = new ArrayList<>();
-        for (int i = 0; i < lsgi.teams.size(); i++) {
-            teams.add(TeamRegistry.getTeamString(lsgi.teams.get(i).name()));
-        }
+        this.teams = UnitedTeamRegistry.getTeams().where(t-> lsgi.teams.any( u-> Objects.equals(u.name(), t.teamName())));
     }
 
     @Override
-    public List<GoalListItem> getGoals() {
-        return List.of(lsgi.goals);
+    public BlockoutList<GoalListItem> getGoals() {
+        return new BlockoutList<>(List.of(lsgi.goals));
     }
 
     public LockoutUpdateBoardInfo latestUpdate() {
@@ -38,22 +37,16 @@ public class Lockout extends LockoutGame {
     }
 
     @Override
-    public List<LockoutTeam> getTeams() {
+    public BlockoutList<UnitedTeamRegistry.Team> getTeams() {
         return teams;
     }
 
     @Override
-    public List<Integer> getScores() {
-        List<Integer> scores = new ArrayList<>();
-        for (LockoutTeam team : teams) {
-            int score = 0;
-            for (String uuid : lubi.goals) {
-                if (team.playeruuids.contains(uuid)) {
-                    score++;
-                }
-            }
-            scores.add(score);
-        }
-        return scores;
+    public BlockoutList<Integer> getScores() {
+        BlockoutList<String> goals = new BlockoutList<>(List.of(lubi.goals));
+        return teams.fold(new BlockoutList<>(), (s, t) -> {
+            s.add(goals.where( g-> UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(g)).teamIndex == t.teamId()).size());
+            return s;
+        });
     }
 }

@@ -9,10 +9,11 @@ import net.abrikoos.lockout_bingo.client.gui.widget.CompassesWidget;
 import net.abrikoos.lockout_bingo.client.modes.LockoutGame;
 import net.abrikoos.lockout_bingo.network.compass.PlayersPositionPacket;
 import net.abrikoos.lockout_bingo.network.game.*;
-import net.abrikoos.lockout_bingo.network.team.AllTeamsPacket;
-import net.abrikoos.lockout_bingo.team.LockoutTeam;
-import net.abrikoos.lockout_bingo.team.PlayerTeamRegistry;
-import net.abrikoos.lockout_bingo.team.TeamController;
+//import net.abrikoos.lockout_bingo.team.LockoutTeam;
+//import net.abrikoos.lockout_bingo.team.PlayerTeamRegistry;
+//import net.abrikoos.lockout_bingo.team.TeamController;
+import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
+import net.abrikoos.lockout_bingo.util.BlockoutList;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -75,22 +76,29 @@ public class LockoutBingoClient implements ClientModInitializer {
             });
         }));
 
+        ClientPlayNetworking.registerGlobalReceiver(UnitedTeamRegistry.ID, ((payload, context) -> {
+            context.client().execute(() -> {
+                UnitedTeamRegistry.update(payload);
+            });
+        }));
+
         ClientPlayNetworking.registerGlobalReceiver(LockoutUpdateBoardPacket.ID, ((payload, context) -> {
             context.client().execute(() -> {
                 MinecraftClient client = MinecraftClient.getInstance();
                 LockoutUpdateBoardInfo boardInfo = payload.goalboard();
                 assert client.player != null;
                 LockoutUpdateBoardInfo old = ClientGameState.latestUpdate();
-                List<LockoutTeam> teams = ClientGameState.getTeams();
-                int t1old = ClientGameState.getTeamScore(teams.get(0).teamId);
-                int t2old = ClientGameState.getTeamScore(teams.get(1).teamId);
+                BlockoutList<UnitedTeamRegistry.Team> teams = ClientGameState.getTeams();
+                int t1old = ClientGameState.getTeamScore(teams.get(0).teamId());
+                int t2old = ClientGameState.getTeamScore(teams.get(1).teamId());
                 ClientGameState.updateBoard(boardInfo);
-                int t1new = ClientGameState.getTeamScore(teams.get(0).teamId);
-                int t2new = ClientGameState.getTeamScore(teams.get(1).teamId);
+                int t1new = ClientGameState.getTeamScore(teams.get(0).teamId());
+                int t2new = ClientGameState.getTeamScore(teams.get(1).teamId());
                 boolean t1goal = t1new > t1old;
                 boolean t2goal = t2new > t2old;
-                boolean team1 = PlayerTeamRegistry.getTeamIndex(client.player.getUuidAsString()) == teams.get(0).teamId;
-                boolean team2 = PlayerTeamRegistry.getTeamIndex(client.player.getUuidAsString()) == teams.get(1).teamId;
+                boolean team1 = UnitedTeamRegistry.getTeamPlayerByUUID(client.player.getUuid()).teamIndex == teams.get(0).teamId();
+                boolean team2 = UnitedTeamRegistry.getTeamPlayerByUUID(client.player.getUuid()).teamIndex == teams.get(1).teamId();
+
                 if (t1goal) {
                     if (team1) {
                         client.player.playSound(SoundEvent.of(Identifier.of("lockout-bingo:goal_success")));
@@ -110,6 +118,41 @@ public class LockoutBingoClient implements ClientModInitializer {
                 else {
                     client.player.playSound(SoundEvent.of(Identifier.of("lockout-bingo:goal_complete")));
                 }
+
+
+//                MinecraftClient client = MinecraftClient.getInstance();
+//                LockoutUpdateBoardInfo boardInfo = payload.goalboard();
+//                assert client.player != null;
+//                LockoutUpdateBoardInfo old = ClientGameState.latestUpdate();
+//                List<LockoutTeam> teams = ClientGameState.getTeams();
+//                int t1old = ClientGameState.getTeamScore(teams.get(0).teamId);
+//                int t2old = ClientGameState.getTeamScore(teams.get(1).teamId);
+//                ClientGameState.updateBoard(boardInfo);
+//                int t1new = ClientGameState.getTeamScore(teams.get(0).teamId);
+//                int t2new = ClientGameState.getTeamScore(teams.get(1).teamId);
+//                boolean t1goal = t1new > t1old;
+//                boolean t2goal = t2new > t2old;
+//                boolean team1 = PlayerTeamRegistry.getTeamIndex(client.player.getUuidAsString()) == teams.get(0).teamId;
+//                boolean team2 = PlayerTeamRegistry.getTeamIndex(client.player.getUuidAsString()) == teams.get(1).teamId;
+//                if (t1goal) {
+//                    if (team1) {
+//                        client.player.playSound(SoundEvent.of(Identifier.of("lockout-bingo:goal_success")));
+//                    }
+//                    else if (team2) {
+//                        client.player.playSound(SoundEvent.of(Identifier.of("lockout-bingo:goal_fail")));
+//                    }
+//                }
+//                else if (t2goal) {
+//                    if (team2) {
+//                        client.player.playSound(SoundEvent.of(Identifier.of("lockout-bingo:goal_success")));
+//                    }
+//                    else if (team1) {
+//                        client.player.playSound(SoundEvent.of(Identifier.of("lockout-bingo:goal_fail")));
+//                    }
+//                }
+//                else {
+//                    client.player.playSound(SoundEvent.of(Identifier.of("lockout-bingo:goal_complete")));
+//                }
             });
         }));
 
@@ -135,22 +178,22 @@ public class LockoutBingoClient implements ClientModInitializer {
             });
         }));
 
-        ClientPlayNetworking.registerGlobalReceiver(AllTeamsPacket.ID,  ((payload, context) -> {
-            context.client().execute(() -> {
-                MinecraftClient client = MinecraftClient.getInstance();
-                TeamController.setAllTeams(payload.teams());
+//        ClientPlayNetworking.registerGlobalReceiver(AllTeamsPacket.ID,  ((payload, context) -> {
+//            context.client().execute(() -> {
+//                MinecraftClient client = MinecraftClient.getInstance();
+//                TeamController.setAllTeams(payload.teams());
+//
+////                LockoutScreens.setTeams(payload.teamnames()); // todo
+//            });
+//        }));
 
-//                LockoutScreens.setTeams(payload.teamnames()); // todo
-            });
-        }));
-
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            PlayerTeamRegistry.updatePlayers();
-        });
-
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-            PlayerTeamRegistry.updatePlayers();
-        });
+//        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+//            PlayerTeamRegistry.updatePlayers();
+//        });
+//
+//        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+//            PlayerTeamRegistry.updatePlayers();
+//        });
 
 
         KeyBinding openBoardScreenKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(

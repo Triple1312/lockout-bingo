@@ -3,6 +3,7 @@ package net.abrikoos.lockout_bingo.network.game;
 import net.abrikoos.lockout_bingo.server.goals.GoalItemRegistry;
 import net.abrikoos.lockout_bingo.server.goals.GoalListItem;
 import net.abrikoos.lockout_bingo.client.modes.team.LockoutTeamDataClass;
+import net.abrikoos.lockout_bingo.util.BlockoutList;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 
@@ -12,12 +13,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class LockoutStartGameInfo {
-    public List<LockoutTeamDataClass> teams;
+    public BlockoutList<LockoutTeamDataClass> teams;
     public final GoalListItem[] goals;
     public boolean freeze = false;
     public long startTime;
 
-    public LockoutStartGameInfo(List<LockoutTeamDataClass> teams, GoalListItem[] goals, boolean freeze, long startTime) {
+    public LockoutStartGameInfo(BlockoutList<LockoutTeamDataClass> teams, GoalListItem[] goals, boolean freeze, long startTime) {
         this.teams = teams;
         this.goals = goals;
         this.freeze = freeze;
@@ -55,7 +56,7 @@ public class LockoutStartGameInfo {
             byte[] bytes = new byte[buf.readableBytes()];
             buf.readBytes(bytes);
             int counter = 0;
-            List<LockoutTeamDataClass> teams = new ArrayList<>();
+            BlockoutList<LockoutTeamDataClass> teams = new BlockoutList<>();
 
             int teamcount = bytes[counter];
             counter++;

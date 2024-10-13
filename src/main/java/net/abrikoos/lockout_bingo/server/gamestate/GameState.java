@@ -4,7 +4,6 @@ import net.abrikoos.lockout_bingo.LockoutLogger;
 import net.abrikoos.lockout_bingo.client.modes.team.LockoutTeamDataClass;
 import net.abrikoos.lockout_bingo.item.LockoutModItems;
 import net.abrikoos.lockout_bingo.server.builder.LockoutFinalBuilder;
-import net.abrikoos.lockout_bingo.server.builder.LockoutRandBuilder;
 import net.abrikoos.lockout_bingo.server.goals.LockoutGoal;
 import net.abrikoos.lockout_bingo.server.goals.LockoutGoalEvent;
 import net.abrikoos.lockout_bingo.server.listeners.*;
@@ -13,9 +12,8 @@ import net.abrikoos.lockout_bingo.network.compass.CompassPlayerPosition;
 import net.abrikoos.lockout_bingo.network.compass.PlayersPositionPacket;
 import net.abrikoos.lockout_bingo.network.game.*;
 import net.abrikoos.lockout_bingo.team.Colors;
-import net.abrikoos.lockout_bingo.team.LockoutTeam;
-import net.abrikoos.lockout_bingo.network.team.AllTeamsPacket;
-import net.abrikoos.lockout_bingo.team.PlayerTeamRegistry;
+import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
+import net.abrikoos.lockout_bingo.util.BlockoutList;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.advancement.PlayerAdvancementTracker;
@@ -30,18 +28,17 @@ import net.minecraft.stat.Stat;
 import net.minecraft.stat.StatHandler;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 
 public class GameState {
 
-    public static List<LockoutTeam> teams = new ArrayList<>();
-
-    public static List<ServerPlayerEntity> players = new ArrayList<>();
+//    public static List<LockoutTeam> teams = new ArrayList<>();
+//
+//    public static List<ServerPlayerEntity> players = new ArrayList<>();
 
     public static List<LockoutGoal> goals = new ArrayList<>();
 
@@ -55,8 +52,9 @@ public class GameState {
 
 
     public static void playerServerJoin(ServerPlayerEntity player) {
-        players.add(player);
-        ServerPlayNetworking.send(player, new AllTeamsPacket(teams));
+        UnitedTeamRegistry.addPlayer(player);
+//        UnitedTeamRegistry.sendState(player);
+        UnitedTeamRegistry.sendState(player);
         if (inGame()) {
             ServerPlayNetworking.send(player, new LockoutStartGamePacket(new LockoutStartGameInfo(info.teams, info.goals, false, System.currentTimeMillis())));
             ServerPlayNetworking.send(player, new LockoutUpdateBoardPacket(getBoard()));
@@ -64,118 +62,94 @@ public class GameState {
     }
 
     public static void playerServerLeave(ServerPlayerEntity player) {
-        players.remove(player);
+        UnitedTeamRegistry.disconnectPlayer(player.getUuid());
     }
 
-    public static void playerJoinTeam(String player, int team) {
-        for (LockoutTeam t : teams) {
-            if (t.playeruuids.contains(player)) {
-                t.removePlayer(player);
-            }
-            if (t.teamId == team) {
-                t.addPlayer(player);
-            }
-        }
-
-        AllTeamsPacket packet = new AllTeamsPacket(teams);
-        for (ServerPlayerEntity plr : players) {
-            ServerPlayNetworking.send(plr, packet);
-        }
+    public static void playerJoinTeam(String puuid, int team) {
+        UnitedTeamRegistry.playerJoinTeam(UUID.fromString(puuid), team);
+//        for (ServerPlayerEntity plr : server.getPlayerManager().getPlayerList()) {
+//            UnitedTeamRegistry.sendState(plr);
+//        }
     }
 
     public static void playerJoinTeam(ServerPlayerEntity player, int team) {
-        if (!players.contains(player)) {
-            players.add(player);
-        }
-        for (LockoutTeam t : teams) {
-            if (t.playeruuids.contains(player.getUuidAsString())) {
-                t.removePlayer(player.getUuidAsString());
-            }
-            if (t.teamId == team) {
-                t.addPlayer(player.getUuidAsString());
-            }
-        }
+        UnitedTeamRegistry.playerJoinTeam(player.getUuid(), team);
+//        for (ServerPlayerEntity plr : server.getPlayerManager().getPlayerList()) {
+//            UnitedTeamRegistry.sendState(plr);
+//        }
+    }
 
-        AllTeamsPacket packet = new AllTeamsPacket(teams);
-        for (ServerPlayerEntity plr : players) {
-            ServerPlayNetworking.send(plr, packet);
-        }
+    public static List<ServerPlayerEntity> players() {
+        return server.getPlayerManager().getPlayerList();
     }
 
     public static void addTeam(String name) {
-        List<String> teamnames = new ArrayList<>();
-        for (LockoutTeam team : teams) {
-            teamnames.add(team.name);
-            if (team.name.equals(name)) {
-                return;
-            }
+        try {
+            UnitedTeamRegistry.addTeam(name);
         }
+        catch (Exception e) {
 
-
-        int id = 1;
-        for (int i = 1; i < 11; i++) {
-            boolean found = false;
-            for (LockoutTeam team : teams) {
-                if (team.teamId == i) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                id = i;
-                break;
-            }
         }
-
-
-        LockoutTeam team = new LockoutTeam(name, id);
-        teams.add(team);
-        AllTeamsPacket packet = new AllTeamsPacket(teams);
-        for (ServerPlayerEntity player : players) {
-            ServerPlayNetworking.send(player, packet);
-        }
+//        List<String> teamnames = new ArrayList<>();
+//        for (LockoutTeam team : teams) {
+//            teamnames.add(team.name);
+//            if (team.name.equals(name)) {
+//                return;
+//            }
+//        }
+//
+//
+//        int id = 1;
+//        for (int i = 1; i < 11; i++) {
+//            boolean found = false;
+//            for (LockoutTeam team : teams) {
+//                if (team.teamId == i) {
+//                    found = true;
+//                    break;
+//                }
+//            }
+//            if (!found) {
+//                id = i;
+//                break;
+//            }
+//        }
+//
+//
+//        LockoutTeam team = new LockoutTeam(name, id);
+//        teams.add(team);
+//        AllTeamsPacket packet = new AllTeamsPacket(teams);
+//        for (ServerPlayerEntity player : players) {
+//            ServerPlayNetworking.send(player, packet);
+//        }
     }
 
     public static void removeTeam(String name) {
-        for (LockoutTeam team : teams) {
-            if (team.name.equals(name)) {
-                teams.remove(team);
-                AllTeamsPacket packet = new AllTeamsPacket(teams);
-                for (ServerPlayerEntity player : players) {
-                    ServerPlayNetworking.send(player, packet);
-                }
-                return;
-            }
-        }
+        UnitedTeamRegistry.removeTeam(name);
     }
 
-    public static void sendAllTeams() {
-        AllTeamsPacket packet = new AllTeamsPacket(teams);
-        for (ServerPlayerEntity player : players) {
-            ServerPlayNetworking.send(player, packet);
-        }
-    }
+//    public static void sendAllTeams() {
+//        AllTeamsPacket packet = new AllTeamsPacket(teams);
+//        for (ServerPlayerEntity player : players) {
+//            ServerPlayNetworking.send(player, packet);
+//        }
+//    }
 
-    public static LockoutTeam getTeam(int teamindex) {
-        for (LockoutTeam team : teams) {
-            if (team.teamId == teamindex) {
-                return team;
-            }
-        }
-        return null;
+    public static UnitedTeamRegistry.Team getTeam(int teamindex) {
+        return UnitedTeamRegistry.getTeam(teamindex);
     }
 
     public static void changeTeamId(int teamindex, int newId) {
-        LockoutTeam team = getTeam(teamindex);
-        LockoutTeam checkTeam = getTeam(newId);
-        if (checkTeam!= null) {
-            return;
-        }
-        if (team == null) {
-            return;
-        }
-        team.teamId = newId;
-        sendAllTeams();
+        UnitedTeamRegistry.changeTeamIndex(teamindex, newId);
+//        LockoutTeam team = getTeam(teamindex);
+//        LockoutTeam checkTeam = getTeam(newId);
+//        if (checkTeam!= null) {
+//            return;
+//        }
+//        if (team == null) {
+//            return;
+//        }
+//        team.teamId = newId;
+//        sendAllTeams();
     }
 
     public static void goalComplete(String playerName, int goal) {
@@ -196,7 +170,7 @@ public class GameState {
         goals = builder.buildBoard(Arrays.asList(li.goals));
         for (int teamindex : packet.teams()) {
             assert getTeam(teamindex) != null;
-            li.teams.add(new LockoutTeamDataClass(getTeam(teamindex).name, getTeam(teamindex).playeruuids));
+            li.teams.add(new LockoutTeamDataClass(getTeam(teamindex).teamName(), UnitedTeamRegistry.getTeamPlayers(teamindex).fold(new BlockoutList<String>(), (s, t) -> {s.add(t.getName()); return s;})));
         }
         info = li;
 
@@ -205,7 +179,7 @@ public class GameState {
             goal.subscribe(GameState::onGoalComplete);
         }
 
-        for (ServerPlayerEntity player : players) {
+        for (ServerPlayerEntity player : players()) {
             player.getInventory().clear();
 //            player.giveItemStack(LockoutModItems.PLAYER_TRACKING_COMPASS.getDefaultStack());
 
@@ -228,7 +202,7 @@ public class GameState {
         }
 
         LockoutStartGamePacket pt = new LockoutStartGamePacket(li);
-        for (ServerPlayerEntity player : players) {
+        for (ServerPlayerEntity player : players()) {
             ServerPlayNetworking.send(player, pt);
         }
     }
@@ -263,13 +237,14 @@ public class GameState {
 //        }
         LockoutUpdateBoardInfo update = getBoard();
         LockoutUpdateBoardPacket packet = new LockoutUpdateBoardPacket(update);
-        for (ServerPlayerEntity player : players) {
+        String playerName = getPlayerByUUID(event.puuid).getName().getString();
+        for (ServerPlayerEntity player : players()) {
             ServerPlayNetworking.send(player, packet);
             player.sendMessage(
                     Text.empty().append("Goal \"")
                         .append(Text.literal(GameState.goals.get(event.goalId).name()))
                         .append("\" completed by ")
-                        .append(Text.literal(PlayerTeamRegistry.getPlayerByUUID(event.puuid).getName()).withColor(Colors.getPlayerColor(event.puuid))),
+                        .append(Text.literal(playerName).withColor(Colors.getPlayerColor(event.puuid))),
                     false);
         }
         return "";
@@ -345,6 +320,15 @@ public class GameState {
                 ServerPlayNetworking.send(player, new PlayersPositionPacket(pos));
             }
         }
+    }
+
+    public static @Nullable ServerPlayerEntity getPlayerByUUID(String uuid) {
+        for (ServerPlayerEntity p : players()) {
+            if (Objects.equals(p.getUuidAsString(), uuid)) {
+                return p;
+            }
+        }
+        return null;
     }
 
 

@@ -2,6 +2,7 @@ package net.abrikoos.lockout_bingo.server.goals.advancement;
 
 import net.abrikoos.lockout_bingo.server.goals.LockoutGoal;
 import net.abrikoos.lockout_bingo.server.listeners.AdvancementListener;
+import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.advancement.AdvancementProgress;

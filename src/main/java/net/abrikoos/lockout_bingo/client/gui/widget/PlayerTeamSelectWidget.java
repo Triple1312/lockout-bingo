@@ -2,14 +2,10 @@ package net.abrikoos.lockout_bingo.client.gui.widget;
 
 import net.abrikoos.lockout_bingo.network.team.ChangeTeamIdPacket;
 import net.abrikoos.lockout_bingo.team.Colors;
-import net.abrikoos.lockout_bingo.team.LockoutTeam;
-import net.abrikoos.lockout_bingo.team.TeamPlayer;
-import net.abrikoos.lockout_bingo.team.TeamRegistry;
+import net.abrikoos.lockout_bingo.team.UTeamPlayer;
+import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.world.CreateWorldScreen;
-import net.minecraft.client.gui.screen.world.SelectWorldScreen;
-import net.minecraft.client.gui.tab.GridScreenTab;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.GridWidget;
 import net.minecraft.client.gui.widget.TextWidget;
@@ -17,9 +13,9 @@ import net.minecraft.text.Text;
 
 public class PlayerTeamSelectWidget extends GridWidget {
 
-    public PlayerTeamSelectWidget(TeamPlayer player) {
+    public PlayerTeamSelectWidget(UTeamPlayer player) {
         super();
-        GridWidget.Adder adder = this.setColumnSpacing(4).setRowSpacing(8).createAdder(TeamRegistry.getTeams().size() +2);
+        GridWidget.Adder adder = this.setColumnSpacing(4).setRowSpacing(8).createAdder(UnitedTeamRegistry.getTeams().size() +2);
         MinecraftClient client = MinecraftClient.getInstance();
         if (player.teamIndex == 0) {
             adder.add(
@@ -48,15 +44,15 @@ public class PlayerTeamSelectWidget extends GridWidget {
 
 
         // add all team buttons
-        for (int i = 0; i < TeamRegistry.getTeams().size(); i++) {
+        for (int i = 0; i < UnitedTeamRegistry.getTeams().size(); i++) {
             int finalI = i;
-            LockoutTeam team = TeamRegistry.getTeams().get(i);
+            UnitedTeamRegistry.Team team = UnitedTeamRegistry.getTeams().get(i);
             ColoredButton tsbtn = adder.add(
                     ColoredButton.builderc(
                             Text.of(""), btn -> {
-                                ClientPlayNetworking.send(new ChangeTeamIdPacket(player.teamIndex, team.teamId));
+                                ClientPlayNetworking.send(new ChangeTeamIdPacket(player.teamIndex, team.teamId()));
                             }
-                    ).width(20).color(Colors.get(team.teamId)).build()
+                    ).width(20).color(Colors.get(team.teamId())).build()
             );
 
             if(i == player.teamIndex) {

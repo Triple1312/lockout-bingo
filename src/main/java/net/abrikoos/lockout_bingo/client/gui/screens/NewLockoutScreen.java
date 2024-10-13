@@ -5,8 +5,7 @@ import net.abrikoos.lockout_bingo.client.gui.screens.tabscreen.LockoutTabManager
 import net.abrikoos.lockout_bingo.client.gui.screens.tabscreen.LockoutTabNavigationWidget;
 import net.abrikoos.lockout_bingo.network.game.CreateLockoutPacket;
 import net.abrikoos.lockout_bingo.team.Colors;
-import net.abrikoos.lockout_bingo.team.LockoutTeam;
-import net.abrikoos.lockout_bingo.team.TeamRegistry;
+import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -135,7 +134,7 @@ public class NewLockoutScreen extends Screen {
         }
 
         ClientPlayNetworking.send(new CreateLockoutPacket(
-                Arrays.asList(mainTab.team1.getValue().teamId, mainTab.team2.getValue().teamId),
+                Arrays.asList(mainTab.team1.getValue().teamId(), mainTab.team2.getValue().teamId()),
                 difficulty,
                 goalCount,
                 goalTypes,
@@ -183,8 +182,8 @@ public class NewLockoutScreen extends Screen {
 
     class MainTab extends GridScreenTab {
         NewLockoutScreen parent;
-        CyclingButtonWidget<LockoutTeam> team1;
-        CyclingButtonWidget<LockoutTeam> team2;
+        CyclingButtonWidget<UnitedTeamRegistry.Team> team1;
+        CyclingButtonWidget<UnitedTeamRegistry.Team> team2;
         CyclingButtonWidget<Integer> difficulty;
         CyclingButtonWidget<Integer> goalCount;
 
@@ -193,15 +192,15 @@ public class NewLockoutScreen extends Screen {
             this.parent = parent;
             GridWidget.Adder adder = this.grid.setRowSpacing(8).setColumnSpacing(10).createAdder(2);
             Positioner positioner = adder.copyPositioner();
-            if (TeamRegistry.getTeams().size() < 2) {
+            if (UnitedTeamRegistry.getTeams().size() < 2) {
                 adder.add(new TextWidget(Text.of("Not enough teams"), MinecraftClient.getInstance().textRenderer), 2, positioner.alignHorizontalCenter() );
             }
             else {
-                team1 = CyclingButtonWidget.<LockoutTeam>builder(
-                        team -> Text.literal(team.name).withColor(Colors.get(team.teamId))).values(TeamRegistry.getTeams()).build(Text.of("Team 1"), (buttonWidget, val) -> {updateUI();}
+                team1 = CyclingButtonWidget.<UnitedTeamRegistry.Team>builder(
+                        team -> Text.literal(team.teamName()).withColor(Colors.get(team.teamId()))).values(UnitedTeamRegistry.getTeams()).build(Text.of("Team 1"), (buttonWidget, val) -> {updateUI();}
                 );
-                team2 = CyclingButtonWidget.<LockoutTeam>builder(
-                        team -> Text.literal(team.name).withColor(Colors.get(team.teamId))).values(TeamRegistry.getTeams()).build(Text.of("Team 2"), (buttonWidget, val) -> {updateUI();}
+                team2 = CyclingButtonWidget.<UnitedTeamRegistry.Team>builder(
+                        team -> Text.literal(team.teamName()).withColor(Colors.get(team.teamId()))).values(UnitedTeamRegistry.getTeams()).build(Text.of("Team 2"), (buttonWidget, val) -> {updateUI();}
                 );
                 adder.add(team1);
                 adder.add(team2);

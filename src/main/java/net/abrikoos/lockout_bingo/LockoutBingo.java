@@ -1,7 +1,6 @@
 package net.abrikoos.lockout_bingo;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import net.abrikoos.lockout_bingo.server.gamestate.GameState;
 import net.abrikoos.lockout_bingo.item.LockoutModItems;
 import net.abrikoos.lockout_bingo.server.listeners.EntityKillListener;
@@ -10,19 +9,19 @@ import net.abrikoos.lockout_bingo.server.listeners.TickListener;
 import net.abrikoos.lockout_bingo.network.compass.PlayersPositionPacket;
 import net.abrikoos.lockout_bingo.network.game.*;
 import net.abrikoos.lockout_bingo.network.team.*;
+import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.client.gui.screen.ingame.BookEditScreen;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.item.BookItem;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
@@ -38,7 +37,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 
 public class LockoutBingo implements ModInitializer {
@@ -50,17 +48,15 @@ public class LockoutBingo implements ModInitializer {
 	public static EntityKillListener entityKillListener = new EntityKillListener();
 
 
-
-
-
 	@Override
 	public void onInitialize() {
 		PayloadTypeRegistry.playS2C().register(BlackoutStartGamePacket.ID, BlackoutStartGamePacket.CODEC);
 		PayloadTypeRegistry.playS2C().register(LockoutUpdateBoardPacket.ID, LockoutUpdateBoardPacket.CODEC);
-		PayloadTypeRegistry.playS2C().register(AllTeamsPacket.ID, AllTeamsPacket.PACKET_CODEC);
+//		PayloadTypeRegistry.playS2C().register(AllTeamsPacket.ID, AllTeamsPacket.PACKET_CODEC);
 		PayloadTypeRegistry.playS2C().register(LockoutStartGamePacket.ID, LockoutStartGamePacket.CODEC);
 		PayloadTypeRegistry.playS2C().register(PlayersPositionPacket.ID, PlayersPositionPacket.CODEC);
 		PayloadTypeRegistry.playC2S().register(ChangeTeamIdPacket.ID, ChangeTeamIdPacket.PACKET_CODEC);
+		PayloadTypeRegistry.playS2C().register(UnitedTeamRegistry.ID, UnitedTeamRegistry.PACKET_CODEC);
 
 
 		PayloadTypeRegistry.playC2S().register(LockoutAddTeamPacket.ID, LockoutAddTeamPacket.PACKET_CODEC);
@@ -79,6 +75,11 @@ public class LockoutBingo implements ModInitializer {
 				return 1;
 			}));
 		});
+
+		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
+			// sends every team update
+			UnitedTeamRegistry.subscribe(u -> GameState.players().forEach(UnitedTeamRegistry::sendState));
+		}
 
 		ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarted);
 
@@ -101,6 +102,7 @@ public class LockoutBingo implements ModInitializer {
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			GameState.playerServerJoin(handler.getPlayer());
 		});
+
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
 			GameState.playerServerLeave(handler.getPlayer());
 		});

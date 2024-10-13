@@ -2,7 +2,7 @@ package net.abrikoos.lockout_bingo.client.gui.widget;
 
 import net.abrikoos.lockout_bingo.network.compass.CompassPlayerPosition;
 import net.abrikoos.lockout_bingo.team.Colors;
-import net.abrikoos.lockout_bingo.team.PlayerTeamRegistry;
+import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
@@ -10,6 +10,7 @@ import net.minecraft.util.math.RotationAxis;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class CompassesWidget {
 
@@ -36,7 +37,7 @@ public class CompassesWidget {
             context.drawTexture(Identifier.of("lockout-bingo:compass.png"), -6, -6, 0, 0, 12, 12, 12, 12);
             context.getMatrices().pop();
             try {
-                context.drawText(client.textRenderer, PlayerTeamRegistry.getPlayerByUUID(p.uuid).getName(), 15, 5 + index * 20, Colors.getPlayerColor(p.uuid), true);
+                context.drawText(client.textRenderer, UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(p.uuid)).getName(), 15, 5 + index * 20, Colors.getPlayerColor(p.uuid), true);
             }
             catch (Exception e) {
                 context.drawText(client.textRenderer, "Unknown", 15, 5 + index * 20, 0xffffff, true);

@@ -1,6 +1,5 @@
 package net.abrikoos.lockout_bingo.item;
 
-import net.abrikoos.lockout_bingo.team.PlayerTeamRegistry;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LodestoneTrackerComponent;
 import net.minecraft.entity.Entity;
@@ -76,11 +75,16 @@ public class Compass2 extends CompassItem {
             if (tracked__uuid == null) {
                 return;
             }
-            ServerPlayerEntity player = serverWorld.getPlayers().stream().filter(p -> p.getUuidAsString().equals(tracked__uuid)).toList().getFirst();
-            RegistryKey<World> dimension = player.getWorld().getRegistryKey();
-            BlockPos pos = player.getBlockPos();
-            LodestoneTrackerComponent l2 = new LodestoneTrackerComponent(Optional.of(GlobalPos.create(dimension, pos)), true);
-            stack.set(DataComponentTypes.LODESTONE_TRACKER, l2);
+            try {
+                ServerPlayerEntity player = serverWorld.getPlayers().stream().filter(p -> p.getUuidAsString().equals(tracked__uuid)).toList().getFirst();
+                RegistryKey<World> dimension = player.getWorld().getRegistryKey();
+                BlockPos pos = player.getBlockPos();
+                LodestoneTrackerComponent l2 = new LodestoneTrackerComponent(Optional.of(GlobalPos.create(dimension, pos)), true);
+                stack.set(DataComponentTypes.LODESTONE_TRACKER, l2);
+            }
+            catch (Exception ignored) {
+
+            }
         }
     }
 }
