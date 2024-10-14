@@ -323,7 +323,6 @@ public class ScreenScreen extends Screen {
 
                 }
 
-
                 @Override
                 public boolean mouseClicked(double mouseX, double mouseY, int button) {
                     return false;
