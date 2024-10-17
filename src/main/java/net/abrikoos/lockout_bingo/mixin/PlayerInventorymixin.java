@@ -23,14 +23,14 @@ public abstract class PlayerInventorymixin {
 
     @Shadow public abstract ItemStack getStack(int slot);
 
-    @Inject(method = "addStack(ILnet/minecraft/item/ItemStack;)I", at = @At("HEAD"))
+    @Inject(method = "addStack(ILnet/minecraft/item/ItemStack;)I", at = @At("TAIL"))
     private void onAddStack(int slot, ItemStack stack, CallbackInfoReturnable<Integer> cir) {
 //        PlayerInventorymixin inventory =  this;
 //        PlayerInventoryListener.registerEvent(inventory.player, stack, true);
     }
 
 
-    @Inject(method = "remove", at = @At("HEAD"))
+    @Inject(method = "remove", at = @At("TAIL"))
     private void onRemoveStack(Predicate<ItemStack> shouldRemove, int maxCount, Inventory craftingInventory, CallbackInfoReturnable<Integer> cir) { // todo does not what I want
 //        PlayerInventorymixin inventory =  this;
 ////        if (stack == ItemStack.EMPTY) {
@@ -39,12 +39,12 @@ public abstract class PlayerInventorymixin {
 //        PlayerInventoryListener.registerEvent(inventory.player, ItemStack.EMPTY, false); // todo idk if return works
     }
 
-    @Inject(method = "setStack(ILnet/minecraft/item/ItemStack;)V", at = @At("HEAD"))
+    @Inject(method = "setStack(ILnet/minecraft/item/ItemStack;)V", at = @At("TAIL"))
     void onSetStack(int slot, ItemStack stack, CallbackInfo ci) {
         PlayerInventorymixin inventory =  this; // this works weird
-        if (stack == inventory.getStack(slot)) {
-            return;
-        }
+//        if (stack == inventory.getStack(slot)) {
+//            return;
+//        }
         boolean added = true;
         if (stack == ItemStack.EMPTY || stack.getItem() == Items.AIR) {
             added = false;

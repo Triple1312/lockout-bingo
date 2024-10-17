@@ -24,21 +24,21 @@ import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerAdvancementLoader;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.stat.Stat;
 import net.minecraft.stat.StatHandler;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
+import net.minecraft.util.WorldSavePath;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.time.LocalTime;
 import java.util.*;
 
 
 public class GameState {
-
-//    public static List<LockoutTeam> teams = new ArrayList<>();
-//
-//    public static List<ServerPlayerEntity> players = new ArrayList<>();
 
     public static List<LockoutGoal> goals = new ArrayList<>();
 
@@ -67,16 +67,10 @@ public class GameState {
 
     public static void playerJoinTeam(String puuid, int team) {
         UnitedTeamRegistry.playerJoinTeam(UUID.fromString(puuid), team);
-//        for (ServerPlayerEntity plr : server.getPlayerManager().getPlayerList()) {
-//            UnitedTeamRegistry.sendState(plr);
-//        }
     }
 
     public static void playerJoinTeam(ServerPlayerEntity player, int team) {
         UnitedTeamRegistry.playerJoinTeam(player.getUuid(), team);
-//        for (ServerPlayerEntity plr : server.getPlayerManager().getPlayerList()) {
-//            UnitedTeamRegistry.sendState(plr);
-//        }
     }
 
     public static List<ServerPlayerEntity> players() {
@@ -90,49 +84,11 @@ public class GameState {
         catch (Exception e) {
 
         }
-//        List<String> teamnames = new ArrayList<>();
-//        for (LockoutTeam team : teams) {
-//            teamnames.add(team.name);
-//            if (team.name.equals(name)) {
-//                return;
-//            }
-//        }
-//
-//
-//        int id = 1;
-//        for (int i = 1; i < 11; i++) {
-//            boolean found = false;
-//            for (LockoutTeam team : teams) {
-//                if (team.teamId == i) {
-//                    found = true;
-//                    break;
-//                }
-//            }
-//            if (!found) {
-//                id = i;
-//                break;
-//            }
-//        }
-//
-//
-//        LockoutTeam team = new LockoutTeam(name, id);
-//        teams.add(team);
-//        AllTeamsPacket packet = new AllTeamsPacket(teams);
-//        for (ServerPlayerEntity player : players) {
-//            ServerPlayNetworking.send(player, packet);
-//        }
     }
 
     public static void removeTeam(String name) {
         UnitedTeamRegistry.removeTeam(name);
     }
-
-//    public static void sendAllTeams() {
-//        AllTeamsPacket packet = new AllTeamsPacket(teams);
-//        for (ServerPlayerEntity player : players) {
-//            ServerPlayNetworking.send(player, packet);
-//        }
-//    }
 
     public static UnitedTeamRegistry.Team getTeam(int teamindex) {
         return UnitedTeamRegistry.getTeam(teamindex);
@@ -140,16 +96,6 @@ public class GameState {
 
     public static void changeTeamId(int teamindex, int newId) {
         UnitedTeamRegistry.changeTeamIndex(teamindex, newId);
-//        LockoutTeam team = getTeam(teamindex);
-//        LockoutTeam checkTeam = getTeam(newId);
-//        if (checkTeam!= null) {
-//            return;
-//        }
-//        if (team == null) {
-//            return;
-//        }
-//        team.teamId = newId;
-//        sendAllTeams();
     }
 
     public static void goalComplete(String playerName, int goal) {
@@ -164,6 +110,7 @@ public class GameState {
         if (!goals.isEmpty()) {
             destroyGame();
         }
+
 
         LockoutFinalBuilder builder = new LockoutFinalBuilder(packet);
         LockoutStartGameInfo li = builder.generateLockoutBoard();
@@ -224,30 +171,17 @@ public class GameState {
     }
 
     public static String onGoalComplete(LockoutGoalEvent event) {
-//        String[] board = new String[25];
-//        if (goals.size() < 25) {
-//            return "";
-//        }
-//        for (int i = 0; i < 25; i++) {
-//            board[i] = goals.get(i).completed == null ?
-//                    "00000000-0000-0000-0000-000000000000"
-//                    : goals.get(i).recipiant() == "ally" ?
-//                        goals.get(i).completed.getUuidAsString()
-//                        : "11111111-1111-1111-1111-111111111111";
-//        }
         LockoutUpdateBoardInfo update = getBoard();
         LockoutUpdateBoardPacket packet = new LockoutUpdateBoardPacket(update);
         String playerName = getPlayerByUUID(event.puuid).getName().getString();
         for (ServerPlayerEntity player : players()) {
-            ServerPlayNetworking.send(player, packet);
-            player.sendMessage(
-                    Text.empty().append("Goal \"")
-                        .append(Text.literal(GameState.goals.get(event.goalId).name()))
-                        .append("\" completed by ")
-                        .append(Text.literal(playerName).withColor(Colors.getPlayerColor(event.puuid))),
-                    false);
+            try {
+                ServerPlayNetworking.send(player, packet);
+            } catch (Exception e) {
+                LockoutLogger.log("Error sending packet to player " + player.getName().getString());
+            }
         }
-        return "";
+        return event.recipiant;
     }
 
     public static LockoutUpdateBoardInfo getBoard() {

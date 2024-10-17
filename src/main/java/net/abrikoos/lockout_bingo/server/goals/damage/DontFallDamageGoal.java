@@ -15,9 +15,14 @@ public class DontFallDamageGoal extends LockoutGoal {
         PlayerDamageListener.subscribe(this::validateProgress);
     }
 
+    @Override
+    public String recipiant() {
+        return "enemy";
+    }
+
     public void validateProgress(PlayerEntity player, DamageSource source, float amount) {
         if (this.completed != null) return;
-        if(source.getTypeRegistryEntry() == DamageTypes.FALL)
+        if(source.getTypeRegistryEntry().matchesKey(DamageTypes.FALL))
             this.completed(player);
     }
 

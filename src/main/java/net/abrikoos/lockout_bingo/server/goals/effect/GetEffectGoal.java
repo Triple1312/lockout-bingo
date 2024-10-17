@@ -18,6 +18,7 @@ public class GetEffectGoal extends LockoutGoal {
     }
 
     private void checkCompletion(MinecraftServer minecraftServer) {
+        if (completed != null) return;
         for (PlayerEntity player : minecraftServer.getPlayerManager().getPlayerList()) {
             if (player.hasStatusEffect(this.effect)) {
                 this.completed(player);

@@ -15,6 +15,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,6 +38,7 @@ public class ClientGameState {
         countDownTime = 60;
         boardTimeOver = false;
         CompleteFullScreenState.selectedTab = 1;
+        LockoutScreens.completeFullScreen.init();
         client.setScreen(LockoutScreens.completeFullScreen);
     }
 
@@ -114,11 +116,6 @@ public class ClientGameState {
         MinecraftClient client = MinecraftClient.getInstance();
         return System.currentTimeMillis() - gameStartTime;
     }
-
-
-
-
-
 
 
 

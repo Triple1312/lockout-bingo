@@ -54,7 +54,7 @@ public class WearCarvedPumpkinGoal extends LockoutGoal {
         int time = (int) (mcserver.getOverworld().getTime() /20);
         playerTimes.forEach(
             (p, i) -> {
-                if (i > time) this.completed(p);
+                if (i < time) this.completed(p);
             }
         );
     }

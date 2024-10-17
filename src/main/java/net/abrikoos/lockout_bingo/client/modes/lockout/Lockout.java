@@ -7,19 +7,18 @@ import net.abrikoos.lockout_bingo.network.game.LockoutUpdateBoardInfo;
 import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
 import net.abrikoos.lockout_bingo.util.BlockoutList;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class Lockout extends LockoutGame {
     public LockoutStartGameInfo lsgi;
     public BlockoutList<UnitedTeamRegistry.Team> teams;
     public LockoutUpdateBoardInfo lubi;
+    public int goal_count = 25;
 
     public Lockout(LockoutStartGameInfo lsgi) {
         this.lsgi = lsgi;
         this.teams = UnitedTeamRegistry.getTeams().where(t-> lsgi.teams.any( u-> Objects.equals(u.name(), t.teamName())));
+        this.lubi = generateEmptyBoard();
     }
 
     @Override
@@ -48,5 +47,11 @@ public class Lockout extends LockoutGame {
             s.add(goals.where( g-> UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(g)).teamIndex == t.teamId()).size());
             return s;
         });
+    }
+
+    public LockoutUpdateBoardInfo generateEmptyBoard() {
+        String[] goals = new String[goal_count];
+        Arrays.fill(goals, "00000000-0000-0000-0000-000000000000");
+        return new LockoutUpdateBoardInfo(goals);
     }
 }

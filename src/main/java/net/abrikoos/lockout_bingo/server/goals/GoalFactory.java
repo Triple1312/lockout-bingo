@@ -10,11 +10,14 @@ import net.abrikoos.lockout_bingo.server.goals.craft.DuplicateTemplateGoal;
 import net.abrikoos.lockout_bingo.server.goals.damage.DealDamageGoal;
 import net.abrikoos.lockout_bingo.server.goals.damage.DontFallDamageGoal;
 import net.abrikoos.lockout_bingo.server.goals.damage.SnowBallHitGoal;
+import net.abrikoos.lockout_bingo.server.goals.damage.TakeXDamageGoal;
 import net.abrikoos.lockout_bingo.server.goals.die.*;
 import net.abrikoos.lockout_bingo.server.goals.eat.EatFoodGoal;
 import net.abrikoos.lockout_bingo.server.goals.eat.EatMultiFoodGoal;
 import net.abrikoos.lockout_bingo.server.goals.eat.EmptyHungerGoal;
 import net.abrikoos.lockout_bingo.server.goals.effect.*;
+import net.abrikoos.lockout_bingo.server.goals.inventory.FillInventoryGoal;
+import net.abrikoos.lockout_bingo.server.goals.inventory.FillUniqueItemsInventoryGoal;
 import net.abrikoos.lockout_bingo.server.goals.kill.*;
 import net.abrikoos.lockout_bingo.server.goals.lvl.ReachLvlGoal;
 import net.abrikoos.lockout_bingo.server.goals.mine.MineDiamondOre;
@@ -314,6 +317,8 @@ public class GoalFactory {
             case "damage_200" -> new DealDamageGoal(id, 200);
             case "damage_500" -> new DealDamageGoal(id, 500);
 
+            case "damage_take_200" -> new TakeXDamageGoal(id, 200);
+
             // use block goals
             case "use_smithing_table" -> new UseBlockGoal(id, ScreenHandlerType.SMITHING, 3);
             case "use_loom" -> new UseBlockGoal(id, ScreenHandlerType.LOOM, 3);
@@ -392,11 +397,11 @@ public class GoalFactory {
             case "more_concrete" -> new ObtainMoreItemGoal(id, Items.WHITE_CONCRETE);
             case "more_lvl" -> new MoreLVLsGoal(id);
 
-            default ->
+            // inventory goals
+            case "fill_inventory" -> new FillInventoryGoal(id);
+            case "fill_inventory_unique" -> new FillUniqueItemsInventoryGoal(id);
 
-            {
-                throw new IllegalStateException("Unexpected value: " + goalid);
-            }
+            default -> new DeadGoal(id,goalid);
         };
 
     }

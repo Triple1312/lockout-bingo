@@ -8,6 +8,7 @@ import net.abrikoos.lockout_bingo.client.gui.screens.tabscreen.LockoutTabNavigat
 import net.abrikoos.lockout_bingo.client.gui.tabs.BoardTab3;
 import net.abrikoos.lockout_bingo.client.gui.tabs.TeamsTab;
 import net.abrikoos.lockout_bingo.client.gui.widget.AddTeamWidget;
+import net.abrikoos.lockout_bingo.server.gamestate.GameState;
 import net.abrikoos.lockout_bingo.team.*;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -49,9 +50,19 @@ public class ScreenScreen extends Screen {
         this.layout.setFooterHeight(0);
         this.tabManager = new LockoutTabManager(this::addDrawableChild, this::remove);
         this.tabManager.subscribeTabChangeEvent(this::tabchanged);
-        this.tabNavigation = LockoutTabNavigationWidget.builder(this.tabManager, this.width)
-                .tabs(new MainTab(), boardTab, new TeamsTab(this))
-                .build();
+        if (GameState.inGame()) {
+            this.tabNavigation = LockoutTabNavigationWidget.builder(this.tabManager, this.width)
+                    .tabs( new MainTab(), boardTab, new TeamsTab(this))
+                    .build();
+        }
+        else {
+            this.tabNavigation = LockoutTabNavigationWidget.builder(this.tabManager, this.width)
+                    .tabs( new MainTab(), new TeamsTab(this))
+                    .build();
+        }
+//        this.tabNavigation = LockoutTabNavigationWidget.builder(this.tabManager, this.width)
+//                .tabs(new MainTab(), boardTab, new TeamsTab(this))
+//                .build();
         this.addDrawableChild(this.tabNavigation);
         this.layout.forEachChild(child -> {
             child.setNavigationOrder(1);

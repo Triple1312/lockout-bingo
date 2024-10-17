@@ -1,5 +1,6 @@
 package net.abrikoos.lockout_bingo.item;
 
+import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LodestoneTrackerComponent;
 import net.minecraft.entity.Entity;
@@ -73,10 +74,22 @@ public class Compass2 extends CompassItem {
         if (world instanceof ServerWorld serverWorld) {
             String tracked__uuid = stack.get(LockoutModItems.PLAYER_COMPASS);
             if (tracked__uuid == null) {
-                return;
+                List<String> playerUUIDs = world.getPlayers().stream()
+                        .filter(p -> p != entity && !p.isSpectator())
+                        .map(PlayerEntity::getUuid).map(UUID::toString)
+                        .toList();
+                if (playerUUIDs.isEmpty()) {
+                    return;
+                }
+                cycleTarget(stack, (PlayerEntity) entity, world);
+                tracked__uuid = stack.get(LockoutModItems.PLAYER_COMPASS);
+            }
+            if (!UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(tracked__uuid)).isConnected()) {
+                cycleTarget(stack, (PlayerEntity) entity, world);
             }
             try {
-                ServerPlayerEntity player = serverWorld.getPlayers().stream().filter(p -> p.getUuidAsString().equals(tracked__uuid)).toList().getFirst();
+                String finalTracked__uuid = tracked__uuid;
+                ServerPlayerEntity player = serverWorld.getPlayers().stream().filter(p -> p.getUuidAsString().equals(finalTracked__uuid)).toList().getFirst();
                 RegistryKey<World> dimension = player.getWorld().getRegistryKey();
                 BlockPos pos = player.getBlockPos();
                 LodestoneTrackerComponent l2 = new LodestoneTrackerComponent(Optional.of(GlobalPos.create(dimension, pos)), true);

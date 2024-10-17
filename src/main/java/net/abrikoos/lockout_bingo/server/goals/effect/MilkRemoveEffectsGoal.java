@@ -14,7 +14,7 @@ public class MilkRemoveEffectsGoal extends LockoutGoal {
     }
 
 
-    public void validateProgress(World world, PlayerEntity player, Hand hand) {
+    public void validateProgress(World world, PlayerEntity player) {
         if (completed != null) return;
         if (!player.getActiveStatusEffects().isEmpty()) {
             completed(player);

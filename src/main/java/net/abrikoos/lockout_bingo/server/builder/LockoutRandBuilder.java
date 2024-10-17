@@ -48,7 +48,7 @@ public class LockoutRandBuilder extends LockoutGoalBuilder {
 
     public List<LockoutGoal> buildBoard(List<GoalListItem> goals) {
         List<LockoutGoal> ret = new ArrayList<>();
-        for (int i = 0; i < 25; i++) {
+        for (int i = 0; i < 25; i = ret.size()) {
             try {
                 LockoutGoal goal = GoalFactory.buildGoal(goals.get(i).id, i);
                 ret.add(goal);

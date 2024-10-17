@@ -73,9 +73,9 @@ public abstract class LockoutGoal {
                 break;
             }
         }
-        if (player == null) {
-            return;
-        }
+//        if (player == null) {
+//            return;
+//        }
         completed(player);
     }
 }

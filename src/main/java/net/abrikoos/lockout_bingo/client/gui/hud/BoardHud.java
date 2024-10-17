@@ -2,7 +2,6 @@ package net.abrikoos.lockout_bingo.client.gui.hud;
 
 import net.abrikoos.lockout_bingo.client.ClientGameState;
 import net.abrikoos.lockout_bingo.client.gui.LockoutUtils;
-import net.abrikoos.lockout_bingo.client.gui.widget.CompassesWidget;
 import net.abrikoos.lockout_bingo.team.Colors;
 import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
 import net.fabricmc.api.EnvType;
@@ -39,6 +38,9 @@ public class BoardHud {
                     if (ClientGameState.latestUpdate() == null) {
                         color = Colors.get(0);
                     }
+//                    else if (UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(ClientGameState.latestUpdate().goals[i])) == null && !ClientGameState.latestUpdate().goals[i].equals("00000000-0000-0000-0000-000000000000")) {
+//                        color = 0xFFFFFFFF;
+//                    }
                     else {
                         color = Colors.getPlayerColor(ClientGameState.latestUpdate().goals[i]);
                     }
@@ -55,6 +57,9 @@ public class BoardHud {
                     if (ClientGameState.latestUpdate().goals[i] == null || ClientGameState.latestUpdate().goals[i].equals("00000000-0000-0000-0000-000000000000")) {
 
                     }
+                    else if (UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(ClientGameState.latestUpdate().goals[i])) == null && !ClientGameState.latestUpdate().goals[i].equals("00000000-0000-0000-0000-000000000000")) {
+                        t1++;
+                    }
                     else if (UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(ClientGameState.latestUpdate().goals[i])).teamIndex == ClientGameState.getTeams().get(0).teamId()) {
                         t1++;
                     }
@@ -63,7 +68,7 @@ public class BoardHud {
                     }
                 }
                 catch (Exception e) {
-                    e.printStackTrace(
+                            e.printStackTrace(
                     );
                 }
 
@@ -89,7 +94,7 @@ public class BoardHud {
             LockoutUtils.drawCenteredText(context, client.textRenderer, String.valueOf(t1), topX + goalwidthheight/2, bottombarY+ goalwidthheight/4, Colors.get(ClientGameState.getTeams().get(0).teamId()), false);
             LockoutUtils.drawCenteredText(context, client.textRenderer, String.valueOf(t2), topX + 3* goalwidthheight/2 + goalpadding, bottombarY + goalwidthheight/4, Colors.get(ClientGameState.getTeams().get(1).teamId()), false);
 
-            CompassesWidget.drawHud(context);
+//            CompassesWidget.drawHud(context);
 
 
 

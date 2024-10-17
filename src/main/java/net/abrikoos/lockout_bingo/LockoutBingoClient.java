@@ -12,6 +12,7 @@ import net.abrikoos.lockout_bingo.network.game.*;
 //import net.abrikoos.lockout_bingo.team.LockoutTeam;
 //import net.abrikoos.lockout_bingo.team.PlayerTeamRegistry;
 //import net.abrikoos.lockout_bingo.team.TeamController;
+import net.abrikoos.lockout_bingo.team.Colors;
 import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
 import net.abrikoos.lockout_bingo.util.BlockoutList;
 import net.fabricmc.api.ClientModInitializer;
@@ -33,6 +34,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -89,6 +91,15 @@ public class LockoutBingoClient implements ClientModInitializer {
                 assert client.player != null;
                 LockoutUpdateBoardInfo old = ClientGameState.latestUpdate();
                 BlockoutList<UnitedTeamRegistry.Team> teams = ClientGameState.getTeams();
+                int changedGoalIndex = 0;
+                String goalClompleter = "";
+                for (int i = 0; i < boardInfo.goals.length; i++) {
+                    if (!boardInfo.goals[i].equals(old.goals[i])) {
+                        changedGoalIndex = i;
+                        goalClompleter = boardInfo.goals[i];
+                        break;
+                    }
+                }
                 int t1old = ClientGameState.getTeamScore(teams.get(0).teamId());
                 int t2old = ClientGameState.getTeamScore(teams.get(1).teamId());
                 ClientGameState.updateBoard(boardInfo);
@@ -98,8 +109,12 @@ public class LockoutBingoClient implements ClientModInitializer {
                 boolean t2goal = t2new > t2old;
                 boolean team1 = UnitedTeamRegistry.getTeamPlayerByUUID(client.player.getUuid()).teamIndex == teams.get(0).teamId();
                 boolean team2 = UnitedTeamRegistry.getTeamPlayerByUUID(client.player.getUuid()).teamIndex == teams.get(1).teamId();
+                Text text1 = Text.literal("Goal \"" + ClientGameState.getGoals().get(changedGoalIndex).name + "\" completed by ");
+                Text text2 = Text.literal(UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(goalClompleter)).name).withColor(Colors.get(UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(goalClompleter)).teamIndex));
+                Text text3 = text1.copy().append(text2);
 
                 if (t1goal) {
+                    client.inGameHud.setOverlayMessage(text3, false);
                     if (team1) {
                         client.player.playSound(SoundEvent.of(Identifier.of("lockout-bingo:goal_success")));
                     }
@@ -108,6 +123,7 @@ public class LockoutBingoClient implements ClientModInitializer {
                     }
                 }
                 else if (t2goal) {
+                    client.inGameHud.setOverlayMessage(text3, false);
                     if (team2) {
                         client.player.playSound(SoundEvent.of(Identifier.of("lockout-bingo:goal_success")));
                     }
@@ -120,39 +136,6 @@ public class LockoutBingoClient implements ClientModInitializer {
                 }
 
 
-//                MinecraftClient client = MinecraftClient.getInstance();
-//                LockoutUpdateBoardInfo boardInfo = payload.goalboard();
-//                assert client.player != null;
-//                LockoutUpdateBoardInfo old = ClientGameState.latestUpdate();
-//                List<LockoutTeam> teams = ClientGameState.getTeams();
-//                int t1old = ClientGameState.getTeamScore(teams.get(0).teamId);
-//                int t2old = ClientGameState.getTeamScore(teams.get(1).teamId);
-//                ClientGameState.updateBoard(boardInfo);
-//                int t1new = ClientGameState.getTeamScore(teams.get(0).teamId);
-//                int t2new = ClientGameState.getTeamScore(teams.get(1).teamId);
-//                boolean t1goal = t1new > t1old;
-//                boolean t2goal = t2new > t2old;
-//                boolean team1 = PlayerTeamRegistry.getTeamIndex(client.player.getUuidAsString()) == teams.get(0).teamId;
-//                boolean team2 = PlayerTeamRegistry.getTeamIndex(client.player.getUuidAsString()) == teams.get(1).teamId;
-//                if (t1goal) {
-//                    if (team1) {
-//                        client.player.playSound(SoundEvent.of(Identifier.of("lockout-bingo:goal_success")));
-//                    }
-//                    else if (team2) {
-//                        client.player.playSound(SoundEvent.of(Identifier.of("lockout-bingo:goal_fail")));
-//                    }
-//                }
-//                else if (t2goal) {
-//                    if (team2) {
-//                        client.player.playSound(SoundEvent.of(Identifier.of("lockout-bingo:goal_success")));
-//                    }
-//                    else if (team1) {
-//                        client.player.playSound(SoundEvent.of(Identifier.of("lockout-bingo:goal_fail")));
-//                    }
-//                }
-//                else {
-//                    client.player.playSound(SoundEvent.of(Identifier.of("lockout-bingo:goal_complete")));
-//                }
             });
         }));
 
@@ -177,24 +160,6 @@ public class LockoutBingoClient implements ClientModInitializer {
 
             });
         }));
-
-//        ClientPlayNetworking.registerGlobalReceiver(AllTeamsPacket.ID,  ((payload, context) -> {
-//            context.client().execute(() -> {
-//                MinecraftClient client = MinecraftClient.getInstance();
-//                TeamController.setAllTeams(payload.teams());
-//
-////                LockoutScreens.setTeams(payload.teamnames()); // todo
-//            });
-//        }));
-
-//        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-//            PlayerTeamRegistry.updatePlayers();
-//        });
-//
-//        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
-//            PlayerTeamRegistry.updatePlayers();
-//        });
-
 
         KeyBinding openBoardScreenKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "Open Lockout Board",

@@ -2,14 +2,17 @@ package net.abrikoos.lockout_bingo.server.goals.inventory;
 
 import net.abrikoos.lockout_bingo.server.goals.LockoutGoal;
 import net.abrikoos.lockout_bingo.server.listeners.PlayerInventoryListener;
+import net.abrikoos.lockout_bingo.util.BlockoutList;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.util.collection.DefaultedList;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FillUniqueItemsInventoryGoal extends LockoutGoal {
+public class FillUniqueItemsInventoryGoal extends LockoutGoal { // todo not tested
 
     public FillUniqueItemsInventoryGoal(int id) {
         super(id);
@@ -20,21 +23,22 @@ public class FillUniqueItemsInventoryGoal extends LockoutGoal {
         if (this.completed != null) {
             return;
         }
-        if (player.getInventory().size() < 36) {
-            return;
-        }
-        List<Item> uniqueItems = new ArrayList<>();
-        for (int i = 0; i < player.getInventory().size(); i++) {
-            ItemStack itemStack = player.getInventory().getStack(i);
-            if (itemStack.isEmpty()) {
-                return;
+        DefaultedList<ItemStack> inventory = player.getInventory().main;
+        BlockoutList<Item> blockoutList = new BlockoutList<>();
+        for (ItemStack itemStack : inventory) {
+            if (itemStack.isEmpty() || itemStack.getItem().equals(Items.AIR)) {
+                continue;
             }
-            if (!uniqueItems.contains(itemStack.getItem())) {
-                uniqueItems.add(itemStack.getItem());
+            else if(!blockoutList.contains(itemStack.getItem())) {
+                return;
             }
             else {
-                return;
+                blockoutList.add(itemStack.getItem());
             }
+        }
+        int size = blockoutList.size();
+        if (size < 36) {
+            return;
         }
         this.completed(player);
     }

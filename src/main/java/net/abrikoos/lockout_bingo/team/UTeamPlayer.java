@@ -45,6 +45,10 @@ public class UTeamPlayer {
         return name;
     }
 
+    public boolean isConnected() {
+        return connected;
+    }
+
     public String puuidstr(){return puuid.toString();}
 
     public UUID puuid(){return puuid;}

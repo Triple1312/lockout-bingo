@@ -209,9 +209,11 @@ public class NewLockoutScreen extends Screen {
             difficulty = CyclingButtonWidget.<Integer>builder(i -> Text.of(i.toString())).values(Arrays.asList(3, 4, 5, 1, 2)).build(Text.of("Difficulty"), (buttonWidget, val) -> {
                         return;
             });
+            difficulty.active = false;
             goalCount = CyclingButtonWidget.<Integer>builder(i -> Text.of(i.toString())).values(Arrays.asList(25, 49, 9)).build(Text.of("Goal amount"), (buttonWidget, val) -> {
                 return;
             });
+            goalCount.active = false;
             adder.add(difficulty);
             adder.add(goalCount);
 
