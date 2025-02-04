@@ -1,12 +1,12 @@
 package net.abrikoos.lockout_bingo.server.builder;
 
 import net.abrikoos.lockout_bingo.LockoutLogger;
-import net.abrikoos.lockout_bingo.network.game.CreateLockoutPacket;
-import net.abrikoos.lockout_bingo.network.game.LockoutStartGameInfo;
+import net.abrikoos.lockout_bingo.networkv2.game.GameStartPacket;
+import net.abrikoos.lockout_bingo.networkv2.game.GoalInfoPacket;
+import net.abrikoos.lockout_bingo.networkv2.game.StartGameRequestPacket;
 import net.abrikoos.lockout_bingo.server.goals.GoalItemRegistry;
 import net.abrikoos.lockout_bingo.server.goals.GoalListItem;
 import net.abrikoos.lockout_bingo.server.goals.LockoutGoalTag;
-import net.abrikoos.lockout_bingo.network.game.BlackoutStartGameInfo;
 import net.abrikoos.lockout_bingo.util.BlockoutList;
 
 import java.util.ArrayList;
@@ -14,67 +14,101 @@ import java.util.List;
 
 public class LockoutFinalBuilder extends LockoutRandBuilder {
 
-    CreateLockoutPacket info;
+    StartGameRequestPacket info;
 
-    public LockoutFinalBuilder(CreateLockoutPacket info) {
+    final int max_redstone = 2;
+    final int max_silk_touch = 1;
+    final int max_die = 3;
+    final int max_dont = 1;
+    final int max_breed = 3;
+    final int max_obtain = 5;
+    final int max_kill = 4;
+    final int max_eat = 5;
+    final int max_effect = 2;
+    final int max_tools = 2;
+    final int max_brew = 2;
+    final int max_armor = 2;
+    final int max_movement = 1;
+    final int max_ride = 1;
+    final int max_lvl = 2;
+    final int max_use = 2;
+    final int max_tame = 2;
+    final int max_biomes = 1;
+    final int max_wool = 1;
+
+
+    public LockoutFinalBuilder(StartGameRequestPacket info) {
         this.info = info;
     }
 
-    public LockoutStartGameInfo generateLockoutBoard() {
+    public GameStartPacket generateLockoutBoard() {
         items = new ArrayList<>();
         items.addAll(GoalItemRegistry.getInstance().items);
-        for (int goaltype : info.disabledGoalTypes()) {
+        for (String goaltype : info.disabledGoals()) {
             switch (goaltype) {
-                case 0:
+                case "end":
                     removeGoalsWithTag(LockoutGoalTag.end);
                     break;
-                case 1:
+                case "nether":
                     removeGoalsWithTag(LockoutGoalTag.nether);
                     break;
-                case 2:
+                case "redstone":
                     removeGoalsWithTag(LockoutGoalTag.redstone);
                     break;
-                case 3:
+                case "die":
                     removeGoalsWithTag(LockoutGoalTag.die);
                     break;
-                case 4:
+                case "dont":
                     removeGoalsWithTag(LockoutGoalTag.dont);
                     break;
-                case 5:
+                case "biomes":
                     removeGoalsWithTag(LockoutGoalTag.biomes);
                     break;
-                case 6:
+                case "advancement":
                     removeGoalsWithTag(LockoutGoalTag.advancement);
                     break;
-                case 7:
+                case "eat":
                     removeGoalsWithTag(LockoutGoalTag.eat);
                     break;
-                case 8:
+                case "kill":
                     removeGoalsWithTag(LockoutGoalTag.kill);
                     break;
-                case 9:
+                case "movement":
                     removeGoalsWithTag(LockoutGoalTag.movement);
                     break;
-                case 10:
+                case "breed":
                     removeGoalsWithTag(LockoutGoalTag.breed);
                     break;
-                case 11:
+                case "obtain":
                     removeGoalsWithTag(LockoutGoalTag.obtain);
                     break;
-                case 12:
+                case "armor":
                     removeGoalsWithTag(LockoutGoalTag.armor);
                     break;
-                case 13:
+                case "tools":
                     removeGoalsWithTag(LockoutGoalTag.tools);
                     break;
-                case 14:
+                case "ride":
                     removeGoalsWithTag(LockoutGoalTag.ride);
                     break;
             }
         }
         // todo I'm ignoring difficulty for now
         // todo I'm ignoring goal count for now
-        LockoutStartGameInfo info = new LockoutStartGameInfo(new BlockoutList<>(), new GoalListItem[25], true, System.currentTimeMillis() );
+
+        List<GoalInfoPacket> goals = new ArrayList<>();
+        for (int i = 0; i < info.goalCount(); i++) {
+            int randomIndex = (int) (Math.random() * items.size());
+            GoalListItem goal = items.get(randomIndex);
+            items.remove(randomIndex);
+            goals.add(new GoalInfoPacket(goal.id, i, "00000000-0000-0000-000000000000", "00000000-0000-0000-000000000000", 0));
+
+
+
+        }
+
+
+        GameStartPacket info = new GameStartPacket("Lockout", new GoalListItem[25], true, System.currentTimeMillis() );
         for (int i = 0; i < 25; i++) {
             int randomIndex = (int) (Math.random() * items.size());
             GoalListItem goal = items.get(randomIndex);

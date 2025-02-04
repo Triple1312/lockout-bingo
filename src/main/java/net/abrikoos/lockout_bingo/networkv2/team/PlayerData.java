@@ -19,7 +19,7 @@ public class PlayerData implements CustomPayload {
         this.connected = connected;
     }
 
-    PlayerData(String puuid, String name, boolean connected) {
+    public PlayerData(String puuid, String name, boolean connected) {
         this.puuid = puuid;
         this.name = name;
         this.connected = connected;

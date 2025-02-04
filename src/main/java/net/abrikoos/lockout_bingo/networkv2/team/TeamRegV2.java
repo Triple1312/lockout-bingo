@@ -77,6 +77,15 @@ public class TeamRegV2 implements CustomPayload {
         throw new Exception("Team not found");
     }
 
+    public TeamData getTeamDataByPlayerUUID(String uuid) throws Exception {
+        for (TeamData team : teams) {
+            if (team.playerUUIDs.contains(uuid)) {
+                return team;
+            }
+        }
+        throw new Exception("Team not found");
+    }
+
 
 
 
