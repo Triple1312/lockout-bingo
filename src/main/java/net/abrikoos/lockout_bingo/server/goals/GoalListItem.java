@@ -69,7 +69,7 @@ public class GoalListItem {
     }
 
     public void renderTexture(@NotNull DrawContext ctx, float delta, int x, int y, int width, int height) {
-        ctx.drawTexture(this.resourceids.get((int) (this.delta /30 % resourceids.size())), x+3, y+3, 0, 0, width-6, height-6, width-6, height-6);
+        ctx.drawTexture(this.resourceids.get((int) (this.delta /80 % resourceids.size())), x+3, y+3, 0, 0, width-6, height-6, width-6, height-6);
     }
 
     public void draw(@NotNull DrawContext ctx, float delta, int x, int y, int width, int height) {

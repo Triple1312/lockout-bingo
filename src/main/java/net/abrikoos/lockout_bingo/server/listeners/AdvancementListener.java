@@ -40,11 +40,17 @@ public class AdvancementListener {
 
     public static void registerEvent(ServerPlayerEntity player, Advancement advancement, String criterionName) {
         for (TriConsumer<ServerPlayerEntity, Advancement, String> listener : getInstance().listeners) {
-            listener.accept(player, advancement, criterionName);
+            try {
+                listener.accept(player, advancement, criterionName);
+            }
+            catch (Exception e) {
+                getInstance().listeners.remove(listener);
+            }
         }
     }
 
     public static void clear() {
+        instance.listeners.clear();
         instance = new AdvancementListener();
     }
 

@@ -11,7 +11,11 @@ import java.util.List;
 public record GoalBoardUpdatePacket( List<GoalInfoPacket> goals, int justCompletedGoal, List<Integer> scores) implements CustomPayload {
     public static final Id<GoalBoardUpdatePacket> ID = new CustomPayload.Id<>(Identifier.of("lockout-bingo", "goal_board_update_v2"));
 
-    public static final PacketCodec<RegistryByteBuf, GoalBoardUpdatePacket> CODEC = new PacketCodec<RegistryByteBuf, GoalBoardUpdatePacket>() {
+    public static GoalBoardUpdatePacket empty() {
+        return new GoalBoardUpdatePacket(new ArrayList<>(), -1, new ArrayList<>());
+    }
+
+    public static  PacketCodec<RegistryByteBuf, GoalBoardUpdatePacket> CODEC = new PacketCodec<RegistryByteBuf, GoalBoardUpdatePacket>() {
         @Override
         public GoalBoardUpdatePacket decode(RegistryByteBuf buf) {
             int goalCount = buf.readByte();
@@ -44,6 +48,6 @@ public record GoalBoardUpdatePacket( List<GoalInfoPacket> goals, int justComplet
 
     @Override
     public Id<? extends CustomPayload> getId() {
-        return null;
+        return ID;
     }
 }

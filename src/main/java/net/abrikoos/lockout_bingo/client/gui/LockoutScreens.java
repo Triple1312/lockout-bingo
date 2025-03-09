@@ -1,17 +1,12 @@
 package net.abrikoos.lockout_bingo.client.gui;
 
 import net.abrikoos.lockout_bingo.LockoutLogger;
-import net.abrikoos.lockout_bingo.client.ClientGameState;
 import net.abrikoos.lockout_bingo.client.gui.screens.*;
-import net.abrikoos.lockout_bingo.client.gui.widget.BoardWidget;
-import net.abrikoos.lockout_bingo.client.modes.LockoutGame;
 import net.abrikoos.lockout_bingo.client.modes.team.LockoutTeamDataClass;
 import net.abrikoos.lockout_bingo.network.game.BlackoutStartGameInfo;
-import net.abrikoos.lockout_bingo.network.game.LockoutUpdateBoardInfo;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class LockoutScreens {

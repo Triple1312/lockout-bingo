@@ -31,7 +31,12 @@ public class PlayerDeathListener {
             return;
         }
         for (BiConsumer<ServerPlayerEntity, DamageSource> listener : listeners) {
-            listener.accept((ServerPlayerEntity) livingEntity, damageSource);
+            try {
+                listener.accept((ServerPlayerEntity) livingEntity, damageSource);
+            }
+            catch (Exception e) {
+                listeners.remove(listener);
+            }
         }
     }
 
@@ -48,5 +53,10 @@ public class PlayerDeathListener {
 
     public static void clear() {
         instance = new PlayerDeathListener();
+        listeners.clear();
+    }
+
+    public static void unsubscribe(BiConsumer<ServerPlayerEntity, DamageSource> listener) {
+        getInstance().listeners.remove(listener);
     }
 }

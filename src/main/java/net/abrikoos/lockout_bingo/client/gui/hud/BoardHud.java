@@ -1,22 +1,26 @@
 package net.abrikoos.lockout_bingo.client.gui.hud;
 
-import net.abrikoos.lockout_bingo.client.ClientGameState;
+import net.abrikoos.lockout_bingo.LockoutLogger;
+import net.abrikoos.lockout_bingo.client.ClientGameStateV2;
 import net.abrikoos.lockout_bingo.client.gui.LockoutUtils;
-import net.abrikoos.lockout_bingo.team.Colors;
-import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
+import net.abrikoos.lockout_bingo.networkv2.game.GoalInfoPacket;
+import net.abrikoos.lockout_bingo.networkv2.team.Colors;
+import net.abrikoos.lockout_bingo.server.goals.GoalItemRegistry;
+//import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.UUID;
 
 @Environment(EnvType.CLIENT)
 public class BoardHud {
 
     public static void drawHud(@NotNull DrawContext context, float delta) {
-        if (ClientGameState.isGameRunning()) {
+        if (ClientGameStateV2.isGameRunning()) {
             MinecraftClient client = MinecraftClient.getInstance();
             int screensizex = context.getScaledWindowWidth();
             int screensizey = context.getScaledWindowHeight();
@@ -25,53 +29,21 @@ public class BoardHud {
             int topX = screensizex - 5 * (goalwidthheight + goalpadding) - goalpadding;
             int topY = 5;
 
-            int t1 = 0;
-            int t2 = 0;
-
-            for (int i = 0; i < ClientGameState.getGoals().size(); i++) {
+            List<GoalInfoPacket> goals = ClientGameStateV2.getGoals();
+            for (int i = 0; i < goals.size(); i++) {
                 int x = i % 5;
                 int y = i / 5;
                 int goalTopX = topX + x * (goalwidthheight + goalpadding);
                 int goalTopY = topY + y * (goalwidthheight + goalpadding);
-                int color;
-                try {
-                    if (ClientGameState.latestUpdate() == null) {
-                        color = Colors.get(0);
-                    }
-//                    else if (UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(ClientGameState.latestUpdate().goals[i])) == null && !ClientGameState.latestUpdate().goals[i].equals("00000000-0000-0000-0000-000000000000")) {
-//                        color = 0xFFFFFFFF;
-//                    }
-                    else {
-                        color = Colors.getPlayerColor(ClientGameState.latestUpdate().goals[i]);
-                    }
-                    context.fill(goalTopX, goalTopY, goalTopX + goalwidthheight, goalTopY + goalwidthheight, color - 0x47000000);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-                ClientGameState.getGoals().get(i).draw(context, delta/3, goalTopX, goalTopY, goalwidthheight, goalwidthheight);
-                if (ClientGameState.latestUpdate() == null) {
-                    continue;
-                }
-                try {
-                    if (ClientGameState.latestUpdate().goals[i] == null || ClientGameState.latestUpdate().goals[i].equals("00000000-0000-0000-0000-000000000000")) {
+                int color = goals.get(i).color();
 
-                    }
-                    else if (UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(ClientGameState.latestUpdate().goals[i])) == null && !ClientGameState.latestUpdate().goals[i].equals("00000000-0000-0000-0000-000000000000")) {
-                        t1++;
-                    }
-                    else if (UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(ClientGameState.latestUpdate().goals[i])).teamIndex == ClientGameState.getTeams().get(0).teamId()) {
-                        t1++;
-                    }
-                    else if (UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(ClientGameState.latestUpdate().goals[i])).teamIndex == ClientGameState.getTeams().get(1).teamId()) {
-                        t2++;
-                    }
+                context.fill(goalTopX, goalTopY, goalTopX + goalwidthheight, goalTopY + goalwidthheight, Colors.get(color) - 0x47000000);
+                try {
+                    GoalItemRegistry.getGoal(goals.get(i).goalID()).draw(context, delta, goalTopX, goalTopY, goalwidthheight, goalwidthheight);
                 }
-                catch (Exception e) {
-                            e.printStackTrace(
-                    );
+                catch (Exception ignored) {
+                    LockoutLogger.log("Error drawing goal " + goals.get(i).goalName() + " at boardhud");
                 }
-
             }
 
             int bottombarY = topY + 5 *(goalwidthheight + goalpadding);
@@ -79,28 +51,33 @@ public class BoardHud {
             context.fill(topX, bottombarY, topX + goalwidthheight * 2 + goalpadding, bottombarY + goalwidthheight/2, Colors.get(0) - 0x47000000);
             context.fill(topX + 2*(goalwidthheight + goalpadding), bottombarY, topX + goalwidthheight * 5 + goalpadding*4, bottombarY + goalwidthheight/2, Colors.get(0) - 0x47000000);
             String timeString = "";
-            long time = ClientGameState.getPlayTime();
+            long time = ClientGameStateV2.gameTimeLength();
             if (time > 3600000) { // hours
                 timeString += time / 3600000 + ":";
             }
             if (time > 60000) { // minutes
-                timeString += time / 60000 + ":";
+                timeString += time / 60000 % 3600000 + ":";
+            }
+            if (time / 1000 % 60 < 10) {
+                timeString += "0";
             }
             timeString += time / 1000 % 60; // seconds
+
             LockoutUtils.drawCenteredText(context, client.textRenderer, timeString,topX + (goalwidthheight * 3 + goalpadding * 3 + goalwidthheight/2),bottombarY + goalwidthheight/4, 0xffffffff, false  );
 
 //            context.drawTextWithBackground(client.textRenderer, Text.of(String.valueOf(t1)), topX + goalwidthheight/2, bottombarY + goalpadding, 200, Colors.get(ClientGameState.getTeams().get(0).teamId));
 //            context.drawTextWithBackground(client.textRenderer, Text.of(String.valueOf(t2)), topX + goalwidthheight + goalpadding + goalwidthheight/2, bottombarY + goalpadding, 200, Colors.get(ClientGameState.getTeams().get(1).teamId));
-            LockoutUtils.drawCenteredText(context, client.textRenderer, String.valueOf(t1), topX + goalwidthheight/2, bottombarY+ goalwidthheight/4, Colors.get(ClientGameState.getTeams().get(0).teamId()), false);
-            LockoutUtils.drawCenteredText(context, client.textRenderer, String.valueOf(t2), topX + 3* goalwidthheight/2 + goalpadding, bottombarY + goalwidthheight/4, Colors.get(ClientGameState.getTeams().get(1).teamId()), false);
+
+            try {
+                LockoutUtils.drawCenteredText(context, client.textRenderer, String.valueOf(ClientGameStateV2.getBoard().scores().get(0)), topX + goalwidthheight/2, bottombarY+ goalwidthheight/4, Colors.get(ClientGameStateV2.getTeams().get(0).teamColor), false);
+                LockoutUtils.drawCenteredText(context, client.textRenderer, String.valueOf(ClientGameStateV2.getBoard().scores().get(1)), topX + 3* goalwidthheight/2 + goalpadding, bottombarY + goalwidthheight/4, Colors.get(ClientGameStateV2.getTeams().get(1).teamColor), false);
+
+            }
+            catch (Exception e) {
+                LockoutLogger.log("Error drawing scores in boardhud");
+            }
 
 //            CompassesWidget.drawHud(context);
-
-
-
-
-
-
 
         }
 

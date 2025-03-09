@@ -6,6 +6,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static net.abrikoos.lockout_bingo.server.goals.LockoutGoalTag.*;
 
@@ -21,11 +22,11 @@ public class GoalItemRegistry {
         items.add(new GoalListItem("Opponent obtains obsidian", "opponent obtains obsidian", 2, List.of(dont), "no_obsidian", List.of(Identifier.of("lockout-bingo:goalicon/block/obsidian.png"))));
         items.add(new GoalListItem("Opponent obtains netherrack", "opponent obtains netherrack", 4, List.of(dont), "no_netherrack", List.of(Identifier.of("lockout-bingo:goalicon/block/netherrack.png"))));
         items.add(new GoalListItem("Opponent obtains seeds", "opponent obtains seeds", 2, List.of(dont), "no_seeds", List.of(Identifier.of("minecraft:textures/item/wheat_seeds.png"))));
-        items.add(new GoalListItem("Opponent gets hit by a snowball", "opponent gets hit by a snowball", 2, List.of(opponent), "snowball_hit", List.of(Identifier.of("minecraft:textures/item/snowball.png"))));
+        items.add(new GoalListItem("Opponent gets hit by a snowball", "opponent gets hit by a snowball", 2, List.of(dont), "snowball_hit", List.of(Identifier.of("minecraft:textures/item/snowball.png"))));
         items.add(new GoalListItem("Opponent takes fall damage", "opponent takes fall damage", 2, List.of(dont), "no_fall", List.of(Identifier.of("lockout-bingo:goalicon/other/fall_damage.png")))); // todo icon
-        items.add(new GoalListItem("Opponent dies", "", 2, List.of(opponent, die), "no_die", List.of(Identifier.of("lockout-bingo:goalicon/other/opponent.png")) ));
-        items.add(new GoalListItem("Opponent dies 3 times", "", 2, List.of(opponent, die, C3), "no_die_3", List.of(Identifier.of("lockout-bingo:goalicon/other/opponent.png")) ));
-        items.add(new GoalListItem("Opponent catches fire", "", 3, List.of(opponent), "no_fire", List.of(Identifier.of("lockout-bingo", "goalicon/other/fire.png"))));
+        items.add(new GoalListItem("Opponent dies", "", 2, List.of(dont, die), "no_die", List.of(Identifier.of("lockout-bingo:goalicon/other/opponent.png")) ));
+        items.add(new GoalListItem("Opponent dies 3 times", "", 2, List.of(dont, die, C3), "no_die_3", List.of(Identifier.of("lockout-bingo:goalicon/other/opponent.png")) ));
+        items.add(new GoalListItem("Opponent catches fire", "", 3, List.of(dont), "no_fire", List.of(Identifier.of("lockout-bingo", "goalicon/other/fire.png"))));
 
         items.add(new GoalListItem("obtain end crystal", "", 3, List.of(nether, obtain), "obtain_end_crystal", List.of(Identifier.of("minecraft:textures/item/end_crystal.png"))));
         items.add(new GoalListItem("obtain bell", "", 2, List.of(village, obtain), "obtain_bell", List.of(Identifier.of("lockout-bingo:goalicon/block/bell.png"))));
@@ -157,7 +158,7 @@ public class GoalItemRegistry {
         items.add(new GoalListItem("kill a silverfish", "", 3, List.of(kill), "kill_silverfish", List.of(Identifier.of("lockout-bingo:goalicon/entity/silverfish.png"))));
         items.add(new GoalListItem("kill a breeze", "", 4, List.of(kill), "kill_breeze", List.of(Identifier.of("lockout-bingo:goalicon/entity/breeze.png")))); // Assuming 'breeze' is a fictional entity for the example
         items.add(new GoalListItem("kill an elder guardian", "", 3, List.of(kill), "kill_elder_guardian", List.of(Identifier.of("lockout-bingo:goalicon/entity/elder_guardian.png"))));
-        items.add(new GoalListItem("kill a ghast", "", 2, List.of(kill), "kill_ghast", List.of(Identifier.of("lockout-bingo:goalicon/entity/ghast.png"))));
+        items.add(new GoalListItem("kill a ghast", "", 2, List.of(kill, nether), "kill_ghast", List.of(Identifier.of("lockout-bingo:goalicon/entity/ghast.png"))));
         items.add(new GoalListItem("kill a zombie villager", "", 2, List.of(kill), "kill_zillager", List.of(Identifier.of("lockout-bingo:goalicon/entity/zillager.png"))));
         items.add(new GoalListItem("kill a witch", "", 3, List.of(kill), "kill_witch", List.of(Identifier.of("lockout-bingo:goalicon/entity/witch.png"))));
         items.add(new GoalListItem("kill a stray", "", 3, List.of(kill), "kill_stray", List.of(Identifier.of("lockout-bingo:goalicon/entity/stray.png"))));
@@ -369,8 +370,12 @@ public class GoalItemRegistry {
         return instance;
     }
 
-    public static GoalListItem getGoal(String id) {
-        return getInstance().items.stream().filter(item -> item.id.equals(id)).findFirst().orElse(null);
+    public static GoalListItem getGoal(String id) throws NoSuchElementException {
+        GoalListItem goal = getInstance().items.stream().filter(item -> item.id.equals(id)).findFirst().orElse(null);
+        if (goal == null) {
+            throw new NoSuchElementException("Goal with id " + id + " not found");
+        }
+        return goal;
     }
 
     public static int goalCount() {

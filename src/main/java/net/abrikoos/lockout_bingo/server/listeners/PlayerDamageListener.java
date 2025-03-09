@@ -22,7 +22,12 @@ public class PlayerDamageListener {
 
     public static void registerEvent(PlayerEntity player, DamageSource damageSource, float amount) {
         for (TriConsumer<PlayerEntity, DamageSource, Float> listener : listeners) {
-            listener.accept(player, damageSource, amount);
+            try {
+                listener.accept(player, damageSource, amount);
+            }
+            catch (Exception e) {
+                listeners.remove(listener);
+            }
         }
     }
 
@@ -31,6 +36,11 @@ public class PlayerDamageListener {
             instance = new PlayerDamageListener();
         }
         return instance;
+    }
+
+    public static void clear() {
+        instance = new PlayerDamageListener();
+        listeners.clear();
     }
 
 

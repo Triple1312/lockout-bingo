@@ -1,5 +1,6 @@
 package net.abrikoos.lockout_bingo.networkv2.team;
 
+import net.abrikoos.lockout_bingo.LockoutLogger;
 import net.fabricmc.api.Environment;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public class TeamRegV2 implements CustomPayload {
 
-    public static final Id<TeamData> ID = new CustomPayload.Id<>(Identifier.of("lockout-bingo", "team_reg_v2"));
+    public static final Id<TeamRegV2> ID = new CustomPayload.Id<>(Identifier.of("lockout-bingo", "team_reg_v2"));
 
     public List<TeamData> teams = new ArrayList<>();
 
@@ -24,7 +25,7 @@ public class TeamRegV2 implements CustomPayload {
         return teamRegV2;
     }
 
-    public PacketCodec<RegistryByteBuf, TeamRegV2> CODEC = new PacketCodec<RegistryByteBuf, TeamRegV2>() {
+    public static PacketCodec<RegistryByteBuf, TeamRegV2> CODEC = new PacketCodec<RegistryByteBuf, TeamRegV2>() {
         @Override
         public TeamRegV2 decode(RegistryByteBuf buf) {
             int teamCount = buf.readByte();
@@ -85,6 +86,59 @@ public class TeamRegV2 implements CustomPayload {
         }
         throw new Exception("Team not found");
     }
+
+    public List<PlayerData> getPlayersDataByTeamUUID(String uuid) throws Exception {
+        List<PlayerData> teamPlayers = new ArrayList<>();
+        List<String> playersTeamUUIDs = this.getTeamDataByUUID(uuid).playerUUIDs;
+        for (PlayerData player : players) {
+            if (playersTeamUUIDs.contains(player.puuid)) {
+                teamPlayers.add(player);
+            }
+        }
+        return teamPlayers;
+    }
+
+    public boolean isTeamEmpty(String teamUUID) throws Exception {
+        return getPlayersDataByTeamUUID(teamUUID).isEmpty();
+    }
+
+    public int teamCount() {
+        return teams.size();
+    }
+
+    public boolean playerInTeam(String playerUUID) {
+        for (TeamData team : teams) {
+            if (team.playerUUIDs.contains(playerUUID)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public TeamData getTeamDataByTeamName(String teamName) throws Exception {
+        for (TeamData team : teams) {
+            if (team.teamName.equals(teamName)) {
+                return team;
+            }
+        }
+        throw new Exception("Team not found");
+    }
+
+    public boolean isPlayerConnected(String uuid) throws Exception {
+        return getPlayerDataByUUID(uuid).connected;
+    }
+
+    public boolean isColorInUse(int color) {
+        for (TeamData team : teams) {
+            if (team.teamColor == color) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
 
 
 

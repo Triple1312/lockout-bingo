@@ -1,16 +1,20 @@
 package net.abrikoos.lockout_bingo;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import net.abrikoos.lockout_bingo.networkv2.compass.AskCompassPacket;
+import net.abrikoos.lockout_bingo.networkv2.game.GameStartPacket;
+import net.abrikoos.lockout_bingo.networkv2.game.GoalBoardUpdatePacket;
+import net.abrikoos.lockout_bingo.networkv2.game.StartGameRequestPacket;
+import net.abrikoos.lockout_bingo.networkv2.get.GetBoard;
+import net.abrikoos.lockout_bingo.networkv2.get.GetGameInfo;
+import net.abrikoos.lockout_bingo.networkv2.get.GetTeamData;
+import net.abrikoos.lockout_bingo.networkv2.team.*;
 import net.abrikoos.lockout_bingo.server.gamestate.GameState;
 import net.abrikoos.lockout_bingo.item.LockoutModItems;
 import net.abrikoos.lockout_bingo.server.listeners.EntityKillListener;
 import net.abrikoos.lockout_bingo.server.listeners.PlayerDeathListener;
 import net.abrikoos.lockout_bingo.server.listeners.TickListener;
-import net.abrikoos.lockout_bingo.network.compass.PlayersPositionPacket;
-import net.abrikoos.lockout_bingo.network.game.*;
-import net.abrikoos.lockout_bingo.network.team.*;
-import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
-import net.fabricmc.api.EnvType;
+import net.abrikoos.lockout_bingo.networkv2.compass.PlayersPositionPacket;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -19,7 +23,6 @@ import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Items;
@@ -50,22 +53,40 @@ public class LockoutBingo implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		PayloadTypeRegistry.playS2C().register(BlackoutStartGamePacket.ID, BlackoutStartGamePacket.CODEC);
-		PayloadTypeRegistry.playS2C().register(LockoutUpdateBoardPacket.ID, LockoutUpdateBoardPacket.CODEC);
-//		PayloadTypeRegistry.playS2C().register(AllTeamsPacket.ID, AllTeamsPacket.PACKET_CODEC);
-		PayloadTypeRegistry.playS2C().register(LockoutStartGamePacket.ID, LockoutStartGamePacket.CODEC);
+//		PayloadTypeRegistry.playS2C().register(BlackoutStartGamePacket.ID, BlackoutStartGamePacket.CODEC);
+//		PayloadTypeRegistry.playS2C().register(LockoutUpdateBoardPacket.ID, LockoutUpdateBoardPacket.CODEC);
+////		PayloadTypeRegistry.playS2C().register(AllTeamsPacket.ID, AllTeamsPacket.PACKET_CODEC);
+//		PayloadTypeRegistry.playS2C().register(LockoutStartGamePacket.ID, LockoutStartGamePacket.CODEC);
 		PayloadTypeRegistry.playS2C().register(PlayersPositionPacket.ID, PlayersPositionPacket.CODEC);
-		PayloadTypeRegistry.playC2S().register(ChangeTeamIdPacket.ID, ChangeTeamIdPacket.PACKET_CODEC);
-		PayloadTypeRegistry.playS2C().register(UnitedTeamRegistry.ID, UnitedTeamRegistry.PACKET_CODEC);
+//		PayloadTypeRegistry.playC2S().register(ChangeTeamIdPacket.ID, ChangeTeamIdPacket.PACKET_CODEC);
+//		PayloadTypeRegistry.playS2C().register(UnitedTeamRegistry.ID, UnitedTeamRegistry.PACKET_CODEC);
+//
+//
+//		PayloadTypeRegistry.playC2S().register(LockoutAddTeamPacket.ID, LockoutAddTeamPacket.PACKET_CODEC);
+//		PayloadTypeRegistry.playC2S().register(CreateBlackoutRequestPacket.ID, CreateBlackoutRequestPacket.CODEC);
+//		PayloadTypeRegistry.playC2S().register(LockoutJoinTeamPacket.ID, LockoutJoinTeamPacket.PACKET_CODEC);
+//		PayloadTypeRegistry.playC2S().register(CreateLockoutPacket.ID, CreateLockoutPacket.CODEC);
+//		PayloadTypeRegistry.playC2S().register(LockoutRemoveTeamPacket.ID, LockoutRemoveTeamPacket.PACKET_CODEC);
+//		PayloadTypeRegistry.playC2S().register(GivePlayerCompass.ID, GivePlayerCompass.CODEC);
+//		PayloadTypeRegistry.playC2S().register(LockoutAddPlayerToTeamPacket.ID, LockoutAddPlayerToTeamPacket.PACKET_CODEC);
+
+		PayloadTypeRegistry.playS2C().register(GameStartPacket.ID, GameStartPacket.CODEC);
+		PayloadTypeRegistry.playS2C().register(GoalBoardUpdatePacket.ID, GoalBoardUpdatePacket.CODEC);
+		PayloadTypeRegistry.playS2C().register(TeamRegV2.ID, ServerTeamRegV2.CODEC);
+
+		PayloadTypeRegistry.playC2S().register(GetTeamData.ID, GetTeamData.CODEC);
+		PayloadTypeRegistry.playC2S().register(GetGameInfo.ID, GetGameInfo.CODEC);
+		PayloadTypeRegistry.playC2S().register(GetBoard.ID, GetBoard.CODEC);
+		PayloadTypeRegistry.playC2S().register(AddPlayerToTeamV2.ID, AddPlayerToTeamV2.CODEC);
+		PayloadTypeRegistry.playC2S().register(AddTeamV2.ID, AddTeamV2.CODEC);
+		PayloadTypeRegistry.playC2S().register(ChangeTeamColorV2.ID, ChangeTeamColorV2.CODEC);
+		PayloadTypeRegistry.playC2S().register(RemovePlayerFromTeamV2.ID, RemovePlayerFromTeamV2.CODEC);
+		PayloadTypeRegistry.playC2S().register(RemoveTeamV2.ID, RemoveTeamV2.CODEC);
+		PayloadTypeRegistry.playC2S().register(StartGameRequestPacket.ID, StartGameRequestPacket.CODEC);
+		PayloadTypeRegistry.playC2S().register(AskCompassPacket.ID, AskCompassPacket.CODEC);
+		PayloadTypeRegistry.playC2S().register(RotateTeamColor.ID, RotateTeamColor.CODEC);
 
 
-		PayloadTypeRegistry.playC2S().register(LockoutAddTeamPacket.ID, LockoutAddTeamPacket.PACKET_CODEC);
-		PayloadTypeRegistry.playC2S().register(CreateBlackoutRequestPacket.ID, CreateBlackoutRequestPacket.CODEC);
-		PayloadTypeRegistry.playC2S().register(LockoutJoinTeamPacket.ID, LockoutJoinTeamPacket.PACKET_CODEC);
-		PayloadTypeRegistry.playC2S().register(CreateLockoutPacket.ID, CreateLockoutPacket.CODEC);
-		PayloadTypeRegistry.playC2S().register(LockoutRemoveTeamPacket.ID, LockoutRemoveTeamPacket.PACKET_CODEC);
-		PayloadTypeRegistry.playC2S().register(GivePlayerCompass.ID, GivePlayerCompass.CODEC);
-		PayloadTypeRegistry.playC2S().register(LockoutAddPlayerToTeamPacket.ID, LockoutAddPlayerToTeamPacket.PACKET_CODEC);
 
 		LockoutLogger.log("Hello Fabric world!");
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
@@ -76,10 +97,12 @@ public class LockoutBingo implements ModInitializer {
 			}));
 		});
 
-		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
-			// sends every team update
-			UnitedTeamRegistry.subscribe(u -> GameState.players().forEach(UnitedTeamRegistry::sendState));
-		}
+
+		// todo check if this is still needed
+//		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
+//			// sends every team update
+//			UnitedTeamRegistry.subscribe(u -> GameState.players().forEach(UnitedTeamRegistry::sendState));
+//		}
 
 		ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarted);
 
@@ -107,7 +130,65 @@ public class LockoutBingo implements ModInitializer {
 			GameState.playerServerLeave(handler.getPlayer());
 		});
 
-		ServerPlayNetworking.registerGlobalReceiver(GivePlayerCompass.ID, (payload, client) -> {
+		ServerPlayNetworking.registerGlobalReceiver(GetBoard.ID, (payload, context) -> {
+			ServerPlayNetworking.send(context.player(), GameState.info.board());
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(GetGameInfo.ID, (payload, context) -> {
+			ServerPlayNetworking.send(context.player(), GameState.info);
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(GetTeamData.ID, (payload, context) -> {
+			ServerPlayNetworking.send(context.player(), GameState.teamRegistry);
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(RotateTeamColor.ID, (payload, context) -> {
+			GameState.teamRegistry.rotateTeamColor(payload.teamuuid());
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(AddPlayerToTeamV2.ID, (payload, context) -> {
+            try {
+				try {
+					GameState.teamRegistry.removePlayerFromTeam(payload.puuid());
+				}
+				catch (Exception e) {
+					// do nothing
+				}
+                GameState.teamRegistry.addPlayerToTeam(payload.puuid(), payload.teamuuid());
+            } catch (Exception e) {
+                LockoutLogger.log("Error adding player to team: " + e.getMessage());
+            }
+        });
+
+		ServerPlayNetworking.registerGlobalReceiver(AddTeamV2.ID, (payload, context) -> {
+			GameState.teamRegistry.createNewTeam(payload.name());
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(ChangeTeamColorV2.ID, (payload, context) -> {
+			try {
+				GameState.teamRegistry.changeTeamColor(payload.teamuuid(), payload.color());
+			} catch (Exception e) {
+				LockoutLogger.log("Error changing team color: " + e.getMessage());
+			}
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(StartGameRequestPacket.ID, (payload, context) -> {
+			GameState.newLockout(payload);
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(RemoveTeamV2.ID, (payload, context) -> {
+			GameState.teamRegistry.removeTeam(payload.uuid());
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(RemovePlayerFromTeamV2.ID, (payload, context) -> {
+			try {
+				GameState.teamRegistry.removePlayerFromTeam(payload.puuid());
+			} catch (Exception e) {
+				LockoutLogger.log("Error removing player from team: " + e.getMessage());
+			}
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(AskCompassPacket.ID, (payload, client) -> {
 			ServerPlayerEntity player = client.player();
 			if (player.getInventory().contains(LockoutModItems.PLAYER_TRACKING_COMPASS.getDefaultStack())) {
 
@@ -117,40 +198,54 @@ public class LockoutBingo implements ModInitializer {
 			}
 		});
 
-		ServerPlayNetworking.registerGlobalReceiver(LockoutAddTeamPacket.ID, (payload, client) -> {
-			GameState.addTeam(payload.team());
-			LockoutLogger.log("Added team " + payload.team());
-		});
 
-		ServerPlayNetworking.registerGlobalReceiver(CreateBlackoutRequestPacket.ID, (payload, client) -> {
-//			GameState.newBlackout();
-			LockoutLogger.log("Started blackout game");
-		});
 
-		ServerPlayNetworking.registerGlobalReceiver(LockoutJoinTeamPacket.ID, (payload, client) -> {
-			GameState.playerJoinTeam(client.player(), payload.teamid());
-			LockoutLogger.log("Player " + client.player().getUuidAsString() + " joined team " + payload.teamid());
-		});
 
-		ServerPlayNetworking.registerGlobalReceiver(LockoutAddPlayerToTeamPacket.ID, (payload, client) -> {
-			if (payload.uuid() == null){return;}
-			GameState.playerJoinTeam(payload.uuid(),  payload.teamid());
-			LockoutLogger.log("player joined team from other player");
-		});
 
-		ServerPlayNetworking.registerGlobalReceiver(CreateLockoutPacket.ID, (payload, client) -> {
-			GameState.newLockout(payload);
-			LockoutLogger.log("Started lockout game");
-		});
+//		ServerPlayNetworking.registerGlobalReceiver(GivePlayerCompass.ID, (payload, client) -> {
+//			ServerPlayerEntity player = client.player();
+//			if (player.getInventory().contains(LockoutModItems.PLAYER_TRACKING_COMPASS.getDefaultStack())) {
+//
+//			}
+//			else {
+//				player.giveItemStack(LockoutModItems.PLAYER_TRACKING_COMPASS.getDefaultStack());
+//			}
+//		});
 
-		ServerPlayNetworking.registerGlobalReceiver(LockoutRemoveTeamPacket.ID, (payload, client) -> {
-			GameState.removeTeam(payload.team());
-			LockoutLogger.log("Removed team " + payload.team());
-		});
-
-		ServerPlayNetworking.registerGlobalReceiver(ChangeTeamIdPacket.ID, (payload, client) -> {
-			GameState.changeTeamId(payload.oldIndex(), payload.newIndex());
-		});
+//		ServerPlayNetworking.registerGlobalReceiver(LockoutAddTeamPacket.ID, (payload, client) -> {
+//			GameState.addTeam(payload.team());
+//			LockoutLogger.log("Added team " + payload.team());
+//		});
+//
+//		ServerPlayNetworking.registerGlobalReceiver(CreateBlackoutRequestPacket.ID, (payload, client) -> {
+////			GameState.newBlackout();
+//			LockoutLogger.log("Started blackout game");
+//		});
+//
+//		ServerPlayNetworking.registerGlobalReceiver(LockoutJoinTeamPacket.ID, (payload, client) -> {
+//			GameState.playerJoinTeam(client.player(), payload.teamid());
+//			LockoutLogger.log("Player " + client.player().getUuidAsString() + " joined team " + payload.teamid());
+//		});
+//
+//		ServerPlayNetworking.registerGlobalReceiver(LockoutAddPlayerToTeamPacket.ID, (payload, client) -> {
+//			if (payload.uuid() == null){return;}
+//			GameState.playerJoinTeam(payload.uuid(),  payload.teamid());
+//			LockoutLogger.log("player joined team from other player");
+//		});
+//
+//		ServerPlayNetworking.registerGlobalReceiver(CreateLockoutPacket.ID, (payload, client) -> {
+//			GameState.newLockout(payload);
+//			LockoutLogger.log("Started lockout game");
+//		});
+//
+//		ServerPlayNetworking.registerGlobalReceiver(LockoutRemoveTeamPacket.ID, (payload, client) -> {
+//			GameState.removeTeam(payload.team());
+//			LockoutLogger.log("Removed team " + payload.team());
+//		});
+//
+//		ServerPlayNetworking.registerGlobalReceiver(ChangeTeamIdPacket.ID, (payload, client) -> {
+//			GameState.changeTeamId(payload.oldIndex(), payload.newIndex());
+//		});
 
 		LockoutModItems.initialize();
 

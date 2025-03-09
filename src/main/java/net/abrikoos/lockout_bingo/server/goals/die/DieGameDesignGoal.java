@@ -16,4 +16,6 @@ public class DieGameDesignGoal extends DieGoal{
         super.validateProgress(player, source);
         if (Objects.equals(source.getType().msgId(), "badRespawnPoint")) completed(player);
     }
+
+
 }

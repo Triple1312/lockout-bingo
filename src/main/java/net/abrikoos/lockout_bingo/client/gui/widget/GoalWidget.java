@@ -1,12 +1,13 @@
 package net.abrikoos.lockout_bingo.client.gui.widget;
 
+import net.abrikoos.lockout_bingo.client.ClientGameStateV2;
 import net.abrikoos.lockout_bingo.server.goals.GoalListItem;
-import net.abrikoos.lockout_bingo.team.Colors;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
+import net.abrikoos.lockout_bingo.networkv2.team.Colors;
 
 public class GoalWidget extends ClickableWidget {
 
@@ -21,9 +22,14 @@ public class GoalWidget extends ClickableWidget {
 
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-        int color = Colors.getPlayerColor(uuid);
-        context.fill( this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, color - 0x47000000);
-        goal.draw(context, delta, this.getX(), this.getY(), this.width, this.height);
+        try {
+            int color = Colors.get(ClientGameStateV2.teamReg.getTeamDataByPlayerUUID(uuid).teamColor);
+            context.fill( this.getX(), this.getY(), this.getX() + this.width, this.getY() + this.height, color - 0x47000000);
+            goal.draw(context, delta, this.getX(), this.getY(), this.width, this.height);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override

@@ -1,11 +1,13 @@
 package net.abrikoos.lockout_bingo.client.gui.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.abrikoos.lockout_bingo.client.ClientGameStateV2;
 import net.abrikoos.lockout_bingo.client.gui.screens.tabscreen.LockoutTabManager;
 import net.abrikoos.lockout_bingo.client.gui.screens.tabscreen.LockoutTabNavigationWidget;
 import net.abrikoos.lockout_bingo.network.game.CreateLockoutPacket;
-import net.abrikoos.lockout_bingo.team.Colors;
-import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
+import net.abrikoos.lockout_bingo.networkv2.game.StartGameRequestPacket;
+import net.abrikoos.lockout_bingo.networkv2.team.Colors;
+import net.abrikoos.lockout_bingo.networkv2.team.TeamData;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -100,46 +102,46 @@ public class NewLockoutScreen extends Screen {
     }
 
     public void startLockout() {
-        List<Integer> goalTypes = new ArrayList<>();
-        List<Integer> modifiers = new ArrayList<>();
+        List<String> goalTypes = new ArrayList<>();
+        List<String> modifiers = new ArrayList<>();
         int difficulty = mainTab.difficulty.getValue();
         int goalCount = mainTab.goalCount.getValue();
 
         if (!goalTypesTab.end.getValue()) {
-            goalTypes.add(0);
+            goalTypes.add("end");
         }
         if (!goalTypesTab.nether.getValue()) {
-            goalTypes.add(1);
+            goalTypes.add("nether");
         }
         if (!goalTypesTab.redstone.getValue()) {
-            goalTypes.add(2);
+            goalTypes.add("redstone");
         }
         if (!goalTypesTab.death.getValue()) {
-            goalTypes.add(3);
+            goalTypes.add("death");
         }
         if (!goalTypesTab.opponent.getValue()) {
-            goalTypes.add(4);
+            goalTypes.add("opponent");
         }
         if (!goalTypesTab.biome.getValue()) {
-            goalTypes.add(5);
+            goalTypes.add("biome");
         }
         if (!goalTypesTab.food.getValue()) {
-            goalTypes.add(7);
+            goalTypes.add("food");
         }
         if (!goalTypesTab.kill.getValue()) {
-            goalTypes.add(8);
+            goalTypes.add("kill");
         }
         if (!goalTypesTab.move.getValue()) {
-            goalTypes.add(9);
+            goalTypes.add("move");
         }
 
-        ClientPlayNetworking.send(new CreateLockoutPacket(
-                Arrays.asList(mainTab.team1.getValue().teamId(), mainTab.team2.getValue().teamId()),
-                difficulty,
-                goalCount,
-                goalTypes,
-                modifiers
-        ));
+        ArrayList<String> teams = new ArrayList<>();
+        teams.add(mainTab.team1.getValue().teamUUID);
+        teams.add(mainTab.team2.getValue().teamUUID);
+
+        StartGameRequestPacket packet = new StartGameRequestPacket(teams, difficulty, goalCount, goalTypes, modifiers);
+
+        ClientPlayNetworking.send(packet);
     }
 
     public void setEnableModifiers(boolean enable) {
@@ -182,8 +184,8 @@ public class NewLockoutScreen extends Screen {
 
     class MainTab extends GridScreenTab {
         NewLockoutScreen parent;
-        CyclingButtonWidget<UnitedTeamRegistry.Team> team1;
-        CyclingButtonWidget<UnitedTeamRegistry.Team> team2;
+        CyclingButtonWidget<TeamData> team1;
+        CyclingButtonWidget<TeamData> team2;
         CyclingButtonWidget<Integer> difficulty;
         CyclingButtonWidget<Integer> goalCount;
 
@@ -192,15 +194,15 @@ public class NewLockoutScreen extends Screen {
             this.parent = parent;
             GridWidget.Adder adder = this.grid.setRowSpacing(8).setColumnSpacing(10).createAdder(2);
             Positioner positioner = adder.copyPositioner();
-            if (UnitedTeamRegistry.getTeams().size() < 2) {
+            if (ClientGameStateV2.teamReg.teamCount() < 2) {
                 adder.add(new TextWidget(Text.of("Not enough teams"), MinecraftClient.getInstance().textRenderer), 2, positioner.alignHorizontalCenter() );
             }
             else {
-                team1 = CyclingButtonWidget.<UnitedTeamRegistry.Team>builder(
-                        team -> Text.literal(team.teamName()).withColor(Colors.get(team.teamId()))).values(UnitedTeamRegistry.getTeams()).build(Text.of("Team 1"), (buttonWidget, val) -> {updateUI();}
+                team1 = CyclingButtonWidget.<TeamData>builder(
+                        team -> Text.literal(team.teamName).withColor(Colors.get(team.teamColor))).values(ClientGameStateV2.teamReg.teams).build(Text.of("Team 1"), (buttonWidget, val) -> {updateUI();}
                 );
-                team2 = CyclingButtonWidget.<UnitedTeamRegistry.Team>builder(
-                        team -> Text.literal(team.teamName()).withColor(Colors.get(team.teamId()))).values(UnitedTeamRegistry.getTeams()).build(Text.of("Team 2"), (buttonWidget, val) -> {updateUI();}
+                team2 = CyclingButtonWidget.<TeamData>builder(
+                        team -> Text.literal(team.teamName).withColor(Colors.get(team.teamColor))).values(ClientGameStateV2.teamReg.teams).build(Text.of("Team 2"), (buttonWidget, val) -> {updateUI();}
                 );
                 adder.add(team1);
                 adder.add(team2);

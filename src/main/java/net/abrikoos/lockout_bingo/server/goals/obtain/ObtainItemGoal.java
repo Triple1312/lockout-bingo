@@ -3,7 +3,7 @@ package net.abrikoos.lockout_bingo.server.goals.obtain;
 import net.abrikoos.lockout_bingo.LockoutLogger;
 import net.abrikoos.lockout_bingo.server.goals.LockoutGoal;
 import net.abrikoos.lockout_bingo.server.goals.LockoutGoalEvent;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.abrikoos.lockout_bingo.server.listeners.ServerTickListener;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.server.MinecraftServer;
@@ -16,7 +16,7 @@ public class ObtainItemGoal extends LockoutGoal {
         super(id);
         this.item = item;
         this.count = 1;
-        ServerTickEvents.START_SERVER_TICK.register(this::checkCompletion);
+        ServerTickListener.subscribe(this::checkCompletion);
     }
 
     private void checkCompletion(MinecraftServer minecraftserver) {
@@ -34,6 +34,11 @@ public class ObtainItemGoal extends LockoutGoal {
     @Override
     public String name() {
         return "Obtain " + item.getName().toString();
+    }
+
+    @Override
+    public void destory() {
+        ServerTickListener.unsubscribe(this::checkCompletion);
     }
 
 }

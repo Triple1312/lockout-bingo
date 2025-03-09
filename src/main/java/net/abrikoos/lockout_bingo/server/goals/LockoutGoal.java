@@ -2,8 +2,6 @@ package net.abrikoos.lockout_bingo.server.goals;
 
 import com.mojang.authlib.GameProfile;
 import net.abrikoos.lockout_bingo.server.gamestate.GameState;
-import net.abrikoos.lockout_bingo.team.UTeamPlayer;
-import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -45,7 +43,7 @@ public abstract class LockoutGoal {
     }
 
     public void destory() {
-//        listeners.clear();
+        listeners.clear();
     }
 
     public String recipiant() {

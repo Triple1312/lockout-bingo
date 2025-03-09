@@ -9,11 +9,11 @@ public class PlayerData implements CustomPayload {
 
     public static final Id<PlayerData> ID = new CustomPayload.Id<>(Identifier.of("lockout-bingo", "player_data_v2"));
 
-    String puuid;
+    public String puuid;
 
-    String name;
+    public String name;
 
-    boolean connected;
+    public boolean connected;
 
     public void setConnected(boolean connected) {
         this.connected = connected;

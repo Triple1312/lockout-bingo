@@ -50,6 +50,10 @@ public class ReworkedBuilder {
         this.items.removeIf(goal -> goal.tags.contains(tag));
     }
 
+    protected void removeGoalId(String id) {
+        this.items.removeIf(goal -> goal.id.equals(id));
+    }
+
 
     private GoalListItem getRandomGoal() {
         int randomIndex = (int) (Math.random() * items.size());
@@ -246,7 +250,8 @@ public class ReworkedBuilder {
 
         for (int i = 0; i < info.goalCount(); i++) {
             GoalListItem goal = getRandomGoal();
-            goalPackets.add(new GoalInfoPacket(goal.name, i, "00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000", 0));
+            goalPackets.add(new GoalInfoPacket(goal.name, goal.id, i, "00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000", 0));
+            this.removeGoalId(goal.id);
         }
 
         ArrayList<Integer> scores = new ArrayList<>();

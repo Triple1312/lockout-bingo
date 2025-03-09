@@ -18,6 +18,8 @@ public class MilkBucketMixin {
 
     @Inject(method = "finishUsing", at = @At("HEAD"))
     public void use(ItemStack stack, World world, LivingEntity user, CallbackInfoReturnable<ItemStack> cir) {
-        MilkBucketUseListener.registerEvent(world, (PlayerEntity) user);
+        if (user instanceof PlayerEntity) {
+            MilkBucketUseListener.registerEvent(world, (PlayerEntity) user);
+        }
     }
 }

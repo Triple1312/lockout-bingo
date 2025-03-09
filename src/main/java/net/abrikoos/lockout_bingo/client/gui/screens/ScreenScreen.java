@@ -2,14 +2,17 @@ package net.abrikoos.lockout_bingo.client.gui.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.abrikoos.lockout_bingo.LockoutLogger;
-import net.abrikoos.lockout_bingo.client.ClientGameState;
+import net.abrikoos.lockout_bingo.client.ClientGameStateV2;
 import net.abrikoos.lockout_bingo.client.gui.screens.tabscreen.LockoutTabManager;
 import net.abrikoos.lockout_bingo.client.gui.screens.tabscreen.LockoutTabNavigationWidget;
 import net.abrikoos.lockout_bingo.client.gui.tabs.BoardTab3;
 import net.abrikoos.lockout_bingo.client.gui.tabs.TeamsTab;
 import net.abrikoos.lockout_bingo.client.gui.widget.AddTeamWidget;
+import net.abrikoos.lockout_bingo.networkv2.team.Colors;
+import net.abrikoos.lockout_bingo.networkv2.team.PlayerData;
+import net.abrikoos.lockout_bingo.networkv2.team.TeamData;
+import net.abrikoos.lockout_bingo.networkv2.team.TeamRegV2;
 import net.abrikoos.lockout_bingo.server.gamestate.GameState;
-import net.abrikoos.lockout_bingo.team.*;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -41,7 +44,7 @@ public class ScreenScreen extends Screen {
     public ScreenScreen() {
         super(Text.of("Complete Full Screen"));
         init();
-        UnitedTeamRegistry.subscribe(this::teamsChanged);
+        ClientGameStateV2.subscribeToTeamsUpdate(this::teamsChanged);
     }
 
     public void init() {
@@ -50,7 +53,7 @@ public class ScreenScreen extends Screen {
         this.layout.setFooterHeight(0);
         this.tabManager = new LockoutTabManager(this::addDrawableChild, this::remove);
         this.tabManager.subscribeTabChangeEvent(this::tabchanged);
-        if (GameState.inGame()) {
+        if (ClientGameStateV2.isGameRunning()) {
             this.tabNavigation = LockoutTabNavigationWidget.builder(this.tabManager, this.width)
                     .tabs( new MainTab(), boardTab, new TeamsTab(this))
                     .build();
@@ -75,7 +78,7 @@ public class ScreenScreen extends Screen {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == GLFW.GLFW_KEY_B) {
-            if (ClientGameState.boardTimeOver) {
+            if (ClientGameStateV2.gameHasStarted()) {
                 if (this.tabManager.getCurrentTab().getTitle().getString().equals("TeamsTab")) {
                     return false;
                 }
@@ -92,7 +95,7 @@ public class ScreenScreen extends Screen {
 
         }
         if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
-            if (ClientGameState.boardTimeOver) {
+            if (ClientGameStateV2.gameHasStarted()) {
                 return super.keyPressed(keyCode, scanCode, modifiers);
             } else {
                 return false;
@@ -151,7 +154,7 @@ public class ScreenScreen extends Screen {
         super.clearChildren();
     }
 
-    public void teamsChanged(UnitedTeamRegistry reg) {
+    public void teamsChanged(TeamRegV2 reg) {
         LockoutLogger.log("Teams Changed");
 //        teamTab.forEachChild(this::remove);
         this.init();
@@ -306,10 +309,10 @@ public class ScreenScreen extends Screen {
 
             public final class PlayerEntry extends Entry implements AutoCloseable {
                 MinecraftClient client = MinecraftClient.getInstance();
-                private final UTeamPlayer player;
+                private final PlayerData player;
 
 
-                public PlayerEntry(UTeamPlayer player) {
+                public PlayerEntry(PlayerData player) {
                     super();
                     this.player = player;
                 }
@@ -328,7 +331,13 @@ public class ScreenScreen extends Screen {
                 public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
                     context.fill(x, y, x + entryWidth, y + entryHeight, 0x80FF0000);
 //                    context.drawTexture(player.getPlayerListEntry().getSkinTextures().texture(), x, y, 8, 8, 8, 8, entryHeight, entryHeight);
-                    context.drawText(client.textRenderer, player.getName(), x + entryHeight + 2, y + 2, player.teamIndex == 0 ? 0xFFFFFFFF : Colors.get(player.teamIndex), false);
+                    TeamData team;
+                    try {
+                        team = ClientGameStateV2.teamReg.getTeamDataByPlayerUUID(player.puuid);
+                    } catch (Exception e) {
+                        team = null;
+                    }
+                    context.drawText(client.textRenderer, player.name, x + entryHeight + 2, y + 2, team == null ? 0xFFFFFFFF : Colors.get(team.teamColor), false);
 //                    context.drawText(client.textRenderer, "Team: " + (player.teamIndex == 0 ? "No" : OldTeamRegistry.getTeams().get(player.teamIndex).name), x + entryHeight + 2, y + 12, 0x77FFFFFF, false); // todo wtf is this ?
 
 

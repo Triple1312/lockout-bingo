@@ -54,6 +54,7 @@ import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 
 public class GoalFactory {
@@ -401,7 +402,7 @@ public class GoalFactory {
             case "fill_inventory" -> new FillInventoryGoal(id);
             case "fill_inventory_unique" -> new FillUniqueItemsInventoryGoal(id);
 
-            default -> new DeadGoal(id,goalid);
+            default -> throw new NoSuchElementException("No goal found for " + goalid);
         };
 
     }

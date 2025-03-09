@@ -1,13 +1,13 @@
 package net.abrikoos.lockout_bingo.client.gui.widget;
 
+import net.abrikoos.lockout_bingo.client.ClientGameStateV2;
 import net.abrikoos.lockout_bingo.network.team.LockoutJoinTeamPacket;
 import net.abrikoos.lockout_bingo.network.team.LockoutRemoveTeamPacket;
-import net.abrikoos.lockout_bingo.team.Colors;
-import net.abrikoos.lockout_bingo.team.UTeamPlayer;
-import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
+import net.abrikoos.lockout_bingo.networkv2.team.*;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.GridWidget;
 import net.minecraft.client.gui.widget.Positioner;
@@ -15,13 +15,13 @@ import net.minecraft.text.Text;
 
 public class TeamSettingsWidget extends GridWidget {
     final boolean leftbutton;
-    final int teamId;
-    final UTeamPlayer player;
+    final TeamData team;
+    final PlayerData player;
 
     TeamSettingsWidget(TeamSettingsWidget.Builder builder) {
         super();
         this.leftbutton = builder.leftbutton;
-        this.teamId = builder.teamId;
+        this.team = builder.teamD;
         this.player = builder.player;
         this.draw();
     }
@@ -29,37 +29,57 @@ public class TeamSettingsWidget extends GridWidget {
     public void draw() {
         Adder adder = this.setColumnSpacing(4).createAdder(2);
         Positioner positioner = adder.copyPositioner();
-        UnitedTeamRegistry.Team team = UnitedTeamRegistry.getTeam(teamId);
         if (team == null) {
             return;
         }
         assert team != null;
-        Text teamname = Text.literal(team.teamName()).withColor(Colors.get(teamId));
+        Text teamname = Text.literal(team.teamName).withColor(Colors.get(team.teamColor));
         ButtonWidget teamNameButton = ButtonWidget.builder(
                 teamname,
                 btn -> {
-                    ClientPlayNetworking.send(new LockoutJoinTeamPacket(teamId));
+                    ClientPlayNetworking.send(new AddPlayerToTeamV2(team.teamUUID, MinecraftClient.getInstance().player.getUuidAsString()));
                 }
         ).build();
         ButtonWidget bbtn;
-        if (player.teamIndex == teamId) {
+
+        bbtn = ButtonWidget.builder(
+                Text.of("X"),
+                btn -> {
+                    ClientPlayNetworking.send(new RemoveTeamV2(team.teamUUID));
+                }
+        ).width(20).build();
+        try {
+            if (!ClientGameStateV2.teamReg.getPlayersDataByTeamUUID(team.teamUUID).isEmpty()) {
+                bbtn.active = false;
+            }
+        }
+        catch (Exception exception) {
+            System.out.println("dude idk, iets met teambutton gemaakt worden ma kan team ni vinden idk");
+        }
+
+        if (team.playerUUIDs.contains(player.puuid)) {
             teamNameButton.active = false;
             bbtn = ColoredButton.builderc(
                     Text.of("Leave"),
                     (ColoredButton.PressAction) btn -> {
-                        ClientPlayNetworking.send(new LockoutJoinTeamPacket(0));
+                        ClientPlayNetworking.send(new RemovePlayerFromTeamV2( player.puuid));
                     }
-            ).color(teamId).build();
+            ).color(team.teamColor).build();
         }
         else {
             bbtn = ButtonWidget.builder(
                     Text.of("X"),
                     btn -> {
-                        ClientPlayNetworking.send(new LockoutRemoveTeamPacket(team.teamName()));
+                        ClientPlayNetworking.send(new RemoveTeamV2(team.teamUUID));
                     }
             ).width(20).build();
-            if (!UnitedTeamRegistry.getTeamPlayers(team.teamId()).isEmpty()) {
-                bbtn.active = false;
+            try {
+                if (ClientGameStateV2.teamReg.isTeamEmpty(team.teamUUID)) {
+                    bbtn.active = false;
+                }
+            }
+            catch (Exception exception) {
+                System.out.println("team van teambutton bestaat ni in registry");
             }
         }
 
@@ -74,26 +94,27 @@ public class TeamSettingsWidget extends GridWidget {
 
     }
 
-    public static TeamSettingsWidget.Builder builder(int teamId, UTeamPlayer player) {
-        return new TeamSettingsWidget.Builder(teamId, player);
+    public static TeamSettingsWidget.Builder builder(String teamUUID, PlayerData player) throws Exception {
+        return new TeamSettingsWidget.Builder(teamUUID, player);
     }
 
 
     @Environment(EnvType.CLIENT)
     public static class Builder {
-        private int teamId = 0;
-        private final UTeamPlayer player;
+        private TeamData teamD;
+        private final PlayerData player;
         private boolean leftbutton = false;
 
-        public Builder(int teamId, UTeamPlayer player) {
-            this.teamId = teamId;
+        public Builder(String teamUUID, PlayerData player) throws Exception {
+            this.teamD = ClientGameStateV2.teamReg.getTeamDataByUUID(teamUUID);
             this.player = player;
         }
 
-        public TeamSettingsWidget.Builder teamId(int teamId) {
-            this.teamId = teamId;
-            return this;
-        }
+//        public TeamSettingsWidget.Builder teamId(int teamId) {
+//            this.teamId = teamId;
+//            return this;
+//        }
+
 
         public TeamSettingsWidget build() {
             return new TeamSettingsWidget(this);

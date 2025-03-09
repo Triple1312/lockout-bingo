@@ -1,6 +1,8 @@
 package net.abrikoos.lockout_bingo.item;
 
-import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
+import net.abrikoos.lockout_bingo.LockoutLogger;
+import net.abrikoos.lockout_bingo.client.ClientGameStateV2;
+import net.abrikoos.lockout_bingo.server.gamestate.GameState;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LodestoneTrackerComponent;
 import net.minecraft.entity.Entity;
@@ -33,7 +35,20 @@ public class Compass2 extends CompassItem {
         if (target == null) {
             return Text.of("No target");
         }
-        return Text.of("Tracking: " + target);
+        if (GameState.teamRegistry == null) {
+            try {
+                return Text.of("Tracking: " + ClientGameStateV2.teamReg.getPlayerDataByUUID(target).name);
+            } catch (Exception e) {
+                return Text.of("Tracking: " + target + "dushadjlksak");
+            }
+        }
+        else {
+            try {
+                return Text.of("Tracking: " + GameState.teamRegistry.getPlayerDataByUUID(target).name);
+            } catch (Exception e) {
+                return Text.of("Tracking: " + target + "dushadjlksak");
+            }
+        }
     }
 
     private void cycleTarget(ItemStack stack, PlayerEntity user, World world) {
@@ -84,9 +99,15 @@ public class Compass2 extends CompassItem {
                 cycleTarget(stack, (PlayerEntity) entity, world);
                 tracked__uuid = stack.get(LockoutModItems.PLAYER_COMPASS);
             }
-            if (!UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(tracked__uuid)).isConnected()) {
-                cycleTarget(stack, (PlayerEntity) entity, world);
+            try {
+                if (ClientGameStateV2.teamReg.isPlayerConnected(tracked__uuid)) {
+                    cycleTarget(stack, (PlayerEntity) entity, world);
+                }
             }
+            catch (Exception ignored) {
+                LockoutLogger.log("");
+            }
+
             try {
                 String finalTracked__uuid = tracked__uuid;
                 ServerPlayerEntity player = serverWorld.getPlayers().stream().filter(p -> p.getUuidAsString().equals(finalTracked__uuid)).toList().getFirst();

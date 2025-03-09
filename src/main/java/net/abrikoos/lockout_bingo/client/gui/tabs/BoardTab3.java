@@ -1,12 +1,13 @@
 package net.abrikoos.lockout_bingo.client.gui.tabs;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.abrikoos.lockout_bingo.client.ClientGameState;
+import net.abrikoos.lockout_bingo.LockoutLogger;
+import net.abrikoos.lockout_bingo.client.ClientGameStateV2;
 import net.abrikoos.lockout_bingo.client.gui.LockoutUtils;
-import net.abrikoos.lockout_bingo.network.game.GivePlayerCompass;
-import net.abrikoos.lockout_bingo.server.gamestate.GameState;
-import net.abrikoos.lockout_bingo.server.goals.GoalListItem;
-import net.abrikoos.lockout_bingo.team.Colors;
+import net.abrikoos.lockout_bingo.networkv2.compass.AskCompassPacket;
+import net.abrikoos.lockout_bingo.networkv2.game.GoalInfoPacket;
+import net.abrikoos.lockout_bingo.networkv2.team.Colors;
+import net.abrikoos.lockout_bingo.server.goals.GoalItemRegistry;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -17,6 +18,7 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class BoardTab3 implements Tab {
@@ -64,7 +66,7 @@ public class BoardTab3 implements Tab {
         @Override
         protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) { // this is for current 25 goals
 
-            if (ClientGameState.isGameRunning()) {
+            if (ClientGameStateV2.isGameRunning()) {
                 int tabsizewidth = this.width;
                 int tabsizeheight = this.height;
                 int goalwidthheight = (int) (tabsizeheight * 0.1);
@@ -72,33 +74,54 @@ public class BoardTab3 implements Tab {
                 int topX = tabsizewidth / 2 - (goalwidthheight * 5 + goalpadding * 6) / 2;
                 int topY = tabsizeheight / 2 - (goalwidthheight * 5 + goalpadding * 6) / 2;
 
-                for (int i = 0; i < ClientGameState.getGoals().size(); i++) {
-                    GoalListItem goal = ClientGameState.getGoals().get(i);
+                List<GoalInfoPacket> goals = ClientGameStateV2.getGoals();
+                for (int i = 0; i < goals.size(); i++) {
                     int x = i % 5;
                     int y = i / 5;
                     int goalTopX = topX + x * (goalwidthheight + goalpadding);
                     int goalTopY = topY + y * (goalwidthheight + goalpadding);
-                    int color;
-                    if (ClientGameState.latestUpdate() == null) {
-                        color = 0xFF000000;
-                    }
-                    else {
-                        color = Colors.getPlayerColor(ClientGameState.latestUpdate().goals[i]);
-                    }
-                    context.fill(goalTopX, goalTopY, goalTopX + goalwidthheight, goalTopY + goalwidthheight, color - 0x47000000);
+                    int color = goals.get(i).color();
 
-                    goal.draw(context, delta/3, goalTopX, goalTopY, goalwidthheight, goalwidthheight);
-
+                    context.fill(goalTopX, goalTopY, goalTopX + goalwidthheight, goalTopY + goalwidthheight, Colors.get(color) - 0x47000000);
+                    try {
+                        GoalItemRegistry.getGoal(goals.get(i).goalID()).draw(context, delta, goalTopX, goalTopY, goalwidthheight, goalwidthheight);
+                    }
+                    catch (Exception ignored) {
+                        LockoutLogger.log("Error drawing goal " + goals.get(i).goalName() + "at boardtab");
+                    }
                     if (intersect(goalTopX, goalTopY, goalTopX + goalwidthheight, goalTopY + goalwidthheight, mouseX, mouseY)) { // onhover
 
-                        context.drawTextWithBackground(client.textRenderer, Text.of(goal.name), goalTopX, goalTopY - goalpadding/2, 200, 0xffffffff);
+                        context.drawTextWithBackground(client.textRenderer, Text.of(goals.get(i).goalName()), goalTopX, goalTopY - goalpadding/2, 200, 0xffffffff);
                     }
-
                 }
-                if(!ClientGameState.boardTimeOver) {
 
-                    LockoutUtils.drawCenteredText(context, client.textRenderer, "Start in: " + ClientGameState.countDown() + 's', tabsizewidth / 2, topY - goalwidthheight/2, 0xffffffff, true);
-                } else if (ClientGameState.compass_enabled) {
+//                for (int i = 0; i < ClientGameStateV2.getGoals().size(); i++) {
+//                    GoalInfoPacket goal = ClientGameStateV2.getGoals().get(i);
+//                    int x = i % 5;
+//                    int y = i / 5;
+//                    int goalTopX = topX + x * (goalwidthheight + goalpadding);
+//                    int goalTopY = topY + y * (goalwidthheight + goalpadding);
+//                    int color;
+//                    if (ClientGameStateV2.latestUpdate() == null) {
+//                        color = 0xFF000000;
+//                    }
+//                    else {
+//                        color = Colors.getPlayerColor(ClientGameState.latestUpdate().goals[i]);
+//                    }
+//                    context.fill(goalTopX, goalTopY, goalTopX + goalwidthheight, goalTopY + goalwidthheight, color - 0x47000000);
+//
+//                    goal.draw(context, delta/3, goalTopX, goalTopY, goalwidthheight, goalwidthheight);
+//
+//                    if (intersect(goalTopX, goalTopY, goalTopX + goalwidthheight, goalTopY + goalwidthheight, mouseX, mouseY)) { // onhover
+//
+//                        context.drawTextWithBackground(client.textRenderer, Text.of(goal.name), goalTopX, goalTopY - goalpadding/2, 200, 0xffffffff);
+//                    }
+//
+//                }
+                if(!ClientGameStateV2.gameHasStarted()) {
+
+                    LockoutUtils.drawCenteredText(context, client.textRenderer, "Start in: " + ClientGameStateV2.countDownTime() + 's', tabsizewidth / 2, topY - goalwidthheight/2, 0xffffffff, true);
+                } else if (ClientGameStateV2.compass_enabled) {
                     compassButton.setX(this.getX() + 16);
                     compassButton.setY(this.getY() + 16);
                     compassButton.render(context, mouseX, mouseY, delta);
@@ -142,7 +165,7 @@ public class BoardTab3 implements Tab {
 
             @Override
             public void onClick(double mouseX, double mouseY) {
-                ClientPlayNetworking.send(new GivePlayerCompass());
+                ClientPlayNetworking.send(new AskCompassPacket());
                 MinecraftClient.getInstance().setScreen(null);
             }
         }

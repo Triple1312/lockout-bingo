@@ -5,6 +5,7 @@ import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,7 +25,7 @@ public class TeamData implements CustomPayload {
         this.teamName = teamName;
         this.teamUUID = teamUUID;
         this.teamColor = teamColor;
-        this.playerUUIDs = List.of();
+        this.playerUUIDs = new ArrayList<>();
     }
 
     public void addPlayer(String puuid) {

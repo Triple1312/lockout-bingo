@@ -3,6 +3,7 @@ package net.abrikoos.lockout_bingo.networkv2.game;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +17,14 @@ public record StartGameRequestPacket(
 
 ) implements CustomPayload {
 
+    public static final Id<StartGameRequestPacket> ID = new CustomPayload.Id<>(Identifier.of("lockout-bingo", "start_game_request_v2"));
 
 
-    public static final PacketCodec<RegistryByteBuf, StartGameRequestPacket> CODEC = new PacketCodec<RegistryByteBuf, StartGameRequestPacket>() {
+    public static StartGameRequestPacket empty() {
+        return new StartGameRequestPacket(new ArrayList<>(), 0, 0, new ArrayList<>(), new ArrayList<>());
+    }
+
+    public static PacketCodec<RegistryByteBuf, StartGameRequestPacket> CODEC = new PacketCodec<RegistryByteBuf, StartGameRequestPacket>() {
         @Override
         public StartGameRequestPacket decode(RegistryByteBuf buf) {
             int teamCount = buf.readByte();
@@ -28,8 +34,9 @@ public record StartGameRequestPacket(
             }
             int difficulty = buf.readByte();
             int goalCount = buf.readByte();
+            int disabledGoalCategoryCounts = buf.readByte();
             List<String> disabledGoals = new ArrayList<>();
-            for (int i = 0; i < goalCount; i++) {
+            for (int i = 0; i < disabledGoalCategoryCounts; i++) {
                 int goalNameCharacterCount = buf.readByte();
                 disabledGoals.add(buf.readCharSequence(goalNameCharacterCount, java.nio.charset.StandardCharsets.UTF_8).toString());
             }
@@ -69,6 +76,6 @@ public record StartGameRequestPacket(
 
     @Override
     public Id<? extends CustomPayload> getId() {
-        return null;
+        return ID;
     }
 }

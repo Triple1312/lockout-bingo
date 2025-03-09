@@ -1,7 +1,5 @@
 package net.abrikoos.lockout_bingo.networkv2.team;
 
-import net.abrikoos.lockout_bingo.team.UTeamPlayer;
-import net.abrikoos.lockout_bingo.team.UnitedTeamRegistry;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -28,22 +26,22 @@ public class Colors {
         return colors[index -1];
     }
 
-    public static int getPlayerColor(String puuid) {
-        if (Objects.equals(puuid, "00000000-0000-0000-0000-000000000000") || puuid == null) {
-            return get(0);
-        }
-        if (puuid.equals("11111111-1111-1111-1111-111111111111")) {
-            return get(1);
-        }
-        if (puuid.equals("22222222-2222-2222-2222-222222222222")) {
-            return get(2);
-        }
-        UTeamPlayer player = UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(puuid));
-        if (player == null) {
-            return get(1);
-        }
-        return get(player.teamIndex);
-    }
+//    public static int getPlayerColor(String puuid) {
+//        if (Objects.equals(puuid, "00000000-0000-0000-0000-000000000000") || puuid == null) {
+//            return get(0);
+//        }
+//        if (puuid.equals("11111111-1111-1111-1111-111111111111")) {
+//            return get(1);
+//        }
+//        if (puuid.equals("22222222-2222-2222-2222-222222222222")) {
+//            return get(2);
+//        }
+//        UTeamPlayer player = UnitedTeamRegistry.getTeamPlayerByUUID(UUID.fromString(puuid));
+//        if (player == null) {
+//            return get(1);
+//        }
+//        return get(player.teamIndex);
+//    }
 
     public static int getTeamIndex(int color) {
         for (int i = 0; i < colors.length; i++) {

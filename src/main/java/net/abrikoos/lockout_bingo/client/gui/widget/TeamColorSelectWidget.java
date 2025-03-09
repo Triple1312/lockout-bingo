@@ -1,7 +1,8 @@
 package net.abrikoos.lockout_bingo.client.gui.widget;
 
 import net.abrikoos.lockout_bingo.network.team.ChangeTeamIdPacket;
-import net.abrikoos.lockout_bingo.team.Colors;
+
+import net.abrikoos.lockout_bingo.networkv2.team.Colors;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;
