@@ -7,12 +7,7 @@ import net.abrikoos.lockout_bingo.client.gui.screens.tabscreen.LockoutTabManager
 import net.abrikoos.lockout_bingo.client.gui.screens.tabscreen.LockoutTabNavigationWidget;
 import net.abrikoos.lockout_bingo.client.gui.tabs.BoardTab3;
 import net.abrikoos.lockout_bingo.client.gui.tabs.TeamsTab;
-import net.abrikoos.lockout_bingo.client.gui.widget.AddTeamWidget;
-import net.abrikoos.lockout_bingo.networkv2.team.Colors;
-import net.abrikoos.lockout_bingo.networkv2.team.PlayerData;
-import net.abrikoos.lockout_bingo.networkv2.team.TeamData;
 import net.abrikoos.lockout_bingo.networkv2.team.TeamRegV2;
-import net.abrikoos.lockout_bingo.server.gamestate.GameState;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -26,10 +21,6 @@ import net.minecraft.client.gui.widget.*;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
 
 @Environment(EnvType.CLIENT)
 public class ScreenScreen extends Screen {
@@ -243,113 +234,6 @@ public class ScreenScreen extends Screen {
                     positioner
             );
             bbbtn.active = false;
-        }
-
-    }
-
-
-    class TeamGTab implements Tab {
-        List<ClickableWidget> children = new ArrayList<>();
-        int TOP_MARGIN = 100;
-
-        TeamGTab() {
-
-        }
-
-        public void redraw() {
-            children.clear();
-//            Team teamPlayer = PlayerTeamRegistry.getPlayerByUUID(MinecraftClient.getInstance().player.getUuidAsString());
-            addTeamsWidgets();
-            addPlayersWidgets();
-        }
-
-        public void addTeamsWidgets() {
-            int X_MARGIN = ScreenScreen.this.width - 2 * 300 / 3;
-            children.add(new TextWidget(X_MARGIN, TOP_MARGIN, Text.of("Teams"), MinecraftClient.getInstance().textRenderer));
-            AddTeamWidget atw = new AddTeamWidget();
-            atw.setX(X_MARGIN);
-            atw.setY(TOP_MARGIN + 20);
-//            children.add(new AddTeamWidget(), atw);
-
-        }
-
-        public void addPlayersWidgets() {
-            int X_MARGIN = (ScreenScreen.this.width - 2 * 300 / 3) * 2 + 300;
-
-        }
-
-
-        @Override
-        public Text getTitle() {
-            return Text.of("Teams");
-        }
-
-        @Override
-        public void forEachChild(Consumer<ClickableWidget> consumer) {
-            children.forEach(consumer);
-        }
-
-        @Override
-        public void refreshGrid(ScreenRect tabArea) {
-
-        }
-
-        class PlayerTeamListWidget extends AlwaysSelectedEntryListWidget<ScreenScreen.TeamGTab.PlayerTeamListWidget.Entry> {
-
-            public PlayerTeamListWidget(MinecraftClient minecraftClient, int i, int j, int k, int l) {
-                super(minecraftClient, i, j, k, l);
-            }
-
-
-            public abstract static class Entry extends AlwaysSelectedEntryListWidget.Entry<Entry> {
-                public Entry() {
-                    super();
-                }
-            }
-
-            public final class PlayerEntry extends Entry implements AutoCloseable {
-                MinecraftClient client = MinecraftClient.getInstance();
-                private final PlayerData player;
-
-
-                public PlayerEntry(PlayerData player) {
-                    super();
-                    this.player = player;
-                }
-
-                @Override
-                public void close() {
-
-                }
-
-                @Override
-                public Text getNarration() {
-                    return Text.of("vbdhjsidolhaldh,bdkjbmnbmsdiolasyiodya");
-                }
-
-                @Override
-                public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-                    context.fill(x, y, x + entryWidth, y + entryHeight, 0x80FF0000);
-//                    context.drawTexture(player.getPlayerListEntry().getSkinTextures().texture(), x, y, 8, 8, 8, 8, entryHeight, entryHeight);
-                    TeamData team;
-                    try {
-                        team = ClientGameStateV2.teamReg.getTeamDataByPlayerUUID(player.puuid);
-                    } catch (Exception e) {
-                        team = null;
-                    }
-                    context.drawText(client.textRenderer, player.name, x + entryHeight + 2, y + 2, team == null ? 0xFFFFFFFF : Colors.get(team.teamColor), false);
-//                    context.drawText(client.textRenderer, "Team: " + (player.teamIndex == 0 ? "No" : OldTeamRegistry.getTeams().get(player.teamIndex).name), x + entryHeight + 2, y + 12, 0x77FFFFFF, false); // todo wtf is this ?
-
-
-                }
-
-                @Override
-                public boolean mouseClicked(double mouseX, double mouseY, int button) {
-                    return false;
-                }
-
-
-            }
         }
 
     }

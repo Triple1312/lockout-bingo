@@ -1,6 +1,5 @@
 package net.abrikoos.lockout_bingo.client.gui.screens;
 
-import net.abrikoos.lockout_bingo.team.UTeamPlayer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;

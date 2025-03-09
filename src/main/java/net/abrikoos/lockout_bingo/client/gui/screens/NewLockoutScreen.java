@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.abrikoos.lockout_bingo.client.ClientGameStateV2;
 import net.abrikoos.lockout_bingo.client.gui.screens.tabscreen.LockoutTabManager;
 import net.abrikoos.lockout_bingo.client.gui.screens.tabscreen.LockoutTabNavigationWidget;
-import net.abrikoos.lockout_bingo.network.game.CreateLockoutPacket;
 import net.abrikoos.lockout_bingo.networkv2.game.StartGameRequestPacket;
 import net.abrikoos.lockout_bingo.networkv2.team.Colors;
 import net.abrikoos.lockout_bingo.networkv2.team.TeamData;

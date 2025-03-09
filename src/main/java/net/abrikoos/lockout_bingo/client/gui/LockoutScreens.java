@@ -2,12 +2,8 @@ package net.abrikoos.lockout_bingo.client.gui;
 
 import net.abrikoos.lockout_bingo.LockoutLogger;
 import net.abrikoos.lockout_bingo.client.gui.screens.*;
-import net.abrikoos.lockout_bingo.client.modes.team.LockoutTeamDataClass;
-import net.abrikoos.lockout_bingo.network.game.BlackoutStartGameInfo;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-
-import java.util.List;
 
 public class LockoutScreens {
 
@@ -38,10 +34,6 @@ public class LockoutScreens {
 //    public static LockoutCreateScreen createScreen() {
 //
 //    }
-
-    public static void teamsupdate(List<LockoutTeamDataClass> teams) {
-
-    }
 
 
     // returns if successfully opened
@@ -84,12 +76,6 @@ public class LockoutScreens {
 
     public static void toggle() {
 
-    }
-
-    public static void setBoard(BlackoutStartGameInfo info) {
-//        boardScreen.setBoardwidget(new BoardWidget(info));
-        currentScreen = "board";
-        open();
     }
 
     public static Void leaveScreen(Void unused) {
