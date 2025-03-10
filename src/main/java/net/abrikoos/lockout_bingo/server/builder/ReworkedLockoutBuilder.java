@@ -1,6 +1,5 @@
 package net.abrikoos.lockout_bingo.server.builder;
 
-import net.abrikoos.lockout_bingo.networkv2.game.GameStartPacket;
 import net.abrikoos.lockout_bingo.networkv2.game.GoalBoardUpdatePacket;
 import net.abrikoos.lockout_bingo.networkv2.game.GoalInfoPacket;
 import net.abrikoos.lockout_bingo.networkv2.game.StartGameRequestPacket;
@@ -10,7 +9,7 @@ import net.abrikoos.lockout_bingo.server.goals.LockoutGoalTag;
 
 import java.util.ArrayList;
 
-public class ReworkedBuilder {
+public class ReworkedLockoutBuilder {
 
     StartGameRequestPacket info;
 
@@ -40,7 +39,7 @@ public class ReworkedBuilder {
     int left_end = 3;
     int left_nether = 12;
 
-    public ReworkedBuilder(StartGameRequestPacket info){
+    public ReworkedLockoutBuilder(StartGameRequestPacket info){
         this.info = info;
         this.packet = generateLockoutBoard();
     }

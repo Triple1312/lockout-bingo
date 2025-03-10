@@ -9,6 +9,7 @@ import net.abrikoos.lockout_bingo.networkv2.get.GetBoard;
 import net.abrikoos.lockout_bingo.networkv2.get.GetGameInfo;
 import net.abrikoos.lockout_bingo.networkv2.get.GetTeamData;
 import net.abrikoos.lockout_bingo.networkv2.team.*;
+import net.abrikoos.lockout_bingo.server.builder.BlockDropChangeBuilder;
 import net.abrikoos.lockout_bingo.server.gamestate.GameState;
 import net.abrikoos.lockout_bingo.item.LockoutModItems;
 import net.abrikoos.lockout_bingo.server.listeners.EntityKillListener;
@@ -284,6 +285,7 @@ public class LockoutBingo implements ModInitializer {
 
 	public void onServerStarted(MinecraftServer server) {
 		GameState.server = server;
+		BlockDropChangeBuilder.shuffleBlockDrops();
 	}
 
 

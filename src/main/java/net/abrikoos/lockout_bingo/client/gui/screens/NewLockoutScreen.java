@@ -50,6 +50,7 @@ public class NewLockoutScreen extends Screen {
         this.parent = parent;
         startLockoutButton = ButtonWidget.builder(Text.translatable("Start Lockout"), button -> {startLockout();}).width(80).build();
         startBlackoutButton = ButtonWidget.builder(Text.translatable("Start Blackout"), button -> {}).width(80).build();
+        startBlackoutButton.active = false;
     }
 
     protected void init() {

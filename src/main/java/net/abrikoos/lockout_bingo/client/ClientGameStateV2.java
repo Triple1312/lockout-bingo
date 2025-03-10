@@ -9,6 +9,8 @@ import net.abrikoos.lockout_bingo.networkv2.game.GoalInfoPacket;
 import net.abrikoos.lockout_bingo.networkv2.get.GetGameInfo;
 import net.abrikoos.lockout_bingo.networkv2.team.TeamData;
 import net.abrikoos.lockout_bingo.networkv2.team.TeamRegV2;
+import net.abrikoos.lockout_bingo.server.goals.GoalItemRegistry;
+import net.abrikoos.lockout_bingo.server.goals.GoalListItem;
 import net.abrikoos.lockout_bingo.util.BlockoutList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -37,11 +39,17 @@ public class ClientGameStateV2 {
     static boolean countTimeSoundPlayed = false;
     static boolean countTimeSoundPlayed2 = false;
 
+    public static List<GoalListItem> goals = new ArrayList<>();
+
     public static void startGame(GameStartPacket packet) {
         game = packet;
         // means its not a real game
         if (Objects.equals(packet.game_mode(), "")) {
             return;
+        }
+        goals.clear();
+        for (GoalInfoPacket goal : packet.board().goals()) { // todo maybe in future redo with every board update
+            goals.add(GoalItemRegistry.getGoal(goal.goalID()));
         }
         gameStartTime = game.startTime() + game.freezeTime();
         boardTimeOver = false;
@@ -104,6 +112,10 @@ public class ClientGameStateV2 {
 
     public static List<GoalInfoPacket> getGoals() {
         return game.board().goals();
+    }
+
+    public static int getGoalCount() {
+        return game.board().goals().size();
     }
 
     public static long gameTimeLength() {

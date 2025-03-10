@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AbstractCauldronMixin",
+    "BlockDropMixin",
     "ComposterMixin",
     "GammaMixin",
     "LockoutLivingEntityMixin",
@@ -11,7 +12,10 @@
     "MilkBucketMixin",
     "PlayerEntityMixin",
     "PlayerInventorymixin",
-    "ScreenMixin"
+    "ScreenMixin",
+    "accessors.CombinedEntryMixin",
+    "accessors.ItemEntryMixin",
+    "accessors.LootTableAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

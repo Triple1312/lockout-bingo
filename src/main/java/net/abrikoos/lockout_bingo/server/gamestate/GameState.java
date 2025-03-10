@@ -10,7 +10,7 @@ import net.abrikoos.lockout_bingo.networkv2.team.Colors;
 import net.abrikoos.lockout_bingo.networkv2.team.PlayerData;
 import net.abrikoos.lockout_bingo.networkv2.team.ServerTeamRegV2;
 import net.abrikoos.lockout_bingo.networkv2.team.TeamData;
-import net.abrikoos.lockout_bingo.server.builder.ReworkedBuilder;
+import net.abrikoos.lockout_bingo.server.builder.ReworkedLockoutBuilder;
 import net.abrikoos.lockout_bingo.server.goals.GoalFactory;
 import net.abrikoos.lockout_bingo.server.goals.LockoutGoal;
 import net.abrikoos.lockout_bingo.server.goals.LockoutGoalEvent;
@@ -139,7 +139,7 @@ public class GameState {
             destroyGame();
         }
 
-        ReworkedBuilder builder = new ReworkedBuilder(packet);
+        ReworkedLockoutBuilder builder = new ReworkedLockoutBuilder(packet);
         long startTime = System.currentTimeMillis();
         int freezetime = 60000;
 

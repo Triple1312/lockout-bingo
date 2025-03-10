@@ -6,6 +6,7 @@ import net.abrikoos.lockout_bingo.server.goals.LockoutGoalEvent;
 import net.abrikoos.lockout_bingo.server.listeners.ServerTickListener;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -26,6 +27,8 @@ public class ObtainItemGoal extends LockoutGoal {
             for (int i = 0; i < inventory.size(); i++) {
                 if (inventory.getStack(i).getItem() == item && inventory.getStack(i).getCount() >= this.count) {
                     this.completed(player);
+                    Registries.ITEM.getId(item).;
+
                 }
             }
         }

@@ -11,13 +11,36 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Environment(EnvType.CLIENT)
 public class BoardHud {
+
+
+    public static void drawHudNew(@NotNull DrawContext context, float delta) {
+        if (ClientGameStateV2.isGameRunning()) {
+            MinecraftClient client = MinecraftClient.getInstance();
+            int goalCount = ClientGameStateV2.getGoalCount();
+            int goalRowCount = (int) Math.pow(goalCount, 0.5);
+            int screensizex = context.getScaledWindowWidth();
+            int screensizey = context.getScaledWindowHeight();
+            double width = 0.36 * screensizex;
+            int topX = (int) (screensizex - width -5);
+            int topY = 5;
+
+            int goalWidthHeight = (int) (width / (goalRowCount + (double) (goalRowCount - 1) /4));
+
+            int goalwidthheight = (int) (screensizey * 0.06);
+            int goalpadding = (int) (screensizey * 0.01);
+//            int topX = screensizex - 5 * (goalwidthheight + goalpadding) - goalpadding;
+//            int topY = 5;
+        }
+    }
 
     public static void drawHud(@NotNull DrawContext context, float delta) {
         if (ClientGameStateV2.isGameRunning()) {
@@ -39,7 +62,8 @@ public class BoardHud {
 
                 context.fill(goalTopX, goalTopY, goalTopX + goalwidthheight, goalTopY + goalwidthheight, Colors.get(color) - 0x47000000);
                 try {
-                    GoalItemRegistry.getGoal(goals.get(i).goalID()).draw(context, delta, goalTopX, goalTopY, goalwidthheight, goalwidthheight);
+                    ClientGameStateV2.goals.get(i).draw(context, delta, goalTopX, goalTopY, goalwidthheight, goalwidthheight);
+//                    context.drawItemWithoutEntity(Items.STONE.getDefaultStack(), goalTopX, goalTopY);
                 }
                 catch (Exception ignored) {
                     LockoutLogger.log("Error drawing goal " + goals.get(i).goalName() + " at boardhud");
