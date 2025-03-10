@@ -173,65 +173,65 @@ public class ScreenScreen extends Screen {
             Positioner positioner = adder.copyPositioner();
             MinecraftClient client = MinecraftClient.getInstance();
             adder.add(
-                    new TextWidget(Text.of("Game Modes"), client.textRenderer),
-                    positioner.alignVerticalCenter()
+                new TextWidget(Text.of("Game Modes"), client.textRenderer),
+                positioner.alignVerticalCenter()
             );
             adder.add(
-                    ButtonWidget.builder(
-                            Text.of("Lockout"), btn -> {
-                                client.setScreen(new NewLockoutScreen(ScreenScreen.this));
-                            }
-                    ).width(120).build(),
-                    positioner
+                ButtonWidget.builder(
+                    Text.of("Lockout"), btn -> {
+                        client.setScreen(new NewLockoutScreen(ScreenScreen.this));
+                    }
+                ).width(120).build(),
+                positioner
             );
 
             ButtonWidget lbbtn = adder.add(
-                    ButtonWidget.builder(
-                            Text.of("Lockout Bingo"), btn -> {
-
-                            }
-                    ).width(120).build(),
-                    positioner
+                ButtonWidget.builder(
+                    Text.of("Drop Shuffle"), btn -> {
+                        client.setScreen(new NewDropShuffleScreen(ScreenScreen.this));
+                    }
+                ).width(120).build(),
+                positioner
             );
-            lbbtn.active = false;
+//            lbbtn.active = false;
 
             ButtonWidget arbtn = adder.add(
-                    ButtonWidget.builder(
-                            Text.of("Advancement Rush"), btn -> {
+                ButtonWidget.builder(
+                    Text.of("Advancement Rush"), btn -> {
 
-                            }
-                    ).width(120).build(),
-                    positioner
+                    }
+                ).width(120).build(),
+                positioner
             );
             arbtn.active = false;
 
             ButtonWidget rbhbtn = adder.add(
-                    ButtonWidget.builder(
-                            Text.of("Random Block Hunt"), btn -> {
+                ButtonWidget.builder(
+                    Text.of("Random Block Hunt"), btn -> {
 
-                            }
-                    ).width(120).build(),
-                    positioner
+                    }
+                ).width(120).build(),
+                positioner
             );
             rbhbtn.active = false;
 
             ButtonWidget ccbtn = adder.add(
-                    ButtonWidget.builder(
-                            Text.of("Crafting Chaos"), btn -> {
+                ButtonWidget.builder(
+                    Text.of("Crafting Chaos"), btn -> {
 
-                            }
-                    ).width(120).build(),
-                    positioner
+                    }
+                ).width(120).build(),
+                positioner
             );
             ccbtn.active = false;
 
             ButtonWidget bbbtn = adder.add(
-                    ButtonWidget.builder(
-                            Text.of("Biome Blitz"), btn -> {
+                ButtonWidget.builder(
+                    Text.of("Biome Blitz"), btn -> {
 
-                            }
-                    ).width(120).build(),
-                    positioner
+                    }
+                ).width(120).build(),
+                positioner
             );
             bbbtn.active = false;
         }

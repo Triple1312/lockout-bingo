@@ -54,22 +54,8 @@ public class LockoutBingo implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-//		PayloadTypeRegistry.playS2C().register(BlackoutStartGamePacket.ID, BlackoutStartGamePacket.CODEC);
-//		PayloadTypeRegistry.playS2C().register(LockoutUpdateBoardPacket.ID, LockoutUpdateBoardPacket.CODEC);
-////		PayloadTypeRegistry.playS2C().register(AllTeamsPacket.ID, AllTeamsPacket.PACKET_CODEC);
-//		PayloadTypeRegistry.playS2C().register(LockoutStartGamePacket.ID, LockoutStartGamePacket.CODEC);
+
 		PayloadTypeRegistry.playS2C().register(PlayersPositionPacket.ID, PlayersPositionPacket.CODEC);
-//		PayloadTypeRegistry.playC2S().register(ChangeTeamIdPacket.ID, ChangeTeamIdPacket.PACKET_CODEC);
-//		PayloadTypeRegistry.playS2C().register(UnitedTeamRegistry.ID, UnitedTeamRegistry.PACKET_CODEC);
-//
-//
-//		PayloadTypeRegistry.playC2S().register(LockoutAddTeamPacket.ID, LockoutAddTeamPacket.PACKET_CODEC);
-//		PayloadTypeRegistry.playC2S().register(CreateBlackoutRequestPacket.ID, CreateBlackoutRequestPacket.CODEC);
-//		PayloadTypeRegistry.playC2S().register(LockoutJoinTeamPacket.ID, LockoutJoinTeamPacket.PACKET_CODEC);
-//		PayloadTypeRegistry.playC2S().register(CreateLockoutPacket.ID, CreateLockoutPacket.CODEC);
-//		PayloadTypeRegistry.playC2S().register(LockoutRemoveTeamPacket.ID, LockoutRemoveTeamPacket.PACKET_CODEC);
-//		PayloadTypeRegistry.playC2S().register(GivePlayerCompass.ID, GivePlayerCompass.CODEC);
-//		PayloadTypeRegistry.playC2S().register(LockoutAddPlayerToTeamPacket.ID, LockoutAddPlayerToTeamPacket.PACKET_CODEC);
 
 		PayloadTypeRegistry.playS2C().register(GameStartPacket.ID, GameStartPacket.CODEC);
 		PayloadTypeRegistry.playS2C().register(GoalBoardUpdatePacket.ID, GoalBoardUpdatePacket.CODEC);
@@ -174,7 +160,7 @@ public class LockoutBingo implements ModInitializer {
 		});
 
 		ServerPlayNetworking.registerGlobalReceiver(StartGameRequestPacket.ID, (payload, context) -> {
-			GameState.newLockout(payload);
+			GameState.StartGame(payload);
 		});
 
 		ServerPlayNetworking.registerGlobalReceiver(RemoveTeamV2.ID, (payload, context) -> {
@@ -285,7 +271,7 @@ public class LockoutBingo implements ModInitializer {
 
 	public void onServerStarted(MinecraftServer server) {
 		GameState.server = server;
-		BlockDropChangeBuilder.shuffleBlockDrops();
+//		BlockDropChangeBuilder.shuffleBlockDrops();
 	}
 
 

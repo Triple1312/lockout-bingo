@@ -27,8 +27,6 @@ public class ObtainItemGoal extends LockoutGoal {
             for (int i = 0; i < inventory.size(); i++) {
                 if (inventory.getStack(i).getItem() == item && inventory.getStack(i).getCount() >= this.count) {
                     this.completed(player);
-                    Registries.ITEM.getId(item).;
-
                 }
             }
         }

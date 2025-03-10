@@ -7,8 +7,6 @@ import net.abrikoos.lockout_bingo.client.gui.screens.tabscreen.LockoutTabNavigat
 import net.abrikoos.lockout_bingo.networkv2.game.StartGameRequestPacket;
 import net.abrikoos.lockout_bingo.networkv2.team.Colors;
 import net.abrikoos.lockout_bingo.networkv2.team.TeamData;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -25,8 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Environment(EnvType.CLIENT)
-public class NewLockoutScreen extends Screen {
+public class NewDropShuffleScreen extends Screen {
     final Screen parent;
     private static final int field_42170 = 10;
     private static final int field_42171 = 8;
@@ -37,26 +34,28 @@ public class NewLockoutScreen extends Screen {
     LockoutTabManager tabManager = new LockoutTabManager(this::addDrawableChild, this::remove);
     private final ThreePartsLayoutWidget layout = new ThreePartsLayoutWidget(this);
     MainTab mainTab = new MainTab(this);
-    GoalTypesTab goalTypesTab = new GoalTypesTab();
     ModifiersTab modifiersTab = new ModifiersTab();
     MarkedStructuresTab markedStructuresTab = new MarkedStructuresTab();
     public boolean modifiers = false;
-    ButtonWidget startLockoutButton;
-    ButtonWidget startBlackoutButton;
+    ButtonWidget startDropShuffleButton;
+    ButtonWidget startDropShuffleSoloButton;
 
 
-    protected NewLockoutScreen(Screen parent) {
+    protected NewDropShuffleScreen(Screen parent) {
         super(Text.of("New Lockout"));
         this.parent = parent;
-        startLockoutButton = ButtonWidget.builder(Text.translatable("Start Lockout"), button -> {startLockout();}).width(80).build();
-        startBlackoutButton = ButtonWidget.builder(Text.translatable("Start Blackout"), button -> {}).width(80).build();
-        startBlackoutButton.active = false;
+        startDropShuffleButton = ButtonWidget.builder(Text.translatable("Start DropShuffle"), button -> {
+            startDropShuffle();
+        }).width(80).build();
+        startDropShuffleSoloButton = ButtonWidget.builder(Text.translatable("Start DropShuffle Solo"), button -> {
+        }).width(80).build();
+        startDropShuffleSoloButton.active = false;
     }
 
     protected void init() {
         this.children().clear();
         List<Tab> tabs = new ArrayList<>();
-        tabs.add(mainTab); tabs.add(goalTypesTab);
+        tabs.add(mainTab);
         if (modifiersTab != null) {
             tabs.add(modifiersTab);
         }
@@ -68,8 +67,8 @@ public class NewLockoutScreen extends Screen {
                 .build();
         this.addDrawableChild(this.tabNavigation);
         DirectionalLayoutWidget directionalLayoutWidget = this.layout.addFooter(DirectionalLayoutWidget.horizontal().spacing(8));
-        directionalLayoutWidget.add(startLockoutButton);
-        directionalLayoutWidget.add(startBlackoutButton);
+        directionalLayoutWidget.add(startDropShuffleButton);
+        directionalLayoutWidget.add(startDropShuffleSoloButton);
         directionalLayoutWidget.add(ButtonWidget.builder(ScreenTexts.CANCEL, button -> this.close()).width(80).build());
         this.layout.forEachChild(child -> {
             child.setNavigationOrder(1);
@@ -94,52 +93,23 @@ public class NewLockoutScreen extends Screen {
 
     public void updateUI() {
         if (mainTab.team1 == null || mainTab.team2 == null || mainTab.team1.getValue() == mainTab.team2.getValue()) {
-            this.startLockoutButton.active = false;
-        }
-        else {
-            this.startLockoutButton.active = true;
+            this.startDropShuffleButton.active = false;
+        } else {
+            this.startDropShuffleButton.active = true;
         }
     }
 
-    public void startLockout() {
+    public void startDropShuffle() {
         List<String> goalTypes = new ArrayList<>();
         List<String> modifiers = new ArrayList<>();
         int difficulty = mainTab.difficulty.getValue();
         int goalCount = mainTab.goalCount.getValue();
 
-        if (!goalTypesTab.end.getValue()) {
-            goalTypes.add("end");
-        }
-        if (!goalTypesTab.nether.getValue()) {
-            goalTypes.add("nether");
-        }
-        if (!goalTypesTab.redstone.getValue()) {
-            goalTypes.add("redstone");
-        }
-        if (!goalTypesTab.death.getValue()) {
-            goalTypes.add("death");
-        }
-        if (!goalTypesTab.opponent.getValue()) {
-            goalTypes.add("opponent");
-        }
-        if (!goalTypesTab.biome.getValue()) {
-            goalTypes.add("biome");
-        }
-        if (!goalTypesTab.food.getValue()) {
-            goalTypes.add("food");
-        }
-        if (!goalTypesTab.kill.getValue()) {
-            goalTypes.add("kill");
-        }
-        if (!goalTypesTab.move.getValue()) {
-            goalTypes.add("move");
-        }
-
         ArrayList<String> teams = new ArrayList<>();
         teams.add(mainTab.team1.getValue().teamUUID);
         teams.add(mainTab.team2.getValue().teamUUID);
 
-        StartGameRequestPacket packet = new StartGameRequestPacket("lockout", teams, difficulty, goalCount, goalTypes, modifiers);
+        StartGameRequestPacket packet = new StartGameRequestPacket("dropshuffle", teams, difficulty, goalCount, goalTypes, modifiers);
 
         ClientPlayNetworking.send(packet);
     }
@@ -183,40 +153,42 @@ public class NewLockoutScreen extends Screen {
 
 
     class MainTab extends GridScreenTab {
-        NewLockoutScreen parent;
+        NewDropShuffleScreen parent;
         CyclingButtonWidget<TeamData> team1;
         CyclingButtonWidget<TeamData> team2;
         CyclingButtonWidget<Integer> difficulty;
         CyclingButtonWidget<Integer> goalCount;
 
-        public MainTab(NewLockoutScreen parent) {
+        public MainTab(NewDropShuffleScreen parent) {
             super(Text.of("Game"));
             this.parent = parent;
             GridWidget.Adder adder = this.grid.setRowSpacing(8).setColumnSpacing(10).createAdder(2);
             Positioner positioner = adder.copyPositioner();
             if (ClientGameStateV2.teamReg.teamCount() < 2) {
-                adder.add(new TextWidget(Text.of("Not enough teams"), MinecraftClient.getInstance().textRenderer), 2, positioner.alignHorizontalCenter() );
-            }
-            else {
+                adder.add(new TextWidget(Text.of("Not enough teams"), MinecraftClient.getInstance().textRenderer), 2, positioner.alignHorizontalCenter());
+            } else {
                 team1 = CyclingButtonWidget.<TeamData>builder(
-                        team -> Text.literal(team.teamName).withColor(Colors.get(team.teamColor))).values(ClientGameStateV2.teamReg.teams).build(Text.of("Team 1"), (buttonWidget, val) -> {updateUI();}
+                        team -> Text.literal(team.teamName).withColor(Colors.get(team.teamColor))).values(ClientGameStateV2.teamReg.teams).build(Text.of("Team 1"), (buttonWidget, val) -> {
+                            updateUI();
+                        }
                 );
                 team2 = CyclingButtonWidget.<TeamData>builder(
-                        team -> Text.literal(team.teamName).withColor(Colors.get(team.teamColor))).values(ClientGameStateV2.teamReg.teams).build(Text.of("Team 2"), (buttonWidget, val) -> {updateUI();}
+                        team -> Text.literal(team.teamName).withColor(Colors.get(team.teamColor))).values(ClientGameStateV2.teamReg.teams).build(Text.of("Team 2"), (buttonWidget, val) -> {
+                            updateUI();
+                        }
                 );
                 adder.add(team1);
                 adder.add(team2);
             }
 
             difficulty = CyclingButtonWidget.<Integer>builder(i -> Text.of(i.toString())).values(Arrays.asList(3, 4, 5, 1, 2)).build(Text.of("Difficulty"), (buttonWidget, val) -> {
-                        return;
-            });
-            difficulty.active = false;
-            goalCount = CyclingButtonWidget.<Integer>builder(i -> Text.of(i.toString())).values(Arrays.asList(25, 49, 9)).build(Text.of("Goal amount"), (buttonWidget, val) -> {
                 return;
             });
-            goalCount.active = false;
-            adder.add(difficulty);
+            difficulty.active = false;
+            goalCount = CyclingButtonWidget.<Integer>builder(i -> Text.of(i.toString())).values(Arrays.asList(25, 9, 49)).build(Text.of("Goal amount"), (buttonWidget, val) -> {
+                return;
+            });
+//            goalCount.active = false;
             adder.add(goalCount);
 
 
@@ -229,55 +201,22 @@ public class NewLockoutScreen extends Screen {
                             .build(Text.of("Modifiers"), (buttonWidget, val) -> {
                                 setEnableModifiers(val);
                             })
-            ); cbw.setValue(false); cbw.active = false;
+            );
+            cbw.setValue(false);
+            cbw.active = false;
             CyclingButtonWidget<Boolean> cbw2 = adder.add(
                     CyclingButtonWidget.onOffBuilder(Text.of("ON"), Text.of("OFF"))
                             .build(Text.of("Marked Structures"), (buttonWidget, val) -> {
                                 setEnableMarkedStructures(val);
                             })
-            ); cbw2.setValue(false); cbw2.active = false;
+            );
+            cbw2.setValue(false);
+            cbw2.active = false;
 
 
         }
 
 
-
-    }
-
-    class GoalTypesTab extends GridScreenTab {
-        CyclingButtonWidget<Boolean> end;
-        CyclingButtonWidget<Boolean> nether;
-        CyclingButtonWidget<Boolean> redstone;
-        CyclingButtonWidget<Boolean> death;
-        CyclingButtonWidget<Boolean> opponent;
-        CyclingButtonWidget<Boolean> biome;
-        CyclingButtonWidget<Boolean> food;
-        CyclingButtonWidget<Boolean> kill;
-        CyclingButtonWidget<Boolean> move;
-        CyclingButtonWidget<Boolean> breed;
-        CyclingButtonWidget<Boolean> obtain;
-        CyclingButtonWidget<Boolean> armor;
-        CyclingButtonWidget<Boolean> tools;
-        CyclingButtonWidget<Boolean> ride;
-
-        public GoalTypesTab() {
-            super(Text.of("Goals"));
-            GridWidget.Adder adder = this.grid.setRowSpacing(8).setColumnSpacing(10).createAdder(3);
-            end = adder.add(CyclingButtonWidget.onOffBuilder().build(Text.of("End goals"), (button, val) -> {}));
-            nether = adder.add(CyclingButtonWidget.onOffBuilder().build(Text.of("Nether goals"), (button, val) -> {}));
-            redstone = adder.add(CyclingButtonWidget.onOffBuilder().build(Text.of("Redstone goals"), (button, val) -> {}));
-            death = adder.add(CyclingButtonWidget.onOffBuilder().build(Text.of("Death goals"), (button, val) -> {}));
-            opponent = adder.add(CyclingButtonWidget.onOffBuilder().build(Text.of("Opponent goals"), (button, val) -> {}));
-            biome = adder.add(CyclingButtonWidget.onOffBuilder().build(Text.of("Biome goals"), (button, val) -> {}));
-            food = adder.add(CyclingButtonWidget.onOffBuilder().build(Text.of("Food goals"), (button, val) -> {}));
-            kill = adder.add(CyclingButtonWidget.onOffBuilder().build(Text.of("Kill goals"), (button, val) -> {}));
-            move = adder.add(CyclingButtonWidget.onOffBuilder().build(Text.of("Move goals"), (button, val) -> {}));
-            breed = adder.add(CyclingButtonWidget.onOffBuilder().build(Text.of("Breed goals"), (button, val) -> {}));
-            obtain = adder.add(CyclingButtonWidget.onOffBuilder().build(Text.of("Obtain goals"), (button, val) -> {}));
-            armor = adder.add(CyclingButtonWidget.onOffBuilder().build(Text.of("Armor goals"), (button, val) -> {}));
-            tools = adder.add(CyclingButtonWidget.onOffBuilder().build(Text.of("Tool goals"), (button, val) -> {}));
-            ride = adder.add(CyclingButtonWidget.onOffBuilder().build(Text.of("Ride goals"), (button, val) -> {}));
-        }
     }
 
     class ModifiersTab extends GridScreenTab {

@@ -84,7 +84,7 @@ public class BoardTab3 implements Tab {
 
                     context.fill(goalTopX, goalTopY, goalTopX + goalwidthheight, goalTopY + goalwidthheight, Colors.get(color) - 0x47000000);
                     try {
-                        GoalItemRegistry.getGoal(goals.get(i).goalID()).draw(context, delta, goalTopX, goalTopY, goalwidthheight, goalwidthheight);
+                        ClientGameStateV2.goals.get(i).draw(context, delta, goalTopX, goalTopY, goalwidthheight, goalwidthheight);
                     }
                     catch (Exception ignored) {
                         LockoutLogger.log("Error drawing goal " + goals.get(i).goalName() + "at boardtab");

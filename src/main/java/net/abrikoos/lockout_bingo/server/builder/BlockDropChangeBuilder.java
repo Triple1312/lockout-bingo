@@ -3,11 +3,12 @@ package net.abrikoos.lockout_bingo.server.builder;
 import net.abrikoos.lockout_bingo.mixin.accessors.CombinedEntryMixin;
 import net.abrikoos.lockout_bingo.mixin.accessors.ItemEntryMixin;
 import net.abrikoos.lockout_bingo.mixin.accessors.LootTableAccessor;
+import net.abrikoos.lockout_bingo.networkv2.game.GoalBoardUpdatePacket;
+import net.abrikoos.lockout_bingo.networkv2.game.GoalInfoPacket;
+import net.abrikoos.lockout_bingo.networkv2.game.StartGameRequestPacket;
 import net.abrikoos.lockout_bingo.server.gamestate.GameState;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.entry.AlternativeEntry;
@@ -20,9 +21,6 @@ import net.minecraft.server.MinecraftServer;
 import java.util.*;
 
 public class BlockDropChangeBuilder {
-
-
-
 
 
     public static Map<Item, Item> blockDropChanges = new HashMap<>();
@@ -66,8 +64,30 @@ public class BlockDropChangeBuilder {
         System.out.println("Shuffled block drops");
     }
 
-    public void resetHashMap() {
+    public static  void resetHashMap() {
         blockDropChanges.clear();
+    }
+
+    public static GoalBoardUpdatePacket generateDropShuffleBoard(StartGameRequestPacket info) {
+        resetHashMap();
+        shuffleBlockDrops();
+        Set<Item> tmp = blockDropChanges.keySet();
+        List<Item> keys = new ArrayList<>(tmp);
+        Collections.shuffle(keys);
+        List<GoalInfoPacket> goalIds = new ArrayList<>();
+        for (int i = 0; i < info.goalCount(); i++) {
+            goalIds.add(
+                new GoalInfoPacket(
+            "Obtain " + keys.get(i).getName().getString(),
+                      keys.get(i).toString(),
+                      i,
+    "00000000-0000-0000-0000-000000000000",
+    "00000000-0000-0000-0000-000000000000",
+                0
+                )
+            );
+        }
+        return new GoalBoardUpdatePacket(goalIds, -1, new ArrayList<>());
     }
 
 }

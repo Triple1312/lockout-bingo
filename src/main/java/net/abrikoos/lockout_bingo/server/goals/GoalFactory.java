@@ -50,6 +50,7 @@ import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potions;
+import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 
@@ -405,6 +406,10 @@ public class GoalFactory {
             default -> throw new NoSuchElementException("No goal found for " + goalid);
         };
 
+    }
+
+    public static ObtainItemGoal buildObtainGoal(Identifier itemId, int index) {
+        return new ObtainItemGoal(index, Registries.ITEM.get(itemId));
     }
 }
 

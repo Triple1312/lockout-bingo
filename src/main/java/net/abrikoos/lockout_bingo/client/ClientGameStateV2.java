@@ -11,11 +11,13 @@ import net.abrikoos.lockout_bingo.networkv2.team.TeamData;
 import net.abrikoos.lockout_bingo.networkv2.team.TeamRegV2;
 import net.abrikoos.lockout_bingo.server.goals.GoalItemRegistry;
 import net.abrikoos.lockout_bingo.server.goals.GoalListItem;
+import net.abrikoos.lockout_bingo.server.goals.GoalListObtainItem;
 import net.abrikoos.lockout_bingo.util.BlockoutList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+
+import static net.abrikoos.lockout_bingo.server.goals.LockoutGoalTag.obtain;
 
 @Environment(EnvType.CLIENT)
 public class ClientGameStateV2 {
@@ -48,9 +52,7 @@ public class ClientGameStateV2 {
             return;
         }
         goals.clear();
-        for (GoalInfoPacket goal : packet.board().goals()) { // todo maybe in future redo with every board update
-            goals.add(GoalItemRegistry.getGoal(goal.goalID()));
-        }
+        buildGameBoard(packet);
         gameStartTime = game.startTime() + game.freezeTime();
         boardTimeOver = false;
         CompleteFullScreenState.selectedTab = 1;
@@ -179,6 +181,22 @@ public class ClientGameStateV2 {
 
     public static void subscribeToBoardUpdate(Consumer<GoalBoardUpdatePacket> listener) {
         boardListeners.add(listener);
+    }
+
+    public static void buildGameBoard(GameStartPacket gsp) {
+        switch (gsp.game_mode()) {
+            case "lockout":
+                for (GoalInfoPacket goal : gsp.board().goals()) { // todo maybe in future redo with every board update
+                    goals.add(GoalItemRegistry.getGoal(goal.goalID()));
+                }
+                break;
+            case "dropshuffle":
+                for (GoalInfoPacket goal : gsp.board().goals()) {
+                    goals.add(new GoalListObtainItem(goal.goalName(), "", 1,List.of(), goal.goalID(), List.of(Registries.ITEM.get(Identifier.of(goal.goalID())).getDefaultStack())));
+                }
+                break;
+        }
+
     }
 
 

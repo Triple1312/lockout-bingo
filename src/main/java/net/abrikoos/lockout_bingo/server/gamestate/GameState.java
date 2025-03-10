@@ -10,6 +10,7 @@ import net.abrikoos.lockout_bingo.networkv2.team.Colors;
 import net.abrikoos.lockout_bingo.networkv2.team.PlayerData;
 import net.abrikoos.lockout_bingo.networkv2.team.ServerTeamRegV2;
 import net.abrikoos.lockout_bingo.networkv2.team.TeamData;
+import net.abrikoos.lockout_bingo.server.builder.BlockDropChangeBuilder;
 import net.abrikoos.lockout_bingo.server.builder.ReworkedLockoutBuilder;
 import net.abrikoos.lockout_bingo.server.goals.GoalFactory;
 import net.abrikoos.lockout_bingo.server.goals.LockoutGoal;
@@ -32,6 +33,7 @@ import net.minecraft.stat.Stat;
 import net.minecraft.stat.StatHandler;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 import java.time.LocalTime;
 import java.util.*;
@@ -78,23 +80,23 @@ public class GameState {
         }
     }
 
-    public static void playerJoinTeam(String puuid, String team) {
-        try {
-            teamRegistry.addPlayerToTeam(puuid, team);
-        }
-        catch (Exception e) {
-            LockoutLogger.log("Error adding player to team");
-        }
-    }
-
-    public static void playerJoinTeam(ServerPlayerEntity player, String team) {
-        try {
-            teamRegistry.addPlayerToTeam(player.getUuid().toString(), team);
-        }
-        catch (Exception e) {
-            LockoutLogger.log("Error adding player to team");
-        }
-    }
+//    public static void playerJoinTeam(String puuid, String team) {
+//        try {
+//            teamRegistry.addPlayerToTeam(puuid, team);
+//        }
+//        catch (Exception e) {
+//            LockoutLogger.log("Error adding player to team");
+//        }
+//    }
+//
+//    public static void playerJoinTeam(ServerPlayerEntity player, String team) {
+//        try {
+//            teamRegistry.addPlayerToTeam(player.getUuid().toString(), team);
+//        }
+//        catch (Exception e) {
+//            LockoutLogger.log("Error adding player to team");
+//        }
+//    }
 
     public static List<ServerPlayerEntity> players() {
         return server.getPlayerManager().getPlayerList();
@@ -104,7 +106,7 @@ public class GameState {
         try {
             teamRegistry.createNewTeam(name);
         }
-        catch (Exception e) {
+        catch (Exception ignored) {
 
         }
     }
@@ -113,7 +115,7 @@ public class GameState {
         try {
             teamRegistry.removeTeam(name);
         }
-        catch (Exception e) {
+        catch (Exception ignored) {
 
         }
     }
@@ -134,26 +136,25 @@ public class GameState {
         goals.get(goal).complete(playerName);
     }
 
-    public static void newLockout(StartGameRequestPacket packet) {
+    public static void StartGame(StartGameRequestPacket packet) {
         if (!goals.isEmpty()) {
             destroyGame();
         }
-
-        ReworkedLockoutBuilder builder = new ReworkedLockoutBuilder(packet);
         long startTime = System.currentTimeMillis();
         int freezetime = 60000;
 
-        info = new GameStartPacket("lockout", packet.teamUUIDs().get(0), packet.teamUUIDs().get(1), builder.packet, startTime, freezetime);
-
-        for (GoalInfoPacket goal : builder.packet.goals()) {
-            LockoutGoal lg = GoalFactory.buildGoal(goal.goalID(), goal.goalIndex());
-            goals.add(lg);
+        switch (packet.gameMode()) {
+            case "lockout":
+                newLockout(packet);
+                break;
+            case "dropshuffle":
+                newDropShuffle(packet);
+                break;
         }
 
         for (LockoutGoal goal : goals) {
             goal.subscribe(GameState::onGoalComplete);
         }
-
 
         // reset all player stats
         for (ServerPlayerEntity player : players()) {
@@ -183,6 +184,34 @@ public class GameState {
         for (ServerPlayerEntity player : players()) {
             ServerPlayNetworking.send(player, info);
         }
+
+    }
+
+    private static void newDropShuffle(StartGameRequestPacket packet) {
+
+        GoalBoardUpdatePacket gbup = BlockDropChangeBuilder.generateDropShuffleBoard(packet);
+        long startTime = System.currentTimeMillis();
+        int freezetime = 60000;
+        info = new GameStartPacket("dropshuffle", packet.teamUUIDs().get(0), packet.teamUUIDs().get(1), gbup, startTime, freezetime);
+
+        for (GoalInfoPacket goal : gbup.goals()) {
+            LockoutGoal lg = GoalFactory.buildObtainGoal(Identifier.of(goal.goalID()), goal.goalIndex());
+            goals.add(lg);
+        }
+    }
+
+    private static void newLockout(StartGameRequestPacket packet) {
+
+        ReworkedLockoutBuilder builder = new ReworkedLockoutBuilder(packet);
+        long startTime = System.currentTimeMillis();
+        int freezetime = 60000;
+
+        info = new GameStartPacket("lockout", packet.teamUUIDs().get(0), packet.teamUUIDs().get(1), builder.packet, startTime, freezetime);
+
+        for (GoalInfoPacket goal : builder.packet.goals()) {
+            LockoutGoal lg = GoalFactory.buildGoal(goal.goalID(), goal.goalIndex());
+            goals.add(lg);
+        }
     }
 
     public static void newRBF() {
@@ -205,6 +234,7 @@ public class GameState {
         TameListener.clear();
         PlayerInventoryListener.clear();
         ServerTickListener.clear();
+        BlockDropChangeBuilder.resetHashMap();
     }
 
     public static String onGoalComplete(LockoutGoalEvent event) {

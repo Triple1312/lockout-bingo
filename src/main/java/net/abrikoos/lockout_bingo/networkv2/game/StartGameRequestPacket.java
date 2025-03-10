@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public record StartGameRequestPacket(
+        String gameMode,
         List<String> teamUUIDs,
         int difficulty,
         int goalCount,
@@ -21,12 +22,14 @@ public record StartGameRequestPacket(
 
 
     public static StartGameRequestPacket empty() {
-        return new StartGameRequestPacket(new ArrayList<>(), 0, 0, new ArrayList<>(), new ArrayList<>());
+        return new StartGameRequestPacket("", new ArrayList<>(), 0, 0, new ArrayList<>(), new ArrayList<>());
     }
 
     public static PacketCodec<RegistryByteBuf, StartGameRequestPacket> CODEC = new PacketCodec<RegistryByteBuf, StartGameRequestPacket>() {
         @Override
         public StartGameRequestPacket decode(RegistryByteBuf buf) {
+            int gameModeCharacterCount = buf.readByte();
+            String gameMode = buf.readCharSequence(gameModeCharacterCount, java.nio.charset.StandardCharsets.UTF_8).toString();
             int teamCount = buf.readByte();
             List<String> teamUUIDs = new ArrayList<>();
             for (int i = 0; i < teamCount; i++) {
@@ -46,11 +49,13 @@ public record StartGameRequestPacket(
                 int modifierNameCharacterCount = buf.readByte();
                 disabledModifiers.add(buf.readCharSequence(modifierNameCharacterCount, java.nio.charset.StandardCharsets.UTF_8).toString());
             }
-            return new StartGameRequestPacket(  teamUUIDs,  difficulty,  goalCount,  disabledGoals,  disabledModifiers);
+            return new StartGameRequestPacket( gameMode, teamUUIDs,  difficulty,  goalCount,  disabledGoals,  disabledModifiers);
         }
 
         @Override
         public void encode(RegistryByteBuf buf, StartGameRequestPacket value) {
+            buf.writeByte(value.gameMode.length());
+            buf.writeCharSequence(value.gameMode, java.nio.charset.StandardCharsets.UTF_8);
             buf.writeByte(value.teamUUIDs.size());
             for (String teamUUID : value.teamUUIDs) {
                 buf.writeCharSequence(teamUUID, java.nio.charset.StandardCharsets.UTF_8);
