@@ -1,5 +1,6 @@
 package net.abrikoos.lockout_bingo.server.goals;
 
+import net.abrikoos.lockout_bingo.client.ClientGameStateV2;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
@@ -23,7 +24,14 @@ public class GoalListBlockItem extends GoalListItem {
         matrices.push();
         matrices.translate(x+3, y+3, 0);
         matrices.scale((float) (width -6)/16, (float) (height -6)/16, 1);
+
+//        ctx.drawItemInSlot(ClientGameStateV2.client.textRenderer,stacks.get(0), 0, 0);
         ctx.drawItemWithoutEntity(stacks.get(0), 0, 0);
+//        matrices.scale((float) 16/(width -6), (float) 16/(height -6), 1);
+//        if (stacks.get(0).getCount() > 1) {
+//            ctx.drawItemInSlot(ClientGameStateV2.client.textRenderer,stacks.get(0), width /2, height /2);
+////            ctx.drawText(ClientGameStateV2.client.textRenderer, String.valueOf(stacks.get(0).getCount()), width /2, height /2, 0xFFFFFF, true);
+//        }
         matrices.pop();
     }
 }

@@ -31,7 +31,7 @@ import java.util.function.Consumer;
 public class ClientGameStateV2 {
     static GameStartPacket game;
     @NotNull public static TeamRegV2 teamReg = new TeamRegV2();
-    @NotNull static MinecraftClient client = MinecraftClient.getInstance();
+    @NotNull public static MinecraftClient client = MinecraftClient.getInstance();
 
     static public long gameStartTime;
     static public boolean boardTimeOver = true;

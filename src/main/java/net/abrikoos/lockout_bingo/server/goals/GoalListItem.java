@@ -20,7 +20,7 @@ public class GoalListItem {
     public List<Identifier> resourceids;
     public List<LockoutGoalTag> tags;
     public String id;
-    private float delta = 0;
+    protected float delta = 0;
     public Sprite sprite;
 
     public GoalListItem(String name, String description, int difficulty, List<LockoutGoalTag> tags, String id, List<Identifier> resourceids) {
@@ -84,6 +84,8 @@ public class GoalListItem {
     private void drawModifiers(DrawContext ctx, int x1, int y1, int x2, int y2) {
         MinecraftClient client = MinecraftClient.getInstance();
         TextRenderer textRenderer = client.textRenderer;
+        ctx.getMatrices().push();
+        ctx.getMatrices().translate(0, 0, 200);
         for (LockoutGoalTag tag : this.tags) {
             switch (tag) {
                 case die:
@@ -181,6 +183,7 @@ public class GoalListItem {
                 ctx.drawText(textRenderer,"1km", x2-2-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
             }
         }
+        ctx.getMatrices().pop();
     }
 
     public void encode(ByteBuf buf) {
