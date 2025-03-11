@@ -3,17 +3,16 @@ package net.abrikoos.lockout_bingo.server.goals;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GoalListObtainItem extends GoalListItem {
+public class GoalListBlockItem extends GoalListItem {
 
     List<ItemStack> stacks;
 
-    public GoalListObtainItem(String name, String description, int difficulty, List<LockoutGoalTag> tags, String id, List<ItemStack> stacks) {
+    public GoalListBlockItem(String name, String description, int difficulty, List<LockoutGoalTag> tags, String id, List<ItemStack> stacks) {
         super(name, description, difficulty, tags, id, new ArrayList<>());
         this.stacks = stacks;
     }

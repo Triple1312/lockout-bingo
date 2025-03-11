@@ -11,7 +11,7 @@ import net.abrikoos.lockout_bingo.networkv2.team.TeamData;
 import net.abrikoos.lockout_bingo.networkv2.team.TeamRegV2;
 import net.abrikoos.lockout_bingo.server.goals.GoalItemRegistry;
 import net.abrikoos.lockout_bingo.server.goals.GoalListItem;
-import net.abrikoos.lockout_bingo.server.goals.GoalListObtainItem;
+import net.abrikoos.lockout_bingo.server.goals.GoalListBlockItem;
 import net.abrikoos.lockout_bingo.util.BlockoutList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
-
-import static net.abrikoos.lockout_bingo.server.goals.LockoutGoalTag.obtain;
 
 @Environment(EnvType.CLIENT)
 public class ClientGameStateV2 {
@@ -192,7 +190,7 @@ public class ClientGameStateV2 {
                 break;
             case "dropshuffle":
                 for (GoalInfoPacket goal : gsp.board().goals()) {
-                    goals.add(new GoalListObtainItem(goal.goalName(), "", 1,List.of(), goal.goalID(), List.of(Registries.ITEM.get(Identifier.of(goal.goalID())).getDefaultStack())));
+                    goals.add(new GoalListBlockItem(goal.goalName(), "", 1,List.of(), goal.goalID(), List.of(Registries.ITEM.get(Identifier.of(goal.goalID())).getDefaultStack())));
                 }
                 break;
         }
