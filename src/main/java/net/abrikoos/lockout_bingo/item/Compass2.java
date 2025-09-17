@@ -39,14 +39,14 @@ public class Compass2 extends CompassItem {
             try {
                 return Text.of("Tracking: " + ClientGameStateV2.teamReg.getPlayerDataByUUID(target).name);
             } catch (Exception e) {
-                return Text.of("Tracking: " + target + "dushadjlksak");
+                return Text.of("Tracking: " + target + "dushadjlksak if");
             }
         }
         else {
             try {
-                return Text.of("Tracking: " + GameState.teamRegistry.getPlayerDataByUUID(target).name);
+                return Text.of("Tracking: " + ClientGameStateV2.teamReg.getPlayerDataByUUID(target).name);
             } catch (Exception e) {
-                return Text.of("Tracking: " + target + "dushadjlksak");
+                return Text.of("Tracking: " + target + "dushadjlksak else");
             }
         }
     }

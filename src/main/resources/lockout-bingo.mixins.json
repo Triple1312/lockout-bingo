@@ -10,9 +10,11 @@
     "LockoutLivingEntityMixin",
     "LockoutPlayerAdvancementTrackerMixin",
     "MilkBucketMixin",
+    "NoiseChunkGeneratorMixin",
     "PlayerEntityMixin",
     "PlayerInventorymixin",
     "ScreenMixin",
+    "ServerChunkLoadingManagerMixin",
     "accessors.CombinedEntryMixin",
     "accessors.ItemEntryMixin",
     "accessors.LootTableAccessor"

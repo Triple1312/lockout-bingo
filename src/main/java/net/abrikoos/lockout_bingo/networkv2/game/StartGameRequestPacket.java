@@ -13,6 +13,7 @@ public record StartGameRequestPacket(
         List<String> teamUUIDs,
         int difficulty,
         int goalCount,
+        boolean teamCountValid,
         List<String> disabledGoals,
         List<String> disabledModifiers
 
@@ -22,7 +23,7 @@ public record StartGameRequestPacket(
 
 
     public static StartGameRequestPacket empty() {
-        return new StartGameRequestPacket("", new ArrayList<>(), 0, 0, new ArrayList<>(), new ArrayList<>());
+        return new StartGameRequestPacket("", new ArrayList<>(), 0, 0, false, new ArrayList<>(), new ArrayList<>());
     }
 
     public static PacketCodec<RegistryByteBuf, StartGameRequestPacket> CODEC = new PacketCodec<RegistryByteBuf, StartGameRequestPacket>() {
@@ -37,6 +38,7 @@ public record StartGameRequestPacket(
             }
             int difficulty = buf.readByte();
             int goalCount = buf.readByte();
+            boolean teamCountValid = buf.readBoolean();
             int disabledGoalCategoryCounts = buf.readByte();
             List<String> disabledGoals = new ArrayList<>();
             for (int i = 0; i < disabledGoalCategoryCounts; i++) {
@@ -49,7 +51,7 @@ public record StartGameRequestPacket(
                 int modifierNameCharacterCount = buf.readByte();
                 disabledModifiers.add(buf.readCharSequence(modifierNameCharacterCount, java.nio.charset.StandardCharsets.UTF_8).toString());
             }
-            return new StartGameRequestPacket( gameMode, teamUUIDs,  difficulty,  goalCount,  disabledGoals,  disabledModifiers);
+            return new StartGameRequestPacket( gameMode, teamUUIDs,  difficulty,  goalCount,  teamCountValid, disabledGoals,  disabledModifiers);
         }
 
         @Override
@@ -62,6 +64,7 @@ public record StartGameRequestPacket(
             }
             buf.writeByte(value.difficulty);
             buf.writeByte(value.goalCount);
+            buf.writeBoolean(value.teamCountValid);
             buf.writeByte(value.disabledGoals.size());
             for (String goal : value.disabledGoals) {
                 buf.writeByte(goal.length());

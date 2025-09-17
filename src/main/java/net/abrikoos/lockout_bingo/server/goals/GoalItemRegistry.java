@@ -2,18 +2,10 @@ package net.abrikoos.lockout_bingo.server.goals;
 
 import net.abrikoos.lockout_bingo.LockoutLogger;
 import net.abrikoos.lockout_bingo.util.BlockoutList;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SmithingTableBlock;
-import net.minecraft.component.Component;
 import net.minecraft.component.ComponentChanges;
-import net.minecraft.component.ComponentType;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.PotionItem;
-import net.minecraft.item.SmithingTemplateItem;
-import net.minecraft.item.trim.ArmorTrim;
-import net.minecraft.registry.Registries;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import java.util.List;

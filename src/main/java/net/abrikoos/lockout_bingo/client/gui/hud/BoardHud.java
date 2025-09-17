@@ -12,7 +12,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.Items;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -22,7 +21,7 @@ import java.util.UUID;
 public class BoardHud {
 
 
-    public static void drawHudNew(@NotNull DrawContext context, float delta) {
+    public static void drawHudNew(DrawContext context, float delta) {
         if (ClientGameStateV2.isGameRunning()) {
             MinecraftClient client = MinecraftClient.getInstance();
             int goalCount = ClientGameStateV2.getGoalCount();
@@ -42,7 +41,7 @@ public class BoardHud {
         }
     }
 
-    public static void drawHud(@NotNull DrawContext context, float delta) {
+    public static void drawHud(DrawContext context, float delta) {
         if (ClientGameStateV2.isGameRunning()) {
             MinecraftClient client = MinecraftClient.getInstance();
             int screensizex = context.getScaledWindowWidth();

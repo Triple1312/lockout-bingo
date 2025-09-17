@@ -139,7 +139,7 @@ public class NewLockoutScreen extends Screen {
         teams.add(mainTab.team1.getValue().teamUUID);
         teams.add(mainTab.team2.getValue().teamUUID);
 
-        StartGameRequestPacket packet = new StartGameRequestPacket("lockout", teams, difficulty, goalCount, goalTypes, modifiers);
+        StartGameRequestPacket packet = new StartGameRequestPacket("lockout", teams, difficulty, goalCount,false,  goalTypes, modifiers);
 
         ClientPlayNetworking.send(packet);
     }

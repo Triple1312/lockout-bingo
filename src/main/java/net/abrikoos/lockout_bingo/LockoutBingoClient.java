@@ -50,6 +50,8 @@ public class LockoutBingoClient implements ClientModInitializer {
 
     private boolean hasJoinedWorld = false;
 
+    public static KeyBinding boardKey = null;
+
     @Override
     public void onInitializeClient() {
 
@@ -156,16 +158,24 @@ public class LockoutBingoClient implements ClientModInitializer {
 //            });
 //        }));
 
-        KeyBinding openBoardScreenKeyBind = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        boardKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "Open Lockout Board",
-                InputUtil.Type.SCANCODE,
+                InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_B,
                 "Lockout Bingo"
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (openBoardScreenKeyBind.wasPressed()) {
-                MinecraftClient.getInstance().setScreen(LockoutScreens.completeFullScreen);
+            if (boardKey.wasPressed()) {
+                if (client.currentScreen instanceof ScreenScreen) {
+                    client.setScreen(null);
+                    return;
+                }
+                if (client.currentScreen == null) {
+                    MinecraftClient.getInstance().setScreen(LockoutScreens.completeFullScreen);
+
+                }
+
             }
         });
 

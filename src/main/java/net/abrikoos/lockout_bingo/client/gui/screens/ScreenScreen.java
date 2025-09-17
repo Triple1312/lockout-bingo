@@ -1,6 +1,7 @@
 package net.abrikoos.lockout_bingo.client.gui.screens;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.abrikoos.lockout_bingo.LockoutBingoClient;
 import net.abrikoos.lockout_bingo.LockoutLogger;
 import net.abrikoos.lockout_bingo.client.ClientGameStateV2;
 import net.abrikoos.lockout_bingo.client.gui.screens.tabscreen.LockoutTabManager;
@@ -68,11 +69,13 @@ public class ScreenScreen extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_B) {
+        // board opening/closing key is handled in LockoutBingoClient oninitializeClient
+
+        if (LockoutBingoClient.boardKey.matchesKey(keyCode, scanCode)) {
             if (ClientGameStateV2.gameHasStarted()) {
-                if (this.tabManager.getCurrentTab().getTitle().getString().equals("TeamsTab")) {
-                    return false;
-                }
+//                if (this.tabManager.getCurrentTab().getTitle().getString().equals("TeamsTab")) {
+//                    return false;
+//                }
                 this.close();
                 return true;
             } else {

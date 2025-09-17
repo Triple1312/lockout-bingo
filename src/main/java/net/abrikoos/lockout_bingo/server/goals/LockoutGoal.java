@@ -50,6 +50,8 @@ public abstract class LockoutGoal {
         return "ally";
     }
 
+//    abstract public void checkComplete();
+
     protected void completed(PlayerEntity player) {
         completed = player;
         if (player == null) {

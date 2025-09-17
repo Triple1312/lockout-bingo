@@ -109,7 +109,7 @@ public class NewDropShuffleScreen extends Screen {
         teams.add(mainTab.team1.getValue().teamUUID);
         teams.add(mainTab.team2.getValue().teamUUID);
 
-        StartGameRequestPacket packet = new StartGameRequestPacket("dropshuffle", teams, difficulty, goalCount, goalTypes, modifiers);
+        StartGameRequestPacket packet = new StartGameRequestPacket("dropshuffle", teams, difficulty, goalCount, false, goalTypes, modifiers);
 
         ClientPlayNetworking.send(packet);
     }

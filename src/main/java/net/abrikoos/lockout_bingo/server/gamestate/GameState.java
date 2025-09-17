@@ -53,6 +53,7 @@ public class GameState {
 
     public static ServerTeamRegV2 teamRegistry = new ServerTeamRegV2();
 
+    public static boolean teamCombinedScore = false;
 
     public static GoalBoardUpdatePacket board() {
         return info.board();
@@ -156,6 +157,8 @@ public class GameState {
             goal.subscribe(GameState::onGoalComplete);
         }
 
+        GameSettings.settings = packet;
+
         // reset all player stats
         for (ServerPlayerEntity player : players()) {
             player.getInventory().clear();
@@ -235,6 +238,7 @@ public class GameState {
         PlayerInventoryListener.clear();
         ServerTickListener.clear();
         BlockDropChangeBuilder.resetHashMap();
+        goals.clear();
     }
 
     public static String onGoalComplete(LockoutGoalEvent event) {
