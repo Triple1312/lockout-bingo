@@ -12,218 +12,181 @@
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.014
+        "lockout-bingo:angle": 0.016666666666666666
       },
       "model": "lockout-bingo:item/player_tracker_compass_01"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.041777777777777775
+        "lockout-bingo:angle": 0.05
       },
       "model": "lockout-bingo:item/player_tracker_compass_02"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.06955555555555555
+        "lockout-bingo:angle": 0.08333333333333333
       },
       "model": "lockout-bingo:item/player_tracker_compass_03"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.09733333333333333
+        "lockout-bingo:angle": 0.1166666666666666
       },
       "model": "lockout-bingo:item/player_tracker_compass_04"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.12511111111111112
+        "lockout-bingo:angle": 0.15
       },
       "model": "lockout-bingo:item/player_tracker_compass_05"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.1528888888888889
+        "lockout-bingo:angle": 0.18333333333333333
       },
       "model": "lockout-bingo:item/player_tracker_compass_06"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.18066666666666667
+        "lockout-bingo:angle": 0.2166666666666666
       },
       "model": "lockout-bingo:item/player_tracker_compass_07"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.20844444444444443
+        "lockout-bingo:angle": 0.25
       },
       "model": "lockout-bingo:item/player_tracker_compass_08"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.23622222222222222
+        "lockout-bingo:angle": 0.28333333333333333
       },
       "model": "lockout-bingo:item/player_tracker_compass_09"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.264
+        "lockout-bingo:angle": 0.3166666666666666
       },
       "model": "lockout-bingo:item/player_tracker_compass_10"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.2917777777777778
+        "lockout-bingo:angle": 0.35
       },
       "model": "lockout-bingo:item/player_tracker_compass_11"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.31955555555555554
+        "lockout-bingo:angle": 0.38333333333333333
       },
       "model": "lockout-bingo:item/player_tracker_compass_12"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.3473333333333333
+        "lockout-bingo:angle": 0.4166666666666666
       },
       "model": "lockout-bingo:item/player_tracker_compass_13"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.3751111111111111
+        "lockout-bingo:angle": 0.45
       },
       "model": "lockout-bingo:item/player_tracker_compass_14"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.40288888888888885
+        "lockout-bingo:angle": 0.48333333333333333
       },
       "model": "lockout-bingo:item/player_tracker_compass_15"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.43066666666666664
+        "lockout-bingo:angle": 0.5166666666666666
         },
         "model": "lockout-bingo:item/player_tracker_compass_16"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.45844444444444443
+        "lockout-bingo:angle": 0.55
       },
       "model": "lockout-bingo:item/player_tracker_compass_17"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.4862222222222222
+        "lockout-bingo:angle": 0.58333333333333333
       },
       "model": "lockout-bingo:item/player_tracker_compass_18"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.514
+        "lockout-bingo:angle": 0.6166666666666666
       },
       "model": "lockout-bingo:item/player_tracker_compass_19"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.5417777777777778
+        "lockout-bingo:angle": 0.65
       },
       "model": "lockout-bingo:item/player_tracker_compass_20"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.5695555555555556
+        "lockout-bingo:angle": 0.68333333333333333
       },
       "model": "lockout-bingo:item/player_tracker_compass_21"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.5973333333333333
+        "lockout-bingo:angle": 0.7166666666666666
       },
       "model": "lockout-bingo:item/player_tracker_compass_22"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.6251111111111111
+        "lockout-bingo:angle": 0.75
       },
       "model": "lockout-bingo:item/player_tracker_compass_23"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.6528888888888889
+        "lockout-bingo:angle": 0.78333333333333333
       },
       "model": "lockout-bingo:item/player_tracker_compass_24"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.6806666666666666
+        "lockout-bingo:angle": 0.8166666666666666
       },
       "model": "lockout-bingo:item/player_tracker_compass_25"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.7084444444444444
+        "lockout-bingo:angle": 0.85
       },
       "model": "lockout-bingo:item/player_tracker_compass_26"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.7362222222222222
+        "lockout-bingo:angle": 0.88333333333333333
       },
       "model": "lockout-bingo:item/player_tracker_compass_27"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.764
+        "lockout-bingo:angle": 0.9166666666666666
       },
       "model": "lockout-bingo:item/player_tracker_compass_28"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.7917777777777777
+        "lockout-bingo:angle": 0.95
       },
-      "model": "lockout-bingo:item/player_tracker_compass_29"
+      "model": "lockout-bingo:item/player_tracker_compass_00"
     },
     {
       "predicate": {
-        "lockout-bingo:angle": 0.8195555555555555
-      },
-      "model": "lockout-bingo:item/player_tracker_compass_30"
-    },
-    {
-      "predicate": {
-        "lockout-bingo:angle": 0.8473333333333333
-        },
-        "model": "lockout-bingo:item/player_tracker_compass_31"
-    },
-    {
-      "predicate": {
-        "lockout-bingo:angle": 0.8751111111111111
-      },
-      "model": "lockout-bingo:item/player_tracker_compass_32"
-    },
-    {
-      "predicate": {
-        "lockout-bingo:angle": 0.9028888888888889
-
-      },
-      "model": "lockout-bingo:item/player_tracker_compass_33"
-    },
-    {
-      "predicate": {
-        "lockout-bingo:angle": 0.9306666666666666
-      },
-      "model": "lockout-bingo:item/player_tracker_compass_34"
-    },
-    {
-      "predicate": {
-        "lockout-bingo:angle": 0.9584444444444444
-      },
-      "model": "lockout-bingo:item/player_tracker_compass_35"
-    },
-    {
-      "predicate": {
-        "lockout-bingo:angle": 0.9862222222222222
+        "lockout-bingo:angle": 0.98333333333333333
       },
       "model": "lockout-bingo:item/player_tracker_compass_00"
     }

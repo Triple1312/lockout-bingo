@@ -37,6 +37,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.Random;
 import java.util.UUID;
 
 import static net.abrikoos.lockout_bingo.item.LockoutModItems.PLAYER_COMPASS;
@@ -137,9 +138,14 @@ public class LockoutBingoClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.world != null && !hasJoinedWorld) {
                 hasJoinedWorld = true;
-                LockoutLogger.log(client.currentScreen.getTitle().toString());
-                if (client.currentScreen instanceof ScreenScreen) {
-                    client.setScreen(null);
+                try {
+                    LockoutLogger.log(client.currentScreen.getTitle().toString());
+                    if (client.currentScreen instanceof ScreenScreen) {
+                        client.setScreen(null);
+                    }
+                }
+                catch (Exception ignored) {
+
                 }
                 ClientPlayNetworking.send(new GetGameInfo());
                 ClientPlayNetworking.send(new GetTeamData());
@@ -208,6 +214,11 @@ public class LockoutBingoClient implements ClientModInitializer {
 
 
         ModelPredicateProviderRegistry.register(LockoutModItems.PLAYER_TRACKING_COMPASS, Identifier.of("lockout-bingo", "angle"), new ClampedModelPredicateProvider() {
+
+            private static int wobble_direction = 1;
+            private static Random random = new Random();
+            private static float wobble_angle = 0.0F;
+
             @Override
             public float unclampedCall(ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity, int seed) {
                 if (entity == null || world == null) {
@@ -229,7 +240,7 @@ public class LockoutBingoClient implements ClientModInitializer {
                 }
 
                 PlayerEntity targetPlayer = world.getPlayerByUuid(UUID.fromString(target));
-                if (targetPlayer == null || targetPlayer.isSpectator() || targetPlayer.isDead() || targetPlayer.isInvisible()) {
+                if (targetPlayer == null || targetPlayer.isSpectator() || targetPlayer.isDead() || targetPlayer.isInvisible() || targetPlayer.getWorld().getRegistryKey() != ClientGameStateV2.client.world.getRegistryKey()) {
                     return wobble();
                 }
 
@@ -249,7 +260,11 @@ public class LockoutBingoClient implements ClientModInitializer {
             }
 
             private static float wobble() {
-                return 0.0F;
+                if (random.nextDouble() < 0.002) {
+                    wobble_direction = -wobble_direction;
+                }
+                wobble_angle += 0.005F * wobble_direction;
+                return wobble_angle % 1.0F ;
             }
 
         });

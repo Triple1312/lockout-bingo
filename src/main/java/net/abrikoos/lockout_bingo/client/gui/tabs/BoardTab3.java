@@ -155,7 +155,7 @@ public class BoardTab3 implements Tab {
                 context.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
                 RenderSystem.enableBlend();
                 context.drawBorder(this.getX(), this.getY(), this.width, this.height, 0xFFFFFFFF);
-                context.drawTexture(Identifier.of("lockout-bingo", "textures/item/compass03.png"), this.getX(), this.getY(), 0, 0, this.width, this.height, 16, 16);
+                context.drawTexture(Identifier.of("lockout-bingo", "textures/item/compass_20.png"), this.getX(), this.getY(), 0, 0, this.width, this.height, 16, 16);
             }
 
             @Override

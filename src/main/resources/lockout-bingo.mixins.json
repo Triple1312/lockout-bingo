@@ -5,6 +5,7 @@
   "mixins": [
     "AbstractCauldronMixin",
     "BlockDropMixin",
+    "CompassVanishMixin",
     "ComposterMixin",
     "GammaMixin",
     "LockoutLivingEntityMixin",

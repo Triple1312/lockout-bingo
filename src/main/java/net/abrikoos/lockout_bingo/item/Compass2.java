@@ -52,10 +52,16 @@ public class Compass2 extends CompassItem {
     }
 
     private void cycleTarget(ItemStack stack, PlayerEntity user, World world) {
-        List<String> playerUUIDs = world.getPlayers().stream()
-                .filter(p -> p != user && !p.isSpectator())
-                .map(PlayerEntity::getUuid).map(UUID::toString)
-                .toList();
+        List<String> playerUUIDs = new java.util.ArrayList<>(List.of());
+        for (World w : GameState.server.getWorlds()) {
+            playerUUIDs.addAll(w.getPlayers().stream()
+                    .filter(p -> p != user && !p.isSpectator())
+                    .map(PlayerEntity::getUuid).map(UUID::toString).toList());
+        }
+//                GameState.server.getWorlds().iterator().getPlayers().stream()
+//                .filter(p -> p != user && !p.isSpectator())
+//                .map(PlayerEntity::getUuid).map(UUID::toString)
+//                .toList();
         if (playerUUIDs.isEmpty()) {
             stack.set(LockoutModItems.PLAYER_COMPASS, null);
             return;
@@ -72,7 +78,7 @@ public class Compass2 extends CompassItem {
 
     @Override
     public boolean hasGlint(ItemStack stack) { // todo could maybe do somthing more
-        return true;
+        return false;
     }
 
     @Override
@@ -86,6 +92,7 @@ public class Compass2 extends CompassItem {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+        // todo should client do something ?
         if (world instanceof ServerWorld serverWorld) {
             String tracked__uuid = stack.get(LockoutModItems.PLAYER_COMPASS);
             if (tracked__uuid == null) {
@@ -105,20 +112,20 @@ public class Compass2 extends CompassItem {
                 }
             }
             catch (Exception ignored) {
-                LockoutLogger.log("");
+//                LockoutLogger.log("inventory tick compass error");
             }
 
-            try {
-                String finalTracked__uuid = tracked__uuid;
-                ServerPlayerEntity player = serverWorld.getPlayers().stream().filter(p -> p.getUuidAsString().equals(finalTracked__uuid)).toList().getFirst();
-                RegistryKey<World> dimension = player.getWorld().getRegistryKey();
-                BlockPos pos = player.getBlockPos();
-                LodestoneTrackerComponent l2 = new LodestoneTrackerComponent(Optional.of(GlobalPos.create(dimension, pos)), true);
-                stack.set(DataComponentTypes.LODESTONE_TRACKER, l2);
-            }
-            catch (Exception ignored) {
-
-            }
+//            try {
+//                String finalTracked__uuid = tracked__uuid;
+//                ServerPlayerEntity player = serverWorld.getPlayers().stream().filter(p -> p.getUuidAsString().equals(finalTracked__uuid)).toList().getFirst();
+//                RegistryKey<World> dimension = player.getWorld().getRegistryKey();
+//                BlockPos pos = player.getBlockPos();
+//                LodestoneTrackerComponent l2 = new LodestoneTrackerComponent(Optional.of(GlobalPos.create(dimension, pos)), true);
+//                stack.set(DataComponentTypes.LODESTONE_TRACKER, l2);
+//            }
+//            catch (Exception ignored) {
+//
+//            }
         }
     }
 }
