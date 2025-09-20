@@ -17,9 +17,17 @@ public class WearArmorTrimGoal extends LockoutGoal {
         if (completed != null) { return; }
         if (added) {
             if (itemStack.getItem() instanceof ArmorItem armor) {
-                if(itemStack.getComponents().contains(DataComponentTypes.TRIM)) {
-                    this.completed(playerEntity);
+                for (ItemStack armorStack : playerEntity.getArmorItems()) {
+                    if (armorStack.getItem() instanceof ArmorItem) {
+                        if(armorStack.getComponents().contains(DataComponentTypes.TRIM)) {
+                            this.completed(playerEntity);
+                            return;
+                        }
+                    }
                 }
+//                if(itemStack.getComponents().contains(DataComponentTypes.TRIM)) {
+//                    this.completed(playerEntity);
+//                }
             }
         }
     }

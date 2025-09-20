@@ -15,17 +15,9 @@ import java.lang.annotation.Target;
 @Mixin(TameableEntity.class)
 public class TameMixin {
 
-    @Inject(method = "setTamed", at = @At("HEAD"))
-    private void onSetTamed(boolean tamed, boolean updateAttributes, CallbackInfo ci) {
-        if (!tamed) {
-
-        }
-        else {
-            TameableEntity entity = (TameableEntity) (Object) this;
-            LivingEntity owner = entity.getOwner();
-            if (owner instanceof PlayerEntity player) {
-                TameListener.registerEvent(player, entity);
-            }
-        }
+    @Inject(method = "setOwner", at = @At("RETURN"))
+    private void onSetTamed(PlayerEntity player, CallbackInfo ci) {
+        TameableEntity entity = (TameableEntity) (Object) this;
+        TameListener.registerEvent(player, entity);
     }
 }

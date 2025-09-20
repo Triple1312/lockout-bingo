@@ -22,7 +22,7 @@ public class ObtainItemGoal extends LockoutGoal {
 
     private void checkCompletion(MinecraftServer minecraftserver) {
         if (completed != null) { return; }
-                    for (ServerPlayerEntity player : minecraftserver.getPlayerManager().getPlayerList()) {
+                            for (ServerPlayerEntity player : minecraftserver.getPlayerManager().getPlayerList()) {
             PlayerInventory inventory = player.getInventory();
             for (int i = 0; i < inventory.size(); i++) {
                 if (inventory.getStack(i).getItem() == item && inventory.getStack(i).getCount() >= this.count) {

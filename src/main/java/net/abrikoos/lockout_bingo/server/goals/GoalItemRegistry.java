@@ -140,7 +140,7 @@ public class GoalItemRegistry {
         items.add(new GoalListItem("breed foxes", "", 3, List.of(breed), "breed_foxes", List.of(Identifier.of("lockout-bingo:goalicon/entity/fox.png"))));
         items.add(new GoalListItem("breed cats", "", 2, List.of(breed), "breed_cats", List.of(Identifier.of("lockout-bingo:goalicon/entity/cat.png"))));
         items.add(new GoalListItem("breed wolves", "", 2, List.of(breed), "breed_wolves", List.of(Identifier.of("lockout-bingo:goalicon/entity/wolf.png"))));
-        items.add(new GoalListItem("breed parrots", "", 2, List.of(breed), "breed_parrots", List.of(Identifier.of("lockout-bingo:goalicon/entity/parrot.png"))));
+//        items.add(new GoalListItem("breed parrots", "", 2, List.of(breed), "breed_parrots", List.of(Identifier.of("lockout-bingo:goalicon/entity/parrot.png"))));
         items.add(new GoalListItem("breed rabbits", "", 3, List.of(breed), "breed_rabbits", List.of(Identifier.of("lockout-bingo:goalicon/entity/rabbit.png"))));
         items.add(new GoalListItem("breed llamas", "", 3, List.of(breed), "breed_llamas", List.of(Identifier.of("lockout-bingo:goalicon/entity/lama.png"))));
         items.add(new GoalListItem("breed horses", "", 3, List.of(breed), "breed_horses", List.of(Identifier.of("lockout-bingo:goalicon/entity/horse.png"))));
@@ -188,7 +188,7 @@ public class GoalItemRegistry {
         items.add(new GoalListBlockItem("kill a ghast with its own fireball", "", 3, List.of(advancement, nether), "return_to_sender_adv", List.of(Items.FIRE_CHARGE.getDefaultStack())));
         items.add(new GoalListBlockItem("find a bastion remnant", "", 3, List.of(advancement, nether), "those_were_the_days_adv", List.of(Items.POLISHED_BLACKSTONE_BRICKS.getDefaultStack()))); // This is a fictional texture path for a structure
         items.add(new GoalListBlockItem("find a nether fortress", "", 3, List.of(advancement, nether), "terrible_fortress_adv", List.of(Items.NETHER_BRICKS.getDefaultStack())));
-        items.add(new GoalListBlockItem("travel 1km in the nether", "", 4, List.of(advancement, nether), "subspace_bubble_adv", List.of(Items.MAP.getDefaultStack())));
+        items.add(new GoalListBlockItem("use the nether to travel 7km in the overworld", "", 4, List.of(advancement, nether), "subspace_bubble_adv", List.of(Items.MAP.getDefaultStack())));
         items.add(new GoalListBlockItem("distract a piglin with gold", "", 2, List.of(advancement, nether), "oh_shiny_adv", List.of(Items.GOLD_INGOT.getDefaultStack())));
         items.add(new GoalListItem("ride a strider with a warped fungus on a stick", "", 4, List.of(ride, advancement, nether), "this_boat_has_legs_adv", List.of(Identifier.of("lockout-bingo:goalicon/entity/strider.png"))));
         items.add(new GoalListBlockItem("use a lodestone", "", 4, List.of(advancement, nether), "country_lode_adv", List.of(Items.LODESTONE.getDefaultStack())));
@@ -207,7 +207,7 @@ public class GoalItemRegistry {
         items.add(new GoalListBlockItem("get a tadpole in a bucket", "", 4, List.of(breed, advancement), "tadpole_bucket_adv", List.of(Items.TADPOLE_BUCKET.getDefaultStack())));
         items.add(new GoalListBlockItem("obtain a sniffer egg", "", 3, List.of(advancement, obtain), "sniffer_egg_adv", List.of(Items.SNIFFER_EGG.getDefaultStack())));
         items.add(new GoalListItem("tame 4 unique types of cats", "", 3, List.of(C4, tame, unique), "catalogue_4_adv", List.of(Identifier.of("lockout-bingo:goalicon/entity/cat.png"))));
-        items.add(new GoalListItem("time 3 unique types of wolves", "", 4, List.of(C3, tame, unique), "whole_pack_3_adv", List.of(Identifier.of("lockout-bingo:goalicon/entity/wolf.png"))));
+        items.add(new GoalListItem("tame 3 unique types of wolves", "", 4, List.of(C3, tame, unique), "whole_pack_3_adv", List.of(Identifier.of("lockout-bingo:goalicon/entity/wolf.png"))));
         items.add(new GoalListBlockItem("tactical fishing", "", 1, List.of(advancement), "tactical_fishing_adv", List.of(Items.TROPICAL_FISH_BUCKET.getDefaultStack())));
         items.add(new GoalListBlockItem("scrape the wax off a copper block", "", 3, List.of(advancement), "wax_off_adv", List.of(Items.STONE_AXE.getDefaultStack())));
         items.add(new GoalListBlockItem("axolotl in a bucket", "", 3, List.of(advancement), "axolotl_bucket_adv", List.of(Items.AXOLOTL_BUCKET.getDefaultStack())));
@@ -217,7 +217,7 @@ public class GoalItemRegistry {
         items.add(new GoalListBlockItem("Sound of music: play a music disk in a meadow", "", 3, List.of(advancement), "sound_of_music_adv", List.of(Items.JUKEBOX.getDefaultStack())));
         items.add(new GoalListBlockItem("catch a fish", "", 1, List.of(advancement), "fishy_business_adv", List.of(Items.FISHING_ROD.getDefaultStack())));
         items.add(new GoalListItem("kill the dragon", "", 5, List.of(advancement, kill), "dragon_adv", List.of(Identifier.of("lockout-bingo:goalicon/entity/ender_dragon.png"))));
-        items.add(new GoalListItem("get the sinper duel advancement", "", 4, List.of(advancement), "sniper_adv", List.of(Identifier.of("lockout-bingo:goalicon/entity/skeleton.png"))));
+        items.add(new GoalListItem("get the sniper duel advancement", "", 4, List.of(advancement), "sniper_adv", List.of(Identifier.of("lockout-bingo:goalicon/entity/skeleton.png"))));
         items.add(new GoalListBlockItem("get any spyglass advancement", "", 3, List.of(advancement), "spyglass_adv", List.of(Items.SPYGLASS.getDefaultStack())));
 
         items.add(new GoalListItem("complete 15 advancements", "", 3, List.of(C15, advancement), "adv_15", List.of(Identifier.of("lockout-bingo:goalicon/advancement/challenge_done.png"))));
@@ -245,6 +245,9 @@ public class GoalItemRegistry {
         items.add(new GoalListBlockItem("freeze to death", "", 2, List.of(die), "die_freeze", List.of(Items.POWDER_SNOW_BUCKET.getDefaultStack())));
         items.add(new GoalListBlockItem("die by intentional game design", "", 2, List.of(die), "die_bed", List.of(Items.RED_BED.getDefaultStack(), Items.RESPAWN_ANCHOR.getDefaultStack())));
         items.add(new GoalListBlockItem("die by tnt minecart", "", 3, List.of(die), "die_tnt_minecart", List.of(Items.TNT_MINECART.getDefaultStack())));
+        items.add(new GoalListBlockItem("die by ender pearl", "", 3, List.of(die), "die_ender_pearl", List.of(Items.ENDER_PEARL.getDefaultStack())));
+        items.add(new GoalListBlockItem("die by explosion", "", 1, List.of(die), "die_explosion", List.of(Items.TNT.getDefaultStack(), Items.TNT_MINECART.getDefaultStack(), Items.FIREWORK_ROCKET.getDefaultStack(), Items.RESPAWN_ANCHOR.getDefaultStack(), Items.RED_BED.getDefaultStack(), Items.END_CRYSTAL.getDefaultStack()))); // todo entities like creeper do too
+        items.add(new GoalListBlockItem("die by projectile", "", 1, List.of(die), "die_projectile", List.of(Items.ARROW.getDefaultStack(), Items.TRIDENT.getDefaultStack(), Items.FIREWORK_ROCKET.getDefaultStack()))); // todo llama spit
 
         // ride goals
         items.add(new GoalListItem("ride a pig", "", 2, List.of(ride), "ride_pig", List.of(Identifier.of("lockout-bingo:goalicon/entity/pig.png"))));

@@ -22,7 +22,7 @@ public class UseBlockGoal extends LockoutGoal {
 
     private void validateProgress(int slotIndex, int button, SlotActionType actionType, PlayerEntity player, ScreenHandlerType<?> type, Slot slot) {
         if (completed != null) { return; }
-        if (type == fsh && actionType == SlotActionType.PICKUP && slotIndex == this.slot && slot.hasStack()) {
+        if (type == fsh && slotIndex == this.slot && slot.hasStack()) {
             this.completed(player);
         }
     }

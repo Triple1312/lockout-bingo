@@ -15,6 +15,6 @@ public class DealDamageGoal extends StatGoal {
 
     @Override
     protected boolean validateProgress(ServerPlayerEntity player) {
-        return player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.DAMAGE_DEALT)) >= amount;
+        return player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.DAMAGE_DEALT)) >= amount * 10;
     }
 }

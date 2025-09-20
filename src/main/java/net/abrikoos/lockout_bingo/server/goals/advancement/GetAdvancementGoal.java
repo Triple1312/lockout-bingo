@@ -4,6 +4,7 @@ import net.abrikoos.lockout_bingo.LockoutLogger;
 import net.abrikoos.lockout_bingo.server.goals.LockoutGoalEvent;
 import net.abrikoos.lockout_bingo.server.listeners.AdvancementListener;
 import net.minecraft.advancement.Advancement;
+import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.advancement.AdvancementProgress;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -20,6 +21,10 @@ public class GetAdvancementGoal extends AdvancementGoal{
         try {
             if (this.advancementId == null && super.translateAdvancementTitleKey(advancement) == null) {return;}
             if (translateAdvancementTitleKey(advancement) != null && translateAdvancementTitleKey(advancement).equals(this.advancementId)) {
+                AdvancementProgress progress = player.getAdvancementTracker().getProgress(new AdvancementEntry(advancementId, advancement)); // todo only checks id anyway
+                if (!progress.isDone()) {
+                    return;
+                }
                 completed = player;
                 this.notifyListeners(new LockoutGoalEvent(player.getUuidAsString(), "ally", this.id));
             }

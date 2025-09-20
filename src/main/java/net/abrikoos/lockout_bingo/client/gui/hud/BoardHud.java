@@ -79,7 +79,7 @@ public class BoardHud {
                 timeString += time / 3600000 + ":";
             }
             if (time > 60000) { // minutes
-                timeString += time / 60000 % 3600000 + ":";
+                timeString += time / 60000 % 60 + ":";
             }
             if (time / 1000 % 60 < 10) {
                 timeString += "0";

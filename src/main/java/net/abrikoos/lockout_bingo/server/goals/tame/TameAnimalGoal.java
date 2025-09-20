@@ -4,6 +4,8 @@ import net.abrikoos.lockout_bingo.server.goals.LockoutGoal;
 import net.abrikoos.lockout_bingo.server.listeners.TameListener;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.Tameable;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 
@@ -18,7 +20,7 @@ public class TameAnimalGoal extends LockoutGoal {
         TameListener.subscribe(this::validateProgress);
     }
 
-    protected void validateProgress(PlayerEntity owner, TameableEntity entity) {
+    protected void validateProgress(PlayerEntity owner, AnimalEntity entity) {
         if (this.completed != null) {
             return;
         }

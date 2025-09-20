@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class LockoutPlayerAdvancementTrackerMixin {
     @Shadow private ServerPlayerEntity owner;
 
-    @Inject(method = "grantCriterion", at = @At("HEAD"))
+    @Inject(method = "grantCriterion", at = @At("RETURN"))
     private void onGrantCriterion(AdvancementEntry advancement, String criterionName, CallbackInfoReturnable<Boolean> cir) {
         try {
             AdvancementListener.registerEvent(owner, advancement.value(), criterionName);

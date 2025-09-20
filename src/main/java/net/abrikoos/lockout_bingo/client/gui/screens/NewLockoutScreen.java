@@ -198,6 +198,7 @@ public class NewLockoutScreen extends Screen {
                 adder.add(new TextWidget(Text.of("Not enough teams"), MinecraftClient.getInstance().textRenderer), 2, positioner.alignHorizontalCenter() );
             }
             else {
+                // todo make it so both cant be the same
                 team1 = CyclingButtonWidget.<TeamData>builder(
                         team -> Text.literal(team.teamName).withColor(Colors.get(team.teamColor))).values(ClientGameStateV2.teamReg.teams).build(Text.of("Team 1"), (buttonWidget, val) -> {updateUI();}
                 );

@@ -13,8 +13,9 @@ public class DieGameDesignGoal extends DieGoal{
 
     @Override
     public void validateProgress(ServerPlayerEntity player, DamageSource source) {
+        if (completed != null) return;
         super.validateProgress(player, source);
-        if (Objects.equals(source.getType().msgId(), "badRespawnPoint")) completed(player);
+        if (Objects.equals(source.getType().deathMessageType().name(), "INTENTIONAL_GAME_DESIGN")) completed(player);
     }
 
 

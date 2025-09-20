@@ -1,6 +1,7 @@
 package net.abrikoos.lockout_bingo.server.listeners;
 
-import net.minecraft.entity.passive.TameableEntity;
+import net.minecraft.entity.Tameable;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.function.BiConsumer;
 
 public class TameListener {
 
-    private final List<BiConsumer<PlayerEntity, TameableEntity>> listeners;
+    private final List<BiConsumer<PlayerEntity, AnimalEntity>> listeners;
 
     private static TameListener instance;
 
@@ -17,11 +18,11 @@ public class TameListener {
         this.listeners =  new ArrayList<>();;
     }
 
-    public static void subscribe(BiConsumer<PlayerEntity, TameableEntity> listener) {
+    public static void subscribe(BiConsumer<PlayerEntity, AnimalEntity> listener) {
         getInstance().listeners.add(listener);
     }
 
-    public static void unsubscribe(BiConsumer<PlayerEntity, TameableEntity> listener) {
+    public static void unsubscribe(BiConsumer<PlayerEntity, AnimalEntity> listener) {
         getInstance().listeners.remove(listener);
     }
 
@@ -32,9 +33,11 @@ public class TameListener {
         return instance;
     }
 
-    public static void registerEvent(PlayerEntity player, TameableEntity entity) {
-        for (BiConsumer<PlayerEntity, TameableEntity> listener : getInstance().listeners) {
-            listener.accept(player, entity);
+    public static void registerEvent(PlayerEntity player, AnimalEntity entity) {
+        if (entity instanceof Tameable) {
+            for (BiConsumer<PlayerEntity, AnimalEntity> listener : getInstance().listeners) {
+                listener.accept(player, entity);
+            }
         }
     }
 

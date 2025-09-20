@@ -21,6 +21,7 @@ public class DieFromEntityGoal extends LockoutGoal {
 
     protected void validateProgress(ServerPlayerEntity player, DamageSource source) {
         if (completed != null) {return;}
+        if (source.getAttacker() == null) {return;}
         if (Objects.requireNonNull(source.getAttacker()).getType() == entity) {
             completed = player;
             this.notifyListeners(new LockoutGoalEvent(player.getUuidAsString(), "ally", this.id));

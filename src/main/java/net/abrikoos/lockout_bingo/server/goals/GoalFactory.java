@@ -45,12 +45,14 @@ import net.abrikoos.lockout_bingo.server.goals.use.UseBlockGoal;
 import net.abrikoos.lockout_bingo.server.goals.use.UseEntityGoal;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ComposterBlock;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potions;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 
@@ -150,9 +152,9 @@ public class GoalFactory {
             case "wear_full_iron" -> new WearArmorSetGoal(id, List.of(Items.IRON_HELMET, Items.IRON_CHESTPLATE, Items.IRON_LEGGINGS, Items.IRON_BOOTS), 4);
             case "wear_full_leather" -> new WearArmorSetGoal(id, List.of(Items.LEATHER_HELMET, Items.LEATHER_CHESTPLATE, Items.LEATHER_LEGGINGS, Items.LEATHER_BOOTS), 4);
             case "wear_netherite" -> new WearArmorSetGoal(id, List.of(Items.NETHERITE_HELMET, Items.NETHERITE_CHESTPLATE, Items.NETHERITE_LEGGINGS, Items.NETHERITE_BOOTS), 1);
-            case "wear_colored" -> new WearColoredArmorGoal(id);
-            case "wear_trimmed" -> new WearArmorTrimGoal(id);
-            case "wear_trimmed_set" -> new WearFullyTrimmedArmorSetGoal(id);
+            case "wear_colored" -> new WearArmorComponentGoal(id, DataComponentTypes.DYED_COLOR, 1);
+            case "wear_trimmed" -> new WearArmorComponentGoal(id, DataComponentTypes.TRIM, 1); //WearArmorTrimGoal(id);
+            case "wear_trimmed_set" -> new WearArmorComponentGoal(id, DataComponentTypes.TRIM, 4);
             case "wear_pumpkin" -> new WearCarvedPumpkinGoal(id, 60); // todo change time after test
 
             case "obtain_all_seeds" -> new ObtainEverySeedGoal(id);
@@ -187,7 +189,7 @@ public class GoalFactory {
             case "breed_axolotls" -> new BreedAnimalGoal(id, "minecraft:axolotl");
             case "breed_foxes" -> new BreedAnimalGoal(id, "minecraft:fox");
             case "breed_cats" -> new BreedAnimalGoal(id, "minecraft:cat");
-            case "breed_parrots" -> new BreedAnimalGoal(id, "minecraft:parrot");
+//            case "breed_parrots" -> new BreedAnimalGoal(id, "minecraft:parrot");
             case "breed_rabbits" -> new BreedAnimalGoal(id, "minecraft:rabbit");
             case "breed_wolves" -> new BreedAnimalGoal(id, "minecraft:wolf");
             case "breed_horses" -> new BreedAnimalGoal(id, "minecraft:horse");
@@ -310,6 +312,9 @@ public class GoalFactory {
             case "die_freeze" -> new DieFromWeaponGoal(id, DamageTypes.FREEZE);
             case "die_bed" -> new DieGameDesignGoal(id);
             case "die_tnt_minecart" -> new DieFromEntityGoal(id, EntityType.TNT_MINECART);
+            case "die_ender_pearl" -> new DieFromEnderPearl(id);
+            case "die_explosion" -> new DieByTag(id, DamageTypeTags.IS_EXPLOSION);
+            case "die_projectile" -> new DieByTag(id, DamageTypeTags.IS_PROJECTILE);
 
             case "ride_pig" -> new RidePigGoal(id);
             case "ride_horse" -> new RideHorseGoal(id);

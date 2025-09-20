@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AbstractCauldronMixin",
+    "AbstractHorseEntityMixin",
     "BlockDropMixin",
     "CompassVanishMixin",
     "ComposterMixin",
@@ -16,6 +17,7 @@
     "PlayerInventorymixin",
     "ScreenMixin",
     "ServerChunkLoadingManagerMixin",
+    "TameMixin",
     "accessors.CombinedEntryMixin",
     "accessors.ItemEntryMixin",
     "accessors.LootTableAccessor"
