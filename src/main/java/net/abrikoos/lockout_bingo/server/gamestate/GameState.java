@@ -11,6 +11,7 @@ import net.abrikoos.lockout_bingo.networkv2.team.PlayerData;
 import net.abrikoos.lockout_bingo.networkv2.team.ServerTeamRegV2;
 import net.abrikoos.lockout_bingo.networkv2.team.TeamData;
 import net.abrikoos.lockout_bingo.server.builder.BlockDropChangeBuilder;
+import net.abrikoos.lockout_bingo.server.builder.EvenMoreReworkedLockoutBuilder;
 import net.abrikoos.lockout_bingo.server.builder.ReworkedLockoutBuilder;
 import net.abrikoos.lockout_bingo.server.goals.GoalFactory;
 import net.abrikoos.lockout_bingo.server.goals.LockoutGoal;
@@ -205,7 +206,7 @@ public class GameState {
 
     private static void newLockout(StartGameRequestPacket packet) {
 
-        ReworkedLockoutBuilder builder = new ReworkedLockoutBuilder(packet);
+        EvenMoreReworkedLockoutBuilder builder = new EvenMoreReworkedLockoutBuilder(packet);
         long startTime = System.currentTimeMillis();
         int freezetime = 60000;
 
