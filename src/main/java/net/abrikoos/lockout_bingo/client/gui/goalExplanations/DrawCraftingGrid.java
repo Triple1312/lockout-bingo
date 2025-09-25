@@ -1,7 +1,7 @@
 package net.abrikoos.lockout_bingo.client.gui.goalExplanations;
 
-import net.minecraft.block.BeehiveBlock;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
@@ -12,12 +12,14 @@ public class DrawCraftingGrid {
     int x;
     int y;
     List<ItemStack> stacks;
+    ItemStack result;
 
 
-    DrawCraftingGrid(int x, int y, List<ItemStack> stacks) {
+    DrawCraftingGrid(int x, int y, List<Item> stacks, Item result) {
         this.x = x;
         this.y = y;
-        this.stacks = stacks;
+        this.stacks = stacks.stream().map(item -> item == null ? null : item.getDefaultStack()).toList();
+        this.result = result == null? null : result.getDefaultStack();
     }
 
 
@@ -38,5 +40,25 @@ public class DrawCraftingGrid {
                 }
             }
         }
+
+        int arrowX = this.x + 3 * 18 + 4; // arrow after 3 slots + some padding
+        int arrowY = this.y + 18; // center vertically to middle row
+        ctx.drawTexture(
+                Identifier.of("minecraft", "textures/gui/container/crafting_table.png"),
+                arrowX, arrowY, // position
+                176, 23, // u,v in texture
+                24, 17  // width,height
+        );
+
+        int resultX = arrowX + 24 + 4; // after arrow + some padding
+        int resultY = this.y + 18; // center vertically to middle row
+        ctx.drawTexture(
+                Identifier.of("minecraft", "textures/gui/container/crafting_table.png"),
+                resultX, resultY, // position
+                95, 17, // u,v in texture
+                18, 18  // width,height
+        );
+        ctx.drawItem(result, resultX + 1, resultY + 1); // +1 to center in slot
+
     }
 }

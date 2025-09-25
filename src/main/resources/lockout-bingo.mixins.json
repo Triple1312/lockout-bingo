@@ -18,6 +18,7 @@
     "ScreenMixin",
     "ServerChunkLoadingManagerMixin",
     "TameMixin",
+    "ZombieAlwaysConvertMixin",
     "accessors.CombinedEntryMixin",
     "accessors.ItemEntryMixin",
     "accessors.LootTableAccessor"

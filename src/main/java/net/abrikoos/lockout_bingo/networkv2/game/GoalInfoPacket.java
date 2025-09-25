@@ -39,4 +39,9 @@ public record GoalInfoPacket( String goalName, String goalID, int goalIndex, Str
     public Id<? extends CustomPayload> getId() {
         return ID;
     }
+
+    public String goalId() {
+        return goalID;
+    }
+
 }

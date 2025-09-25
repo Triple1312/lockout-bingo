@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "lockout-bingo",
-	"version": "0.9.0",
+	"version": "0.10.0",
 	"name": "Lockout Bingo",
 	"description": "This is a lockout mod made for fabric 1.21",
 	"authors": [

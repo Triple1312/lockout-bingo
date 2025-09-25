@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.abrikoos.lockout_bingo.LockoutLogger;
 import net.abrikoos.lockout_bingo.client.ClientGameStateV2;
 import net.abrikoos.lockout_bingo.client.gui.LockoutUtils;
+import net.abrikoos.lockout_bingo.client.gui.goalExplanations.GoalExplanationRegistry;
 import net.abrikoos.lockout_bingo.networkv2.compass.AskCompassPacket;
 import net.abrikoos.lockout_bingo.networkv2.game.GoalInfoPacket;
 import net.abrikoos.lockout_bingo.networkv2.team.Colors;
@@ -92,6 +93,7 @@ public class BoardTab3 implements Tab {
                     if (intersect(goalTopX, goalTopY, goalTopX + goalwidthheight, goalTopY + goalwidthheight, mouseX, mouseY)) { // onhover
 
                         context.drawTextWithBackground(client.textRenderer, Text.of(goals.get(i).goalName()), goalTopX, goalTopY - goalpadding/2, 200, 0xffffffff);
+                        GoalExplanationRegistry.getGoalExplanation(goals.get(i).goalId()).renderWidget(context, client.textRenderer, this.width /4, Colors.get(color), goals.get(i).completedPlayerUUID());
                     }
                 }
 

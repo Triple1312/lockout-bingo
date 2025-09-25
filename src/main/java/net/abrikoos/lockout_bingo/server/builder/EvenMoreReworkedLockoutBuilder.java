@@ -7,6 +7,7 @@ import net.abrikoos.lockout_bingo.networkv2.game.StartGameRequestPacket;
 import net.abrikoos.lockout_bingo.server.goals.GoalItemRegistry;
 import net.abrikoos.lockout_bingo.server.goals.GoalListItem;
 import net.abrikoos.lockout_bingo.server.goals.LockoutGoalTag;
+import net.minecraft.entity.passive.VillagerEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -281,6 +282,7 @@ public class EvenMoreReworkedLockoutBuilder {
         // todo diff random
 
         for (int i = 0; i < info.goalCount(); i++) {
+
 
             int difficulty = (int) Math.round(rand.nextGaussian() * sigma + mu);
             if (difficulty < 1) difficulty = 1;
