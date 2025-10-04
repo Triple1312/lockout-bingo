@@ -2,14 +2,12 @@ package net.abrikoos.lockout_bingo.server.gamestate;
 
 import net.abrikoos.lockout_bingo.LockoutLogger;
 import net.abrikoos.lockout_bingo.item.LockoutModItems;
-import net.abrikoos.lockout_bingo.networkv2.game.GameStartPacket;
-import net.abrikoos.lockout_bingo.networkv2.game.GoalBoardUpdatePacket;
-import net.abrikoos.lockout_bingo.networkv2.game.GoalInfoPacket;
-import net.abrikoos.lockout_bingo.networkv2.game.StartGameRequestPacket;
+import net.abrikoos.lockout_bingo.networkv2.game.*;
 import net.abrikoos.lockout_bingo.networkv2.team.Colors;
 import net.abrikoos.lockout_bingo.networkv2.team.PlayerData;
 import net.abrikoos.lockout_bingo.networkv2.team.ServerTeamRegV2;
 import net.abrikoos.lockout_bingo.networkv2.team.TeamData;
+import net.abrikoos.lockout_bingo.server.ThunderyWeatherCycle;
 import net.abrikoos.lockout_bingo.server.builder.BlockDropChangeBuilder;
 import net.abrikoos.lockout_bingo.server.builder.EvenMoreReworkedLockoutBuilder;
 import net.abrikoos.lockout_bingo.server.builder.ReworkedLockoutBuilder;
@@ -24,17 +22,25 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.block.Block;
+import net.minecraft.client.gui.screen.DeathScreen;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerAdvancementLoader;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stat;
 import net.minecraft.stat.StatHandler;
 import net.minecraft.stat.Stats;
+import net.minecraft.structure.StructureStart;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.gen.structure.Structure;
+import net.minecraft.world.gen.structure.StructureKeys;
+import net.minecraft.world.gen.structure.StructureType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.time.LocalTime;
 import java.util.*;
@@ -60,6 +66,14 @@ public class GameState {
         return info.board();
     }
 
+    public static List<StructureLocationPacket> structures = new ArrayList<>();
+
+    public static Map<String, String> playerRespawnTargets = new HashMap<>();
+
+    public static boolean increasedSkulls = false;
+
+    public static ThunderyWeatherCycle thunderyWeatherCycle = null;
+
     public static void playerServerJoin(ServerPlayerEntity player) {
         try {
             teamRegistry.getPlayerDataByUUID(player.getUuid().toString());
@@ -81,6 +95,92 @@ public class GameState {
             LockoutLogger.log("Error removing player from team registry");
         }
     }
+
+    public static void registerPlayerRespawnTarget(String puuid, String targetPuuid) {
+        playerRespawnTargets.put(puuid, targetPuuid);
+    }
+
+    public static @Nullable ServerPlayerEntity getPlayerRespawnTarget(String puuid) {
+        String targetPuuid = playerRespawnTargets.get(puuid);
+        if (targetPuuid == null) {
+            return null;
+        }
+        var returnedPlayer = getPlayerByUUID(targetPuuid);
+        registerPlayerRespawnTarget(puuid, null);
+        return returnedPlayer;
+    }
+
+    public static void registerStructure(@NotNull StructureStart structure) {
+        int r, g, b;
+        var structKey = server.getOverworld().getRegistryManager().get(RegistryKeys.STRUCTURE).getKey(structure.getStructure());
+        if (structKey.isEmpty()) {
+            return;
+        }
+
+        if (structKey.get().equals(StructureKeys.TRIAL_CHAMBERS)) {
+            r = 245; g = 159; b = 39;
+        }
+        else if(structKey.get().equals(StructureKeys.DESERT_PYRAMID)) {
+            r = 222; g = 192; b = 20;
+        }
+        else if(structKey.get().equals(StructureKeys.JUNGLE_PYRAMID)) {
+            r = 58; g = 97; b = 48;
+        }
+        else if(structKey.get().equals(StructureKeys.IGLOO)) {
+            r = 180; g = 63; b = 45;
+        }
+        else if(structKey.get().equals(StructureKeys.MONUMENT)) {
+            r = 43; g = 87; b = 189;
+        }
+//        else if(structKey.get().equals(StructureKeys.SHIPWRECK)) {
+//            r = 139; g = 69; b = 19;
+//        }
+        else if(structKey.get().equals(StructureKeys.SWAMP_HUT)) {
+            r = 98; g = 150; b = 86;
+        }
+        else if(structKey.get().equals(StructureKeys.MANSION)) {
+            r = 89; g = 53; b = 15;
+        }
+        else if(structKey.get().equals(StructureKeys.FORTRESS)) {
+            r = 33; g = 23; b = 15;
+        }
+//        else if(structure.getStructure().getType() == StructureType.JIGSAW) {
+//            r = 178; g = 34; b = 34;
+//        }
+//        else if(structure.getStructure().getType() == StructureType.RUINED_PORTAL) {
+//            r = 105; g = 105; b = 105;
+//        }
+        else if(structKey.get().equals(StructureKeys.END_CITY)) {
+            r = 107; g = 44; b = 105;
+        }
+        else if(structKey.get().equals(StructureKeys.ANCIENT_CITY)) {
+            r = 41; g = 33; b = 41;
+        }
+        else {
+            return;
+        }
+        var box = structure.getBoundingBox();
+        structures.add(new StructureLocationPacket(r, g, b, box.getCenter().getX(), box.getCenter().getY(), box.getCenter().getZ()));
+        sendStructuresLocationToAll();
+    }
+
+    public static void sendStructuresLocation(ServerPlayerEntity player) {
+        ServerPlayNetworking.send(player, new StructureLocationsPacket(structures));
+    }
+
+    public static void sendStructuresLocationToAll() {
+        for (ServerPlayerEntity player : players()) {
+            ServerPlayNetworking.send(player, new StructureLocationsPacket(structures));
+        }
+    }
+
+    public static void enableThunderyWeatherCycle() {
+        if (thunderyWeatherCycle == null) {
+            thunderyWeatherCycle = new ThunderyWeatherCycle();
+        }
+    }
+
+
 
 //    public static void playerJoinTeam(String puuid, String team) {
 //        try {
@@ -175,6 +275,7 @@ public class GameState {
                 });
             }
 
+
             StatHandler sh = player.getStatHandler();
             for (Stat<?> stat : Stats.CUSTOM) {
                 sh.setStat(player, stat, 0);
@@ -196,7 +297,7 @@ public class GameState {
         GoalBoardUpdatePacket gbup = BlockDropChangeBuilder.generateDropShuffleBoard(packet);
         long startTime = System.currentTimeMillis();
         int freezetime = 60000;
-        info = new GameStartPacket("dropshuffle", packet.teamUUIDs().get(0), packet.teamUUIDs().get(1), gbup, startTime, freezetime);
+        info = new GameStartPacket("dropshuffle", packet.teamUUIDs().get(0), packet.teamUUIDs().get(1), gbup, startTime, freezetime, packet.teammateRespawn());
 
         for (GoalInfoPacket goal : gbup.goals()) {
             LockoutGoal lg = GoalFactory.buildObtainGoal(Identifier.of(goal.goalID()), goal.goalIndex());
@@ -210,7 +311,7 @@ public class GameState {
         long startTime = System.currentTimeMillis();
         int freezetime = 60000;
 
-        info = new GameStartPacket("lockout", packet.teamUUIDs().get(0), packet.teamUUIDs().get(1), builder.packet, startTime, freezetime);
+        info = new GameStartPacket("lockout", packet.teamUUIDs().get(0), packet.teamUUIDs().get(1), builder.packet, startTime, freezetime, packet.teammateRespawn());
 
         for (GoalInfoPacket goal : builder.packet.goals()) {
             LockoutGoal lg = GoalFactory.buildGoal(goal.goalID(), goal.goalIndex());
@@ -240,6 +341,7 @@ public class GameState {
         ServerTickListener.clear();
         BlockDropChangeBuilder.resetHashMap();
         goals.clear();
+        increasedSkulls = false;
     }
 
     public static String onGoalComplete(LockoutGoalEvent event) {

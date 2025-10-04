@@ -101,6 +101,7 @@ public class GoalItemRegistry {
         items.add(new GoalListBlockItem("wear a full set of golden armor", "", 4, List.of(armor), "wear_full_golden", List.of(Items.GOLDEN_HELMET.getDefaultStack(), Items.GOLDEN_CHESTPLATE.getDefaultStack(), Items.GOLDEN_LEGGINGS.getDefaultStack(), Items.GOLDEN_BOOTS.getDefaultStack())));
         items.add(new GoalListBlockItem("wear a full set of diamond armor", "", 5, List.of(armor), "wear_full_diamond", List.of(Items.DIAMOND_HELMET.getDefaultStack(), Items.DIAMOND_CHESTPLATE.getDefaultStack(), Items.DIAMOND_LEGGINGS.getDefaultStack(), Items.DIAMOND_BOOTS.getDefaultStack())));
         items.add(new GoalListBlockItem("wear a piece of netherite armor", "", 6, List.of(armor), "wear_netherite", List.of(Items.NETHERITE_HELMET.getDefaultStack(), Items.NETHERITE_CHESTPLATE.getDefaultStack(), Items.NETHERITE_LEGGINGS.getDefaultStack(), Items.NETHERITE_BOOTS.getDefaultStack())));
+        items.add(new GoalListBlockItem("wear an elytra", "", 5, List.of(elytra, end), "wear_elytra", List.of(Items.ELYTRA.getDefaultStack())));
 
         ItemStack red_leather_cap = Items.LEATHER_HELMET.getDefaultStack();red_leather_cap.applyChanges(ComponentChanges.builder().add(DataComponentTypes.BASE_COLOR, DyeColor.RED).build());ItemStack purple_leather_boots = Items.LEATHER_BOOTS.getDefaultStack();purple_leather_boots.applyChanges(ComponentChanges.builder().add(DataComponentTypes.BASE_COLOR, DyeColor.PURPLE).build());ItemStack green_leather_pants = Items.LEATHER_LEGGINGS.getDefaultStack();green_leather_pants.applyChanges(ComponentChanges.builder().add(DataComponentTypes.BASE_COLOR, DyeColor.GREEN).build());ItemStack orange_leather_chestplate = Items.LEATHER_CHESTPLATE.getDefaultStack();orange_leather_chestplate.applyChanges(ComponentChanges.builder().add(DataComponentTypes.BASE_COLOR, DyeColor.ORANGE).build());
         items.add(new GoalListBlockItem("wear a piece of colored armor", "", 2, List.of(armor), "wear_colored", List.of(red_leather_cap, purple_leather_boots, green_leather_pants, orange_leather_chestplate)));
@@ -167,6 +168,7 @@ public class GoalItemRegistry {
         items.add(new GoalListItem("kill a witch", "", 3, List.of(kill), "kill_witch", List.of(Identifier.of("lockout-bingo:goalicon/entity/witch.png"))));
         items.add(new GoalListItem("kill a stray", "", 3, List.of(kill), "kill_stray", List.of(Identifier.of("lockout-bingo:goalicon/entity/stray.png"))));
         items.add(new GoalListItem("kill a snow golem", "", 3, List.of(kill), "kill_snow_golem", List.of(Identifier.of("lockout-bingo:goalicon/entity/snow_golem.png"))));
+        items.add(new GoalListItem("kill a blaze with a snowball", "", 4, List.of(kill, nether), "kill_blaze_snowball", List.of(Identifier.of("lockout-bingo:goalicon/entity/blaze.png"))));
         items.add(new GoalListItem("kill 7 unique hostile mobs", "", 1, List.of(kill, C7, unique), "kill_7", List.of(Identifier.of("lockout-bingo:goalicon/entity/zombie.png"))));
         items.add(new GoalListItem("kill 10 unique hostile mobs", "", 3, List.of(kill, C10, unique), "kill_10", List.of(Identifier.of("lockout-bingo:goalicon/entity/zombie.png"))));
         items.add(new GoalListItem("kill 15 unique hostile mobs", "", 4, List.of(kill, C15, unique), "kill_15", List.of(Identifier.of("lockout-bingo:goalicon/entity/zombie.png"))));
@@ -219,6 +221,7 @@ public class GoalItemRegistry {
         items.add(new GoalListItem("kill the dragon", "", 5, List.of(advancement, kill), "dragon_adv", List.of(Identifier.of("lockout-bingo:goalicon/entity/ender_dragon.png"))));
         items.add(new GoalListItem("get the sniper duel advancement", "", 4, List.of(advancement), "sniper_adv", List.of(Identifier.of("lockout-bingo:goalicon/entity/skeleton.png"))));
         items.add(new GoalListBlockItem("get any spyglass advancement", "", 3, List.of(advancement), "spyglass_adv", List.of(Items.SPYGLASS.getDefaultStack())));
+        items.add(new GoalListBlockItem("very very frightening", "", 5, List.of(advancement), "frightening_adv", List.of(Items.TRIDENT.getDefaultStack())));
 
         items.add(new GoalListItem("complete 15 advancements", "", 3, List.of(C15, advancement), "adv_15", List.of(Identifier.of("lockout-bingo:goalicon/advancement/challenge_done.png"))));
         items.add(new GoalListItem("complete 25 advancements", "", 3, List.of(C25, advancement), "adv_25", List.of(Identifier.of("lockout-bingo:goalicon/advancement/challenge_done.png"))));
@@ -269,6 +272,7 @@ public class GoalItemRegistry {
         items.add(new GoalListBlockItem("use a stonecutter", "", 1, List.of(use), "use_stonecutter", List.of(Items.STONECUTTER.getDefaultStack())));
         items.add(new GoalListBlockItem("use an anvil", "", 3, List.of(use), "use_anvil", List.of(Items.ANVIL.getDefaultStack())));
         items.add(new GoalListBlockItem("use a composter", "", 1, List.of(use), "use_composter", List.of(Items.COMPOSTER.getDefaultStack())));
+        items.add(new GoalListBlockItem("pot a plant", "", 1, List.of(use), "pot_plant", List.of(Items.FLOWER_POT.getDefaultStack())));
 
 
         // mine goals
@@ -299,9 +303,7 @@ public class GoalItemRegistry {
         items.add(new GoalListBlockItem("have 6 active effects at once", "", 4, List.of(effect, C6), "effect_6", List.of(Items.MILK_BUCKET.getDefaultStack())));
         items.add(new GoalListBlockItem("dont get any effects", "", 2, List.of(effect, dont), "dont_effect", List.of(Items.MILK_BUCKET.getDefaultStack())));
         items.add(new GoalListItem("dont get glowing", "", 2, List.of(effect, dont), "dont_glowing", List.of(Identifier.of("lockout-bingo:goalicon/effect/glowing.png"))));
-        items.add(new GoalListBlockItem("remove all effects using milk", "", 2, List.of(effect), "milk_effect", List.of(Items.MILK_BUCKET.getDefaultStack())));
-
-
+        items.add(new GoalListBlockItem("remove an effect using milk", "", 2, List.of(effect), "milk_effect", List.of(Items.MILK_BUCKET.getDefaultStack())));
 
         items.add(new GoalListBlockItem("break 5 pickaxes", "", 2, List.of(C5, broken), "break_5_pickaxes", List.of(Items.WOODEN_PICKAXE.getDefaultStack(), Items.STONE_PICKAXE.getDefaultStack(), Items.IRON_PICKAXE.getDefaultStack(), Items.GOLDEN_PICKAXE.getDefaultStack(), Items.DIAMOND_PICKAXE.getDefaultStack(), Items.NETHERITE_PICKAXE.getDefaultStack())));
         items.add(new GoalListBlockItem("break a diamond pickaxe", "", 4, List.of(broken), "break_diamond", List.of(Items.DIAMOND_PICKAXE.getDefaultStack())));
@@ -332,6 +334,7 @@ public class GoalItemRegistry {
         items.add(new GoalListItem("swim 1 km", "", 3, List.of(km1), "swim_1km", List.of(Identifier.of("lockout-bingo:goalicon/effect/dolphins_grace.png"))));
         items.add(new GoalListItem("opponent sneaks", "", 2, List.of(dont), "dont_crouch", List.of(Identifier.of("lockout-bingo:goalicon/other/crouch.png"))));
         items.add(new GoalListItem("opponent jumps", "", 3, List.of(dont), "dont_jump", List.of(Identifier.of("lockout-bingo:goalicon/other/jump.png"))));
+        items.add(new GoalListItem("use elytra to fly 1km", "", 5, List.of(elytra, km1), "fly_elytra", List.of(Identifier.of("lockout-bingo:goalicon/item/elytra.png"))));
 
 
         // brew goals

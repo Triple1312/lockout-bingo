@@ -8,15 +8,21 @@
     "BlockDropMixin",
     "CompassVanishMixin",
     "ComposterMixin",
+    "EntityDeathMixin",
     "GammaMixin",
     "LockoutLivingEntityMixin",
     "LockoutPlayerAdvancementTrackerMixin",
+    "LootTableMixin",
     "MilkBucketMixin",
+    "MinecraftServerMixin",
     "NoiseChunkGeneratorMixin",
     "PlayerEntityMixin",
     "PlayerInventorymixin",
-    "ScreenMixin",
+    "PlayerRespawnMixin",
+    "ScreenHandlerMixin",
     "ServerChunkLoadingManagerMixin",
+    "ServerPlayerMixin",
+    "StructureFindMixin",
     "TameMixin",
     "ZombieAlwaysConvertMixin",
     "accessors.CombinedEntryMixin",
@@ -27,6 +33,9 @@
     "defaultRequire": 1
   },
   "client": [
-    "HudBoardMixin"
-	]
+    "HudBoardMixin",
+    "RespawnScreenMixin",
+    "ScreenMixin",
+    "WorldRenderMixin"
+  ]
 }

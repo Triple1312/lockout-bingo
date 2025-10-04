@@ -25,10 +25,7 @@ import net.abrikoos.lockout_bingo.server.goals.mine.MineEmeraldOre;
 import net.abrikoos.lockout_bingo.server.goals.mine.MineGoal;
 import net.abrikoos.lockout_bingo.server.goals.more.MoreLVLsGoal;
 import net.abrikoos.lockout_bingo.server.goals.more.ObtainMoreItemGoal;
-import net.abrikoos.lockout_bingo.server.goals.movement.DontCrouch;
-import net.abrikoos.lockout_bingo.server.goals.movement.DontJumpGoal;
-import net.abrikoos.lockout_bingo.server.goals.movement.SprintGoal;
-import net.abrikoos.lockout_bingo.server.goals.movement.SwimGoal;
+import net.abrikoos.lockout_bingo.server.goals.movement.*;
 import net.abrikoos.lockout_bingo.server.goals.obtain.*;
 import net.abrikoos.lockout_bingo.server.goals.position.FallGoal;
 import net.abrikoos.lockout_bingo.server.goals.position.ReachBedrockGoal;
@@ -40,11 +37,11 @@ import net.abrikoos.lockout_bingo.server.goals.tame.TameAnimalGoal;
 import net.abrikoos.lockout_bingo.server.goals.tools.BreakItemsGoal;
 import net.abrikoos.lockout_bingo.server.goals.tools.BreakXPickaxes;
 import net.abrikoos.lockout_bingo.server.goals.use.ComposterGoal;
+import net.abrikoos.lockout_bingo.server.goals.use.PotPlantGoal;
 import net.abrikoos.lockout_bingo.server.goals.use.UseBlockGoal;
 
 import net.abrikoos.lockout_bingo.server.goals.use.UseEntityGoal;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.ComposterBlock;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageTypes;
@@ -156,6 +153,7 @@ public class GoalFactory {
             case "wear_trimmed" -> new WearArmorComponentGoal(id, DataComponentTypes.TRIM, 1); //WearArmorTrimGoal(id);
             case "wear_trimmed_set" -> new WearArmorComponentGoal(id, DataComponentTypes.TRIM, 4);
             case "wear_pumpkin" -> new WearCarvedPumpkinGoal(id, 60); // todo change time after test
+            case "wear_elytra" -> new WearArmorSetGoal(id, List.of(Items.ELYTRA), 1);
 
             case "obtain_all_seeds" -> new ObtainEverySeedGoal(id);
             case "obtain_6_flowers" -> new ObtainXFlowers(id, 6);
@@ -217,6 +215,7 @@ public class GoalFactory {
             case "kill_witch" -> new KillHostileEntityGoal(id, "minecraft:witch");
             case "kill_stray" -> new KillHostileEntityGoal(id, "minecraft:stray");
             case "kill_snow_golem" -> new KillEntityGoal(id, EntityType.SNOW_GOLEM);
+            case "kill_blaze_snowball" -> new KillXWithYGoal(id, EntityType.BLAZE, EntityType.SNOWBALL);
             case "kill_7" -> new MultiKillHostilesGoal(id, 7);
             case "kill_10" -> new MultiKillHostilesGoal(id, 10);
             case "kill_15" -> new MultiKillHostilesGoal(id, 15);
@@ -260,9 +259,7 @@ public class GoalFactory {
             case "tadpole_bucket_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "husbandry/tadpole_in_a_bucket"));
             case "sniffer_egg_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "husbandry/obtain_sniffer_egg"));
             case "catalogue_4_adv" -> new MultiCriterionAdvancementGoal(id, Identifier.of("minecraft", "husbandry/complete_catalogue"), 4);
-//            case "tame_cat" -> new MultiAdvancementGoal(id, Identifier.of("minecraft", "husbandry/complete_catalogue"), 1);
             case "whole_pack_3_adv" -> new MultiCriterionAdvancementGoal(id, Identifier.of("minecraft", "husbandry/whole_pack"), 3);
-//            case "tame_wolf" -> new MultiAdvancementGoal(id, Identifier.of("minecraft", "husbandry/whole_pack"), 1);
             case "tactical_fishing_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "husbandry/tactical_fishing"));
             case "wax_off_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "husbandry/wax_off"));
             case "axolotl_bucket_adv" -> new GetAdvancementGoal(id, Identifier.of("minecraft", "husbandry/axolotl_in_a_bucket"));
@@ -277,6 +274,7 @@ public class GoalFactory {
                     new GetAdvancementGoal(id, Identifier.of("minecraft", "adventure/spyglass_at_parrot")),
                     new GetAdvancementGoal(id, Identifier.of("minecraft", "adventure/spyglass_at_ghast")),
                     new GetAdvancementGoal(id, Identifier.of("minecraft", "adventure/spyglass_at_dragon"))));
+            case "frightening_adv" -> new FrighteningGoal(id);
 
             case "adv_15" -> new AdvancementCountGoal(id, 15);
             case "adv_35" -> new AdvancementCountGoal(id, 35);
@@ -335,6 +333,7 @@ public class GoalFactory {
             case "use_grindstone" -> new UseBlockGoal(id, ScreenHandlerType.GRINDSTONE, 2);
             case "use_anvil" -> new UseBlockGoal(id, ScreenHandlerType.ANVIL, 2);
             case "use_composter" -> new ComposterGoal(id);
+            case "pot_plant" -> new PotPlantGoal(id);
 
             // mine goals
             case "mine_diamond" -> new MineDiamondOre(id);
@@ -385,6 +384,7 @@ public class GoalFactory {
             case "swim_1km" -> new SwimGoal(id, 100000);
             case "dont_jump" -> new DontJumpGoal(id);
             case "dont_crouch" -> new DontCrouch(id);
+            case "fly_elytra" -> new ElytraFlightGoal(id, 100000);
 
             // brew goals
             case "brew_regen" -> new BrewPotionGoal(id, Potions.REGENERATION);

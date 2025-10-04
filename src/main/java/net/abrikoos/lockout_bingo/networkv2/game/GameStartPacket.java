@@ -15,14 +15,16 @@ public class GameStartPacket implements CustomPayload {
     GoalBoardUpdatePacket board;
     long startTime;
     int freezeTime;
+    public boolean teammateRespawn;
 
-    public GameStartPacket(String game_mode, String team1, String team2, GoalBoardUpdatePacket board, long startTime, int freezeTime) {
+    public GameStartPacket(String game_mode, String team1, String team2, GoalBoardUpdatePacket board, long startTime, int freezeTime, boolean teammateRespawn) {
         this.game_mode = game_mode;
         this.team1 = team1;
         this.team2 = team2;
         this.board = board;
         this.startTime = startTime;
         this.freezeTime = freezeTime;
+        this.teammateRespawn = teammateRespawn;
     }
 
     public String game_mode() {
@@ -60,7 +62,7 @@ public class GameStartPacket implements CustomPayload {
     public static final Id<GameStartPacket> ID = new CustomPayload.Id<>(Identifier.of("lockout-bingo", "game_start"));
 
     public static GameStartPacket empty() {
-        return new GameStartPacket("", "00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000", GoalBoardUpdatePacket.empty(), 0, 0);
+        return new GameStartPacket("", "00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000", GoalBoardUpdatePacket.empty(), 0, 0, false);
     }
 
     public static PacketCodec<RegistryByteBuf, GameStartPacket> CODEC = new PacketCodec<RegistryByteBuf, GameStartPacket>() {
@@ -73,7 +75,8 @@ public class GameStartPacket implements CustomPayload {
             GoalBoardUpdatePacket board = GoalBoardUpdatePacket.CODEC.decode(buf);
             long startTime = buf.readLong();
             int freezeTime = buf.readInt();
-            return new GameStartPacket(gameMode, team1, team2,  board, startTime, freezeTime);
+            boolean teammateRespawn = buf.readBoolean();
+            return new GameStartPacket(gameMode, team1, team2,  board, startTime, freezeTime, teammateRespawn);
         }
 
         @Override
@@ -85,6 +88,7 @@ public class GameStartPacket implements CustomPayload {
             GoalBoardUpdatePacket.CODEC.encode(buf, value.board());
             buf.writeLong(value.startTime());
             buf.writeInt(value.freezeTime());
+            buf.writeBoolean(value.teammateRespawn);
         }
     };
 

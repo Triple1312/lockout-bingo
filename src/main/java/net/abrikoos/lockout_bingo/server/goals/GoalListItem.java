@@ -7,6 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.texture.*;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -82,10 +83,12 @@ public class GoalListItem {
     }
 
     private void drawModifiers(DrawContext ctx, int x1, int y1, int x2, int y2) {
+        final float textScale = 3;
         MinecraftClient client = MinecraftClient.getInstance();
         TextRenderer textRenderer = client.textRenderer;
-        ctx.getMatrices().push();
-        ctx.getMatrices().translate(0, 0, 200);
+        MatrixStack matrices = ctx.getMatrices();
+        matrices.push();
+        matrices.translate(0, 0, 200);
         for (LockoutGoalTag tag : this.tags) {
             switch (tag) {
                 case die:
@@ -123,64 +126,144 @@ public class GoalListItem {
                     break;
             }
             if (tag == LockoutGoalTag.C6) {
-                ctx.drawText(textRenderer,"6", x2-2-(x2-x1)/5, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-2-(x2-x1)/5, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer,"6", 0,0, 0xffffffff, true);
+                matrices.pop();
             }
             else if (tag == LockoutGoalTag.C8) {
-                ctx.drawText(textRenderer,"8", x2-2-(x2-x1)/5, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-2-(x2-x1)/5, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer,"8", 0,0, 0xffffffff, true);
+                matrices.pop();
             }
             else if (tag == LockoutGoalTag.C7) {
-                ctx.drawText(textRenderer,"7", x2-2-(x2-x1)/5, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-2-(x2-x1)/5, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer,"7", 0,0, 0xffffffff, true);
+                matrices.pop();
             }
             else if (tag == LockoutGoalTag.C10) {
-                ctx.drawText(textRenderer,"10", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer,"10", 0, 0, 0xffffffff, true);
+                matrices.pop();
             }
             else if (tag == LockoutGoalTag.C15) {
-                ctx.drawText(textRenderer,"15", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer,"15", 0, 0, 0xffffffff, true);
+                matrices.pop();
             }
             else if (tag == LockoutGoalTag.C20) {
-                ctx.drawText(textRenderer,"20", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer,"20", 0, 0, 0xffffffff, true);
+                matrices.pop();
             }
             else if (tag == LockoutGoalTag.C25) {
-                ctx.drawText(textRenderer,"25", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer,"25", 0, 0, 0xffffffff, true);
+                matrices.pop();
             }
             else if (tag == LockoutGoalTag.C30) {
-                ctx.drawText(textRenderer,"30", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer,"30", 0, 0, 0xffffffff, true);
+                matrices.pop();
             }
             else if (tag == LockoutGoalTag.C35) {
-                ctx.drawText(textRenderer,"35", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer,"35", 0, 0, 0xffffffff, true);
+                matrices.pop();
             }
             else if (tag == LockoutGoalTag.C64) {
-                ctx.drawText(textRenderer,"64", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer,"64", 0, 0, 0xffffffff, true);
+                matrices.pop();
             }
             else if (tag == LockoutGoalTag.C5) {
-                ctx.drawText(textRenderer,"5", x2-2-(x2-x1)/5, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-2-(x2-x1)/5, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer,"5", 0, 0, 0xffffffff, true);
+                matrices.pop();
             }
             else if (tag == LockoutGoalTag.C4) {
-                ctx.drawText(textRenderer,"4", x2-2-(x2-x1)/5, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-2-(x2-x1)/5, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer,"4", 0, 0, 0xffffffff, true);
+                matrices.pop();
             }
             else if (tag == LockoutGoalTag.C3) {
-                ctx.drawText(textRenderer,"3", x2-2-(x2-x1)/5, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-2-(x2-x1)/5, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer,"3", 0, 0, 0xffffffff, true);
+                matrices.pop();
             }
             else if (tag == LockoutGoalTag.C2) {
-                ctx.drawText(textRenderer,"2", x2-2-(x2-x1)/5, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-2-(x2-x1)/5, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer,"2", 0, 0, 0xffffffff, true);
+                matrices.pop();
             }
             else if(tag == LockoutGoalTag.C100) {
-                ctx.drawText(textRenderer, "100",x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer, "100",0, 0, 0xffffffff, true);
+                matrices.pop();
             }
             else if (tag == LockoutGoalTag.C200) {
-                ctx.drawText(textRenderer,"200", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer,"200", 0, 0, 0xffffffff, true);
+                matrices.pop();
             }
             else if (tag == LockoutGoalTag.C500) {
-                ctx.drawText(textRenderer,"500", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer,"500", 0,0, 0xffffffff, true);
+                matrices.pop();
             }
             else if (tag == LockoutGoalTag.C300) {
-                ctx.drawText(textRenderer,"300", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer,"300", 0, 0, 0xffffffff, true);
+                matrices.pop();
             }
             else if (tag == LockoutGoalTag.C400) {
-                ctx.drawText(textRenderer,"400", x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer,"400", 0, 0, 0xffffffff, true);
+                matrices.pop();
             }
             else if (tag == LockoutGoalTag.km1) {
-                ctx.drawText(textRenderer,"1km", x2-2-(x2-x1)/3, y2 -(x2-x1)/3 -1, 0xffffffff, true);
+                matrices.push();
+                matrices.translate(x2-1-(x2-x1)/3, y2 -(x2-x1)/3 -1,0);
+                matrices.scale(textScale, textScale, 1);
+                ctx.drawText(textRenderer,"1km", 0, 0, 0xffffffff, true);
+                matrices.pop();
             }
         }
         ctx.getMatrices().pop();

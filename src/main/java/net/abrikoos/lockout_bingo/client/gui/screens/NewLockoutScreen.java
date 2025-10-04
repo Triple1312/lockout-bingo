@@ -139,7 +139,7 @@ public class NewLockoutScreen extends Screen {
         teams.add(mainTab.team1.getValue().teamUUID);
         teams.add(mainTab.team2.getValue().teamUUID);
 
-        StartGameRequestPacket packet = new StartGameRequestPacket("lockout", teams, difficulty, goalCount,false,  goalTypes, modifiers);
+        StartGameRequestPacket packet = new StartGameRequestPacket("lockout", teams, difficulty, goalCount,false, mainTab.teammateRespawn.getValue(),  goalTypes, modifiers);
 
         ClientPlayNetworking.send(packet);
     }
@@ -188,6 +188,7 @@ public class NewLockoutScreen extends Screen {
         CyclingButtonWidget<TeamData> team2;
         CyclingButtonWidget<Integer> difficulty;
         CyclingButtonWidget<Integer> goalCount;
+        CyclingButtonWidget<Boolean> teammateRespawn;
 
         public MainTab(NewLockoutScreen parent) {
             super(Text.of("Game"));
@@ -213,10 +214,10 @@ public class NewLockoutScreen extends Screen {
                         return;
             });
             difficulty.active = true;
-            goalCount = CyclingButtonWidget.<Integer>builder(i -> Text.of(i.toString())).values(Arrays.asList(25, 49, 9)).build(Text.of("Goal amount"), (buttonWidget, val) -> {
+            goalCount = CyclingButtonWidget.<Integer>builder(i -> Text.of(i.toString())).values(Arrays.asList(25, 9, 49, 81, 121)).build(Text.of("Goal amount"), (buttonWidget, val) -> {
                 return;
             });
-            goalCount.active = false;
+            goalCount.active = true;
             adder.add(difficulty);
             adder.add(goalCount);
 
@@ -238,6 +239,11 @@ public class NewLockoutScreen extends Screen {
                             })
             ); cbw2.setValue(false); cbw2.active = false;
 
+            teammateRespawn = adder.add(
+                    CyclingButtonWidget.onOffBuilder()
+                            .build(Text.of("Teammate Respawn"), (buttonWidget, val) -> {
+                            })
+            ); teammateRespawn.setValue(true);
 
         }
 

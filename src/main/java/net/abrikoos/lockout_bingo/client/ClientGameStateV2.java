@@ -3,9 +3,7 @@ package net.abrikoos.lockout_bingo.client;
 import net.abrikoos.lockout_bingo.LockoutLogger;
 import net.abrikoos.lockout_bingo.client.gui.LockoutScreens;
 import net.abrikoos.lockout_bingo.client.gui.screens.CompleteFullScreenState;
-import net.abrikoos.lockout_bingo.networkv2.game.GameStartPacket;
-import net.abrikoos.lockout_bingo.networkv2.game.GoalBoardUpdatePacket;
-import net.abrikoos.lockout_bingo.networkv2.game.GoalInfoPacket;
+import net.abrikoos.lockout_bingo.networkv2.game.*;
 import net.abrikoos.lockout_bingo.networkv2.get.GetGameInfo;
 import net.abrikoos.lockout_bingo.networkv2.team.TeamData;
 import net.abrikoos.lockout_bingo.networkv2.team.TeamRegV2;
@@ -40,6 +38,7 @@ public class ClientGameStateV2 {
     public static boolean compass_enabled = true;
     static boolean countTimeSoundPlayed = false;
     static boolean countTimeSoundPlayed2 = false;
+    public static StructureLocationsPacket structures = null;
 
     public static List<GoalListItem> goals = new ArrayList<>();
 
@@ -120,6 +119,10 @@ public class ClientGameStateV2 {
 
     public static long gameTimeLength() {
         return System.currentTimeMillis() - game.startTime();
+    }
+
+    public static boolean teammateRespawnEnabled() {
+        return game.teammateRespawn;
     }
 
     public static List<TeamData> getTeams() {

@@ -50,4 +50,5 @@ public enum LockoutGoalTag {
     village,
     more,
     unique,
+    elytra,
 }

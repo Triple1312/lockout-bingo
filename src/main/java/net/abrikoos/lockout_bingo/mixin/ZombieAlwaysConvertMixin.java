@@ -17,6 +17,4 @@ public abstract class ZombieAlwaysConvertMixin {
             cir.setReturnValue(true);
         }
     }
-
-
 }

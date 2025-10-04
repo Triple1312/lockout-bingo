@@ -109,7 +109,7 @@ public class NewDropShuffleScreen extends Screen {
         teams.add(mainTab.team1.getValue().teamUUID);
         teams.add(mainTab.team2.getValue().teamUUID);
 
-        StartGameRequestPacket packet = new StartGameRequestPacket("dropshuffle", teams, difficulty, goalCount, false, goalTypes, modifiers);
+        StartGameRequestPacket packet = new StartGameRequestPacket("dropshuffle", teams, difficulty, goalCount, false, mainTab.teammateRespawn.getValue(), goalTypes, modifiers);
 
         ClientPlayNetworking.send(packet);
     }
@@ -158,6 +158,7 @@ public class NewDropShuffleScreen extends Screen {
         CyclingButtonWidget<TeamData> team2;
         CyclingButtonWidget<Integer> difficulty;
         CyclingButtonWidget<Integer> goalCount;
+        CyclingButtonWidget<Boolean> teammateRespawn;
 
         public MainTab(NewDropShuffleScreen parent) {
             super(Text.of("Game"));
@@ -212,6 +213,12 @@ public class NewDropShuffleScreen extends Screen {
             );
             cbw2.setValue(false);
             cbw2.active = false;
+
+            teammateRespawn = adder.add(
+                    CyclingButtonWidget.onOffBuilder()
+                            .build(Text.of("Teammate Respawn"), (buttonWidget, val) -> {
+                            })
+            ); teammateRespawn.setValue(true);
 
 
         }

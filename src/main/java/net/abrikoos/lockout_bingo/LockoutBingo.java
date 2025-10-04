@@ -2,14 +2,11 @@ package net.abrikoos.lockout_bingo;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.abrikoos.lockout_bingo.networkv2.compass.AskCompassPacket;
-import net.abrikoos.lockout_bingo.networkv2.game.GameStartPacket;
-import net.abrikoos.lockout_bingo.networkv2.game.GoalBoardUpdatePacket;
-import net.abrikoos.lockout_bingo.networkv2.game.StartGameRequestPacket;
+import net.abrikoos.lockout_bingo.networkv2.game.*;
 import net.abrikoos.lockout_bingo.networkv2.get.GetBoard;
 import net.abrikoos.lockout_bingo.networkv2.get.GetGameInfo;
 import net.abrikoos.lockout_bingo.networkv2.get.GetTeamData;
 import net.abrikoos.lockout_bingo.networkv2.team.*;
-import net.abrikoos.lockout_bingo.server.builder.BlockDropChangeBuilder;
 import net.abrikoos.lockout_bingo.server.gamestate.GameState;
 import net.abrikoos.lockout_bingo.item.LockoutModItems;
 import net.abrikoos.lockout_bingo.server.listeners.EntityKillListener;
@@ -19,13 +16,14 @@ import net.abrikoos.lockout_bingo.networkv2.compass.PlayersPositionPacket;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.projectile.thrown.SnowballEntity;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
@@ -56,10 +54,11 @@ public class LockoutBingo implements ModInitializer {
 	public void onInitialize() {
 
 		PayloadTypeRegistry.playS2C().register(PlayersPositionPacket.ID, PlayersPositionPacket.CODEC);
-
 		PayloadTypeRegistry.playS2C().register(GameStartPacket.ID, GameStartPacket.CODEC);
 		PayloadTypeRegistry.playS2C().register(GoalBoardUpdatePacket.ID, GoalBoardUpdatePacket.CODEC);
 		PayloadTypeRegistry.playS2C().register(TeamRegV2.ID, ServerTeamRegV2.CODEC);
+		PayloadTypeRegistry.playS2C().register(StructureLocationPacket.ID, StructureLocationPacket.CODEC);
+		PayloadTypeRegistry.playS2C().register(StructureLocationsPacket.ID, StructureLocationsPacket.CODEC);
 
 		PayloadTypeRegistry.playC2S().register(GetTeamData.ID, GetTeamData.CODEC);
 		PayloadTypeRegistry.playC2S().register(GetGameInfo.ID, GetGameInfo.CODEC);
@@ -72,6 +71,7 @@ public class LockoutBingo implements ModInitializer {
 		PayloadTypeRegistry.playC2S().register(StartGameRequestPacket.ID, StartGameRequestPacket.CODEC);
 		PayloadTypeRegistry.playC2S().register(AskCompassPacket.ID, AskCompassPacket.CODEC);
 		PayloadTypeRegistry.playC2S().register(RotateTeamColor.ID, RotateTeamColor.CODEC);
+		PayloadTypeRegistry.playC2S().register(TeammateRespawnRequestPacket.ID, TeammateRespawnRequestPacket.CODEC);
 
 
 
@@ -90,8 +90,6 @@ public class LockoutBingo implements ModInitializer {
 //			// sends every team update
 //			UnitedTeamRegistry.subscribe(u -> GameState.players().forEach(UnitedTeamRegistry::sendState));
 //		}
-
-		ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarted);
 
 
 
@@ -183,6 +181,11 @@ public class LockoutBingo implements ModInitializer {
 			else {
 				player.giveItemStack(LockoutModItems.PLAYER_TRACKING_COMPASS.getDefaultStack());
 			}
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(TeammateRespawnRequestPacket.ID, (payload, context) -> {
+			GameState.registerPlayerRespawnTarget(context.player().getUuidAsString(), payload.playerUUID());
+//			context.server().getPlayerManager().respawnPlayer(context.player(), false, Entity.RemovalReason.CHANGED_DIMENSION);
 		});
 
 

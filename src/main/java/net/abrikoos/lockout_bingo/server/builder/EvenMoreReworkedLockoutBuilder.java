@@ -25,31 +25,58 @@ public class EvenMoreReworkedLockoutBuilder {
     ArrayList<GoalListItem> items_diff4 = new ArrayList<>(GoalItemRegistry.getInstance().items.where(goal -> goal.difficulty == 4));
     ArrayList<GoalListItem> items_diff5 = new ArrayList<>(GoalItemRegistry.getInstance().items.where(goal -> goal.difficulty == 5));
 
-    int max_redstone = 2;
-    int max_silk_touch = 1;
-    int max_die = 3;
-    int max_dont = 1;
-    int max_breed = 3;
-    int max_obtain = 5;
-    int max_kill = 4;
-    int max_eat = 5;
-    int max_effect = 2;
-    int max_tools = 2;
-    int max_brew = 2;
-    int max_armor = 2;
-    int max_movement = 1;
-    int max_ride = 1;
-    int max_lvl = 2;
-    int max_use = 2;
-    int max_tame = 2;
-    int max_biomes = 1;
-    int max_wool = 1;
-    int max_end = 6;
-    int max_nether = 15;
+    float max_redstone = 2;
+    float max_silk_touch = 1;
+    float max_die = 3;
+    float max_dont = 1;
+    float max_breed = 3;
+    float max_obtain = 5;
+    float max_kill = 4;
+    float max_eat = 5;
+    float max_effect = 2;
+    float max_tools = 2;
+    float max_brew = 2;
+    float max_armor = 2;
+    float max_movement = 1;
+    float max_ride = 1;
+    float max_lvl = 2;
+    float max_use = 2;
+    float max_tame = 2;
+    float max_biomes = 1;
+    float max_wool = 1;
+    float max_end = 6;
+    float max_nether = 15;
     
     public EvenMoreReworkedLockoutBuilder(StartGameRequestPacket info) {
         this.info = info;
+        setup_max(info);
         this.packet = generateLockoutBoard();
+    }
+
+    public void setup_max(StartGameRequestPacket packet){
+        int goalCount = packet.goalCount();
+
+        max_redstone = 2f/ 25 * goalCount;
+        max_silk_touch = 1f/ 25 * goalCount;
+        max_die = 3f/ 25 * goalCount;
+        max_dont = 1f/ 25 * goalCount;
+        max_breed = 3f/ 25 * goalCount;
+        max_obtain = 5f/ 25 * goalCount;
+        max_kill = 4f/ 25 * goalCount;
+        max_eat = 5f/ 25 * goalCount;
+        max_effect = 2f/ 25 * goalCount;
+        max_tools = 2f/ 25 * goalCount;
+        max_brew = 2f/ 25 * goalCount;
+        max_armor = 2f/ 25 * goalCount;
+        max_movement = 1f/ 25 * goalCount;
+        max_ride = 1f/ 25 * goalCount;
+        max_lvl = 2f/ 25 * goalCount;
+        max_use = 2f/ 25 * goalCount;
+        max_tame = 2f/ 25 * goalCount;
+        max_biomes = 1f/ 25 * goalCount;
+        max_wool = 1f/ 25 * goalCount;
+        max_end = 6f/ 25 * goalCount;
+        max_nether = 15f/ 25 * goalCount;
     }
 
     public void removeGoalsWithTag(LockoutGoalTag tag) {
@@ -277,7 +304,7 @@ public class EvenMoreReworkedLockoutBuilder {
 
         Random rand = new Random();
         int mu = info.difficulty();
-        float sigma = 1f; // todo choose good value
+        float sigma = 0.8f + info.difficulty() * 0.2f ; // todo choose good value
         // todo diff uniform
         // todo diff random
 
@@ -293,6 +320,7 @@ public class EvenMoreReworkedLockoutBuilder {
             if (goal == null) {
                 LockoutLogger.log("Not enough goals to generate board, generated " + i + " out of " + info.goalCount() + " goals for difficulty " + difficulty);
                 i--;
+                sigma += 0.05f;
                 continue;
             }
             difficulties.set(difficulty - 1, difficulties.get(difficulty - 1) + 1);

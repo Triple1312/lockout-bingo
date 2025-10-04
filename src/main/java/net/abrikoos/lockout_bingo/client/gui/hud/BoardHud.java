@@ -1,6 +1,7 @@
 package net.abrikoos.lockout_bingo.client.gui.hud;
 
 import net.abrikoos.lockout_bingo.LockoutLogger;
+import net.abrikoos.lockout_bingo.client.Board;
 import net.abrikoos.lockout_bingo.client.ClientGameStateV2;
 import net.abrikoos.lockout_bingo.client.gui.LockoutUtils;
 import net.abrikoos.lockout_bingo.networkv2.game.GoalInfoPacket;
@@ -11,6 +12,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Items;
 
 import java.util.List;
@@ -51,23 +53,30 @@ public class BoardHud {
             int topX = screensizex - 5 * (goalwidthheight + goalpadding) - goalpadding;
             int topY = 5;
 
-            List<GoalInfoPacket> goals = ClientGameStateV2.getGoals();
-            for (int i = 0; i < goals.size(); i++) {
-                int x = i % 5;
-                int y = i / 5;
-                int goalTopX = topX + x * (goalwidthheight + goalpadding);
-                int goalTopY = topY + y * (goalwidthheight + goalpadding);
-                int color = goals.get(i).color();
+            MatrixStack matrices = context.getMatrices();
+            matrices.push();
+            matrices.translate(topX, topY, 0);
+            matrices.scale((screensizey * 0.33f) / Board.getBoardSizePX(), (screensizey * 0.33f) / Board.getBoardSizePX(), 1);
+            Board.drawBoard(context, delta, 0,0);
+            matrices.pop();
 
-                context.fill(goalTopX, goalTopY, goalTopX + goalwidthheight, goalTopY + goalwidthheight, Colors.get(color) - 0x47000000);
-                try {
-                    ClientGameStateV2.goals.get(i).draw(context, delta, goalTopX, goalTopY, goalwidthheight, goalwidthheight);
-//                    context.drawItemWithoutEntity(Items.STONE.getDefaultStack(), goalTopX, goalTopY);
-                }
-                catch (Exception ignored) {
-                    LockoutLogger.log("Error drawing goal " + goals.get(i).goalName() + " at boardhud");
-                }
-            }
+//            List<GoalInfoPacket> goals = ClientGameStateV2.getGoals();
+//            for (int i = 0; i < goals.size(); i++) {
+//                int x = i % 5;
+//                int y = i / 5;
+//                int goalTopX = topX + x * (goalwidthheight + goalpadding);
+//                int goalTopY = topY + y * (goalwidthheight + goalpadding);
+//                int color = goals.get(i).color();
+//
+//                context.fill(goalTopX, goalTopY, goalTopX + goalwidthheight, goalTopY + goalwidthheight, Colors.get(color) - 0x47000000);
+//                try {
+//                    ClientGameStateV2.goals.get(i).draw(context, delta, goalTopX, goalTopY, goalwidthheight, goalwidthheight);
+////                    context.drawItemWithoutEntity(Items.STONE.getDefaultStack(), goalTopX, goalTopY);
+//                }
+//                catch (Exception ignored) {
+//                    LockoutLogger.log("Error drawing goal " + goals.get(i).goalName() + " at boardhud");
+//                }
+//            }
 
             int bottombarY = topY + 5 *(goalwidthheight + goalpadding);
 

@@ -1,5 +1,6 @@
 package net.abrikoos.lockout_bingo.mixin;
 
+import net.abrikoos.lockout_bingo.server.listeners.ComposterUseListener;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
@@ -14,7 +15,7 @@ public class ComposterMixin {
 
     @Inject(method = "emptyFullComposter", at = @At("HEAD"))
     private static void emptyFullComposter(Entity user, BlockState state, World world, BlockPos pos, CallbackInfoReturnable<BlockState> cir) {
-
+        ComposterUseListener.registerEvent(user, state, world, pos);
 
     }
 }

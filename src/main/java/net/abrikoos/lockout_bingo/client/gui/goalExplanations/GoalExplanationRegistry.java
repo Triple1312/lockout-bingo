@@ -1,8 +1,8 @@
 package net.abrikoos.lockout_bingo.client.gui.goalExplanations;
 
-import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.item.Items;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class GoalExplanationRegistry {
@@ -10,20 +10,77 @@ public class GoalExplanationRegistry {
     public static GoalExplanation getGoalExplanation(String goalCraftingId) {
         switch (goalCraftingId) {
             case "obtain_end_crystal":
-                return new GoalExplanation("obtain end crystal", "the only way to obtain an end crystal is by crafting it", List.of(new DrawCraftingGrid(10, 100, List.of(
+                return new GoalExplanation("obtain end crystal", "the only way to obtain an end crystal is by crafting it", List.of(new DrawCraftingGrid(10, 100, Arrays.asList(
                         Items.GLASS, Items.GLASS, Items.GLASS,
                         Items.GLASS, Items.ENDER_EYE,Items.GLASS,
                         Items.GLASS, Items.GHAST_TEAR, Items.GLASS
                         ), Items.END_CRYSTAL)
                 ));
+            case "obtain_calibrated_sculk_sensor":
+                return new GoalExplanation("obtain calibrated sculk sensor", "the only way to obtain a calibrated sculk sensor is by crafting it. For the recipe you need a sculk sensor, which can be found in deep dark biomes and, ancient cities. ", List.of(new DrawCraftingGrid(10, 100, Arrays.asList(
+                        null, Items.AMETHYST_SHARD, null,
+                        Items.AMETHYST_SHARD, Items.SCULK_SENSOR, Items.AMETHYST_SHARD,
+                        null, null, null
+                ), Items.CALIBRATED_SCULK_SENSOR)
+                ));
+            case "trade_adv":
+                return new GoalExplanation("What a deal", "Trade with a villager", List.of());
             case "no_water":
                 return new GoalExplanation("Don't touch water", "just don't touch it", List.of());
+            case "use_composter":
+                return new GoalExplanation("use a composter", "A composter is a block that can be used to convert food and plant material into bone meal. 'Using' is defined as getting 1 bone meal from it. " +
+                        " A composter can be found in villages or can be crafted with any type of wood slabs. \n\n\n\n\n\n\n You can use it by right clicking on it with any of the following items:\n\n" +
+                        "- Wheat Seeds\n" +
+                        "- Melon Seeds\n" +
+                        "- Pumpkin Seeds\n" +
+                        "- Beetroot Seeds\n" +
+                        "- Carrots\n" +
+                        "- Potatoes\n" +
+                        "- Beetroot\n" +
+                        "- Cactus Green\n" +
+                        "- Dried Kelp\n" +
+                        "- Sugar Cane\n" +
+                        "- Bamboo\n" +
+                        "- Hay Bale\n" +
+                        "- Tall Grass\n" +
+                        "- Fern\n" +
+                        "- Dead Bush\n" +
+                        "- Leaves (any type)\n" +
+                        "- Vines\n" +
+                        "- Sweet Berries\n" +
+                        "- Glow Berries\n" +
+                        "- Kelp\n" +
+                        "- Seagrass",
+                    List.of(new DrawCraftingGrid(10, 140, Arrays.asList(
+                            Items.OAK_SLAB, null, Items.OAK_SLAB,
+                            Items.OAK_SLAB, null, Items.OAK_SLAB,
+                            Items.OAK_SLAB, Items.OAK_SLAB, Items.OAK_SLAB
+                    ), Items.COMPOSTER)));
             case "obtain_bell":
                 return new GoalExplanation("obtain a bell", "Bells can always be found in villages or with a 1.5% chance inside ruined portal chests. Bells can be mined with anything.", List.of());
             case "obtain_bottle_o_enchanting":
                 return new GoalExplanation("obtain bottle o enchanting", "bottle o enchanting can't be crafted but can be found in Shipwreck chests, Pillager outpost chests and, Ancient city chests.", List.of());
             case "no_crafting_table":
                 return new GoalExplanation("no crafting table", "you are not allowed to have a crafting table in your inventory. You can still use a crafting table you find or use the crafting grid in you inventory. \n Crafting tables can be found in the overworld at some houses in villages, pillager towers, witch huts and igloos.", List.of());
+            case "eat_beetroot_soup":
+                return new GoalExplanation("eat beetroot soup", "Beetroot soup can be crafted and can also be found in snowy village chests.", List.of(new DrawCraftingGrid(10, 100, Arrays.asList(
+                        Items.BEETROOT, Items.BEETROOT, Items.BEETROOT,
+                        Items.BEETROOT, Items.BOWL, Items.BEETROOT,
+                        null, Items.BOWL, null
+                ), Items.BEETROOT_SOUP)
+                ));
+            case "eat_rabbit_stew":
+                return new GoalExplanation("eat rabbit stew", "Rabbit stew can be crafted using either mushroom and can also be traded for with lvl1 butchers.", List.of(new DrawCraftingGrid(10, 100, Arrays.asList(
+                        null, Items.RABBIT, null,
+                        Items.CARROT, Items.BAKED_POTATO, Items.RED_MUSHROOM,
+                        null, Items.BOWL, null
+                ), Items.RABBIT_STEW)
+                ));
+            case "frightening_adv":
+                return new GoalExplanation("Very very frightening",
+                        "Turn a villager into a witch by throwing a trident with channeling at it during a thunderstorm, striking them with lightning. \n\n" +
+                                "Because of this goal the weather pattern is different. There will be a 7 to 12 minute clear weather followed by a minute of thunder.\n\n" +
+                                "Tridents will drop from a drowned with a trident 33% of the time in this mod.\n The first time you enchant a trident with an enchantment table with lvl 30 it will always give you channeling.", List.of());
             case "breed_5":
                 return new GoalExplanation("breed 5 unique animals", "breed 5 pairs of animals together: \n\n" +
                         "- tamed horses with golden apples/carrots.\n" +

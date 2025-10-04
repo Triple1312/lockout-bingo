@@ -4,20 +4,25 @@ import net.abrikoos.lockout_bingo.server.goals.LockoutGoal;
 import net.abrikoos.lockout_bingo.server.listeners.EntityKillListener;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 
 public class KillEntityGoal extends LockoutGoal {
 
-    final EntityType entityType;
+    final EntityType<? extends LivingEntity> entityType;
 
-    public KillEntityGoal(int id, EntityType entity) {
+    public KillEntityGoal(int id, EntityType<? extends LivingEntity> entity) {
         super(id);
         this.entityType = entity;
         EntityKillListener.subscribe(this::validateProgress);
     }
 
-    protected void validateProgress(PlayerEntity player, Entity entity) {
+    protected void validateProgress(LivingEntity entity, DamageSource source) {
         if (this.completed != null) {
+            return;
+        }
+        if (!(source.getAttacker() instanceof PlayerEntity player)) {
             return;
         }
         if (this.entityType == entity.getType()) {

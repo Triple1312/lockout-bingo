@@ -3,6 +3,7 @@ import net.abrikoos.lockout_bingo.client.ClientGameStateV2;
 import net.abrikoos.lockout_bingo.item.LockoutModItems;
 import net.abrikoos.lockout_bingo.networkv2.game.GameStartPacket;
 import net.abrikoos.lockout_bingo.networkv2.game.GoalBoardUpdatePacket;
+import net.abrikoos.lockout_bingo.networkv2.game.StructureLocationsPacket;
 import net.abrikoos.lockout_bingo.networkv2.get.GetGameInfo;
 import net.abrikoos.lockout_bingo.networkv2.get.GetTeamData;
 import net.abrikoos.lockout_bingo.networkv2.team.TeamRegV2;
@@ -199,6 +200,10 @@ public class LockoutBingoClient implements ClientModInitializer {
 
         ClientPlayNetworking.registerGlobalReceiver(TeamRegV2.ID, (packet, context) ->
             ClientGameStateV2.updateTeamReg(packet)
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(StructureLocationsPacket.ID, (packet, context) ->
+            ClientGameStateV2.structures = packet
         );
 
 
