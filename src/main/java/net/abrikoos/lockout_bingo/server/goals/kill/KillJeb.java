@@ -5,6 +5,7 @@ import net.abrikoos.lockout_bingo.server.goals.LockoutGoalEvent;
 import net.abrikoos.lockout_bingo.server.listeners.EntityKillListener;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public class KillJeb extends LockoutGoal {
@@ -13,9 +14,9 @@ public class KillJeb extends LockoutGoal {
         EntityKillListener.subscribe(this::checkName);
     }
 
-    protected void checkName(ServerPlayerEntity player, LivingEntity target) {
+    protected void checkName(LivingEntity target, DamageSource source) {
         if (completed != null) { return; }
-        if (target.getType() != null && target.getType().equals(EntityType.SHEEP) && target.getName().getString().equals("jeb_")) {
+        if (target.getType() != null && target.getType().equals(EntityType.SHEEP) && target.getName().getString().equals("jeb_") && source.getAttacker() instanceof ServerPlayerEntity player) {
             this.completed = player;
             this.notifyListeners(new LockoutGoalEvent(player.getUuidAsString(), "ally", this.id));
         }

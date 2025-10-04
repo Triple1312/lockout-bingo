@@ -27,6 +27,8 @@ public class GoalListItemV2 {
     private DrawableModifier bottomLeft;
     private DrawableModifier bottomRight;
 
+    int visibleIconCount = 0;
+
     public static final float TEXT_SCALE = 3f;
     public static final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
@@ -43,6 +45,13 @@ public class GoalListItemV2 {
 
     public void draw(@NotNull DrawContext ctx, float delta, int x, int y, int width, int height) {
         this.delta += delta;
+        if (delta > 1000){
+            this.delta = 0;
+            this.visibleIconCount += 1;
+            if (this.visibleIconCount > this.resourceids.size() + this.itemStacks.size() -1){
+                this.visibleIconCount = 0;
+            }
+        }
     }
 
 
