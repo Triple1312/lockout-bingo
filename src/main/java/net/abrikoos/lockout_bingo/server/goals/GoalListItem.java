@@ -8,6 +8,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.texture.*;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
@@ -98,7 +99,7 @@ public class GoalListItem {
                     ctx.drawTexture(Identifier.of("lockout-bingo", "goalicon/modifiers/hotbar_attack_indicator_progress.png"), x1+1, y1+1, 0, 0, (x2-x1)/4, (y2-y1)/4, (x2-x1)/4, (y2-y1)/4);
                     break;
                 case breed:
-                    ctx.drawTexture(Identifier.of("lockout-bingo", "goalicon/modifiers/heart.png"), x1+1, y1+1, y1+1, 0, 0, (x2-x1)/4, (y2-y1)/4, (x2-x1)/4, (y2-y1)/4);
+                    ctx.drawTexture(Identifier.of("lockout-bingo", "goalicon/modifiers/heart.png"), x1+1, y1+1, 0, 0, (x2-x1)/4, (y2-y1)/4, (x2-x1)/4, (y2-y1)/4);
                     break;
                 case dont:
                     ctx.drawTexture(Identifier.of("lockout-bingo", "goalicon/modifiers/dont.png"), 3*(x2-x1)/4 + x1-1, y1+1, 0, 0, (x2-x1)/4, (y2-y1)/4, (x2-x1)/4, (y2-y1)/4);

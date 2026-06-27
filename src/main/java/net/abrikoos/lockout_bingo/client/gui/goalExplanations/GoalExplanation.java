@@ -15,14 +15,14 @@ public class GoalExplanation {
 
     public String description;
 
-    public List<DrawCraftingGrid> craftingRecipes;
+    public List<RecipeWidget> recipes;
 
     public static int top = 50;
 
-    public GoalExplanation(String title, String description, List<DrawCraftingGrid> craftingRecipes) {
+    public GoalExplanation(String title, String description, List<RecipeWidget> recipes) {
         this.title = title;
         this.description = description;
-        this.craftingRecipes = craftingRecipes;
+        this.recipes = recipes;
     }
 
     public void renderWidget(DrawContext context, TextRenderer textRenderer, int width, int titleColor, String completedBy) {
@@ -44,7 +44,6 @@ public class GoalExplanation {
             context.drawText(textRenderer, line, 10, lineY, 0xFFFFFF, true);
             lineY += textRenderer.fontHeight;
         }
-//        context.drawText(client.textRenderer, title, 10, 20, 0xFFFFFF, true);
         matrices.pop();
         matrices.push();
         lineY += 20;
@@ -54,9 +53,10 @@ public class GoalExplanation {
             context.drawText(textRenderer, line, 10, lineY, 0xF0F0F0, false);
             lineY += textRenderer.fontHeight;
         }
-//        context.drawText(client.textRenderer, body, 10, 40, 0xF0F0F0, false);
-        for (DrawCraftingGrid grid : craftingRecipes) {
-            grid.render(context);
+
+        int recipeY = lineY + 8;
+        for (RecipeWidget widget : recipes) {
+            recipeY += widget.render(context, 10, recipeY) + 6;
         }
 
         matrices.pop();

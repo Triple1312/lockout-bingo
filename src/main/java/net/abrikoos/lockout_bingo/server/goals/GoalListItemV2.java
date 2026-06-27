@@ -1,16 +1,20 @@
 package net.abrikoos.lockout_bingo.server.goals;
 
+import net.abrikoos.lockout_bingo.LockoutLogger;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.registry.DefaultedRegistry;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import static net.abrikoos.lockout_bingo.server.goals.LockoutGoalTag.*;
+import java.util.Optional;
 
 public class GoalListItemV2 {
     public String name;
@@ -30,7 +34,6 @@ public class GoalListItemV2 {
     int visibleIconCount = 0;
 
     public static final float TEXT_SCALE = 3f;
-    public static final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
 
 
@@ -40,28 +43,81 @@ public class GoalListItemV2 {
         this.difficulty = difficulty;
         this.tags = tags;
         this.id = id;
+        this.resourceids = new ArrayList<>();
+        this.itemStacks = new ArrayList<>();
         this.tagsToDrawables();
     }
 
     public void draw(@NotNull DrawContext ctx, float delta, int x, int y, int width, int height) {
         this.delta += delta;
-        if (delta > 1000){
+        if (this.delta > 1000){
             this.delta = 0;
             this.visibleIconCount += 1;
             if (this.visibleIconCount > this.resourceids.size() + this.itemStacks.size() -1){
                 this.visibleIconCount = 0;
             }
         }
+
+        if (this.background != null) {
+            this.background.render(ctx, delta, x, y, width, height);
+        }
+
+        if (this.resourceids.size() > this.visibleIconCount){
+            ctx.drawTexture(this.resourceids.get(this.visibleIconCount), x, y, 0, 0, width, height, width, height);
+        }
+        else {
+            int index = this.visibleIconCount - this.resourceids.size();
+            MatrixStack matrices = ctx.getMatrices();
+            matrices.push();
+            try {
+                matrices.translate(x+3, y+3, 0);
+                matrices.scale((float) (width -6)/16, (float) (height -6)/16, 1);
+                ctx.drawItemWithoutEntity(this.itemStacks.get(index), 0, 0);
+            }
+            catch (Exception e){
+                LockoutLogger.log("Could not render ItemStack for item " + this.itemStacks.get(index).getItem().getName().getString() + ": " + e.getMessage());
+            }
+            matrices.pop();
+        }
+        if (this.topLeft != null) {
+            this.topLeft.render(ctx, delta, x+1, y+1, width / 4, height / 4);
+        }
+        if (this.topRight != null) {
+            this.topRight.render(ctx, delta, x + (width * 3 / 4) -1, y + 1, width / 4, height / 4);
+        }
+        if (this.bottomLeft != null) {
+            this.bottomLeft.render(ctx, delta, x +1, y + (height * 3 / 4) -1, width / 4, height / 4);
+        }
+        if (this.bottomRight != null) {
+            this.bottomRight.render(ctx, delta, x + (width * 3 / 4) -1, y + (height * 3 / 4) -1, width / 4, height / 4);
+        }
+
     }
 
 
 
-    public static GoalListItemV2 createImaged(String name, String description, int difficulty, List<LockoutGoalTag> tags, String id, List<ItemStack> resourceids) {
+    public static GoalListItemV2 createStacked(String name, String description, int difficulty, List<LockoutGoalTag> tags, String id, List<ItemStack> resourceids) {
         return (new GoalListItemV2(name, description, difficulty, tags, id)).addStacks(resourceids);
-
     }
 
-    public static GoalListItemV2 createStacked(String name, String description, int difficulty, List<LockoutGoalTag> tags, String id, List<Identifier> resourceids) {
+    public static GoalListItemV2 createStackedString(String name, String description, int difficulty, List<LockoutGoalTag> tags, String id, List<String> itemStrings) {
+        List<Item> items = new ArrayList<>();
+        for (String itemString : itemStrings) {
+            DefaultedRegistry<Item> itemReg = Registries.ITEM;
+            Optional<Item> item = itemReg.getOrEmpty(Identifier.ofVanilla(itemString));
+            // todo maybe add code for custom items here later
+            if (item.isPresent()) {
+                items.add(item.orElseThrow());
+            }
+        }
+        if (items.isEmpty()) {
+            items.add(Items.BARRIER);
+            LockoutLogger.log("GoalListItemV2: No valid items found for goal " + name + ", adding barrier as placeholder");
+        }
+        return new GoalListItemV2(name, description, difficulty, tags, id).addStacks(items.stream().map(Item::getDefaultStack).toList());
+    }
+
+    public static GoalListItemV2 createImaged(String name, String description, int difficulty, List<LockoutGoalTag> tags, String id, List<Identifier> resourceids) {
         return (new GoalListItemV2(name, description, difficulty, tags, id)).addImages(resourceids);
     }
 
@@ -116,7 +172,7 @@ public class GoalListItemV2 {
     }
 
     public GoalListItemV2 addTopRight(String text) {
-        this.bottomLeft = new TextModifier(text);
+        this.topRight = new TextModifier(text);
         return this;
     }
 
@@ -174,13 +230,13 @@ public class GoalListItemV2 {
                     this.addTopLeft(Identifier.of("lockout-bingo", "goalicon/modifiers/tame.png"));
                     break;
                 case ride:
-                    this.addTopRight(Identifier.of("lockout-bingo", "goalicon/modifiers/saddle.png"));
+                    this.addTopRight(Items.SADDLE.getDefaultStack());
                     break;
                 case broken:
                     this.addTopLeft(Identifier.of("lockout-bingo", "goalicon/modifiers/item_broken.png"));
                     break;
                 case more:
-                    this.addBottomLeft(Identifier.of("lockout-bingo", "goalicon/modifiers/more.png"));
+                    this.addBottomLeft(Identifier.of("lockout-bingo", "goalicon/modifiers/up-arrow.png"));
                     break;
                 case unique:
                     this.addTopRight(Identifier.of("lockout-bingo", "goalicon/modifiers/unique.png"));
@@ -189,7 +245,7 @@ public class GoalListItemV2 {
                     this.addTopLeft(Identifier.of("lockout-bingo", "goalicon/modifiers/item_used.png"));
                     break;
                 case obtain:
-                    this.addTopLeft(Identifier.of("lockout-bingo", "goalicon/modifiers/item_obtained.png"));
+                    this.addTopLeft(Identifier.of("lockout-bingo", "goalicon/modifiers/item_picked_up.png"));
                     break;
             }
         }
@@ -225,9 +281,14 @@ public class GoalListItemV2 {
         void render(@NotNull DrawContext ctx, float delta, int x, int y, int width, int height) {
             MatrixStack matrices = ctx.getMatrices();
             matrices.push();
-            matrices.translate(x+3, y+3, 0);
-            matrices.scale((float) (width -6)/16, (float) (height -6)/16, 1);
-            ctx.drawItemWithoutEntity(stack, 0, 0);
+            try {
+                matrices.translate(x+3, y+3, 0);
+                matrices.scale((float) (width -6)/16, (float) (height -6)/16, 1);
+                ctx.drawItemWithoutEntity(stack, 0, 0);
+            }
+            catch (Exception e){
+                LockoutLogger.log("Could not render ItemStackModifier for item " + stack.getItem().getName().getString() + ": " + e.getMessage());
+            }
             matrices.pop();
         }
 
@@ -247,7 +308,7 @@ public class GoalListItemV2 {
             matrices.push();
             matrices.translate(x, y, 0);
             matrices.scale(TEXT_SCALE, TEXT_SCALE, 1);
-            ctx.drawText(textRenderer, text, 0, 0, 0xFFFFFF, false);
+            ctx.drawText(MinecraftClient.getInstance().textRenderer, text, 0, 0, 0xFFFFFF, false);
             matrices.pop();
         }
 

@@ -6,6 +6,7 @@ import net.abrikoos.lockout_bingo.networkv2.game.GoalInfoPacket;
 import net.abrikoos.lockout_bingo.networkv2.game.StartGameRequestPacket;
 import net.abrikoos.lockout_bingo.server.goals.GoalItemRegistry;
 import net.abrikoos.lockout_bingo.server.goals.GoalListItem;
+import net.abrikoos.lockout_bingo.server.goals.GoalListItemV2;
 import net.abrikoos.lockout_bingo.server.goals.LockoutGoalTag;
 import net.minecraft.entity.passive.VillagerEntity;
 
@@ -19,11 +20,11 @@ public class EvenMoreReworkedLockoutBuilder {
 
     public GoalBoardUpdatePacket packet;
 
-    ArrayList<GoalListItem> items_diff1 = new ArrayList<>(GoalItemRegistry.getInstance().items.where(goal -> goal.difficulty == 1));
-    ArrayList<GoalListItem> items_diff2 = new ArrayList<>(GoalItemRegistry.getInstance().items.where(goal -> goal.difficulty == 2));
-    ArrayList<GoalListItem> items_diff3 = new ArrayList<>(GoalItemRegistry.getInstance().items.where(goal -> goal.difficulty == 3));
-    ArrayList<GoalListItem> items_diff4 = new ArrayList<>(GoalItemRegistry.getInstance().items.where(goal -> goal.difficulty == 4));
-    ArrayList<GoalListItem> items_diff5 = new ArrayList<>(GoalItemRegistry.getInstance().items.where(goal -> goal.difficulty == 5));
+    ArrayList<GoalListItemV2> items_diff1 = new ArrayList<>(GoalItemRegistry.getInstance().items.where(goal -> goal.difficulty == 1));
+    ArrayList<GoalListItemV2> items_diff2 = new ArrayList<>(GoalItemRegistry.getInstance().items.where(goal -> goal.difficulty == 2));
+    ArrayList<GoalListItemV2> items_diff3 = new ArrayList<>(GoalItemRegistry.getInstance().items.where(goal -> goal.difficulty == 3));
+    ArrayList<GoalListItemV2> items_diff4 = new ArrayList<>(GoalItemRegistry.getInstance().items.where(goal -> goal.difficulty == 4));
+    ArrayList<GoalListItemV2> items_diff5 = new ArrayList<>(GoalItemRegistry.getInstance().items.where(goal -> goal.difficulty == 5));
 
     float max_redstone = 2;
     float max_silk_touch = 1;
@@ -95,8 +96,8 @@ public class EvenMoreReworkedLockoutBuilder {
         this.items_diff5.removeIf(goal -> goal.id.equals(id));
     }
     
-    private GoalListItem getRandomGoal(int difficulty) {
-        ArrayList<GoalListItem> items;
+    private GoalListItemV2 getRandomGoal(int difficulty) {
+        ArrayList<GoalListItemV2> items;
         switch (difficulty) {
             case 1 -> items = items_diff1;
             case 2 -> items = items_diff2;
@@ -110,7 +111,7 @@ public class EvenMoreReworkedLockoutBuilder {
         }
 
         int randomIndex = (int) (Math.random() * items.size());
-        GoalListItem goal = items.get(randomIndex);
+        GoalListItemV2 goal = items.get(randomIndex);
 
         for (int i = 0; i < goal.tags.size(); i++) {
             switch (goal.tags.get(i)) {
@@ -316,8 +317,13 @@ public class EvenMoreReworkedLockoutBuilder {
             if (difficulty > 5) difficulty = 5;
 
 
-            GoalListItem goal = getRandomGoal(difficulty);
+            GoalListItemV2 goal = getRandomGoal(difficulty);
             if (goal == null) {
+                boolean allEmpty = items_diff1.isEmpty() && items_diff2.isEmpty() && items_diff3.isEmpty() && items_diff4.isEmpty() && items_diff5.isEmpty();
+                if (allEmpty) {
+                    LockoutLogger.log("Ran out of goals entirely, generated " + i + " out of " + info.goalCount() + " goals");
+                    break;
+                }
                 LockoutLogger.log("Not enough goals to generate board, generated " + i + " out of " + info.goalCount() + " goals for difficulty " + difficulty);
                 i--;
                 sigma += 0.05f;

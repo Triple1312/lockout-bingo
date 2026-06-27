@@ -10,6 +10,7 @@ import net.abrikoos.lockout_bingo.networkv2.team.TeamRegV2;
 import net.abrikoos.lockout_bingo.server.goals.GoalItemRegistry;
 import net.abrikoos.lockout_bingo.server.goals.GoalListItem;
 import net.abrikoos.lockout_bingo.server.goals.GoalListBlockItem;
+import net.abrikoos.lockout_bingo.server.goals.GoalListItemV2;
 import net.abrikoos.lockout_bingo.util.BlockoutList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -40,7 +41,7 @@ public class ClientGameStateV2 {
     static boolean countTimeSoundPlayed2 = false;
     public static StructureLocationsPacket structures = null;
 
-    public static List<GoalListItem> goals = new ArrayList<>();
+    public static List<GoalListItemV2> goals = new ArrayList<>();
 
     public static void startGame(GameStartPacket packet) {
         game = packet;
@@ -192,8 +193,8 @@ public class ClientGameStateV2 {
                 }
                 break;
             case "dropshuffle":
-                for (GoalInfoPacket goal : gsp.board().goals()) {
-                    goals.add(new GoalListBlockItem(goal.goalName(), "", 1,List.of(), goal.goalID(), List.of(Registries.ITEM.get(Identifier.of(goal.goalID())).getDefaultStack())));
+                for (GoalInfoPacket goal : gsp.board().goals()) { // todo dropshuffle broken atm
+//                    goals.add(new GoalListBlockItem(goal.goalName(), "", 1,List.of(), goal.goalID(), List.of(Registries.ITEM.get(Identifier.of(goal.goalID())).getDefaultStack())));
                 }
                 break;
         }

@@ -16,8 +16,14 @@ public class GameStartPacket implements CustomPayload {
     long startTime;
     int freezeTime;
     public boolean teammateRespawn;
+    boolean paused;
+    long pauseOffset;
 
     public GameStartPacket(String game_mode, String team1, String team2, GoalBoardUpdatePacket board, long startTime, int freezeTime, boolean teammateRespawn) {
+        this(game_mode, team1, team2, board, startTime, freezeTime, teammateRespawn, false, 0L);
+    }
+
+    public GameStartPacket(String game_mode, String team1, String team2, GoalBoardUpdatePacket board, long startTime, int freezeTime, boolean teammateRespawn, boolean paused, long pauseOffset) {
         this.game_mode = game_mode;
         this.team1 = team1;
         this.team2 = team2;
@@ -25,6 +31,8 @@ public class GameStartPacket implements CustomPayload {
         this.startTime = startTime;
         this.freezeTime = freezeTime;
         this.teammateRespawn = teammateRespawn;
+        this.paused = paused;
+        this.pauseOffset = pauseOffset;
     }
 
     public String game_mode() {
@@ -51,8 +59,17 @@ public class GameStartPacket implements CustomPayload {
         return freezeTime;
     }
 
+    public boolean paused() { return paused; }
+
+    public long pauseOffset() { return pauseOffset; }
+
     public void updateBoard(GoalBoardUpdatePacket board) {
         this.board = board;
+    }
+
+    public void updatePauseState(boolean paused, long pauseOffset) {
+        this.paused = paused;
+        this.pauseOffset = pauseOffset;
     }
 
     public List<String> teamUUIDs() { // todo update when more teams available
@@ -76,7 +93,9 @@ public class GameStartPacket implements CustomPayload {
             long startTime = buf.readLong();
             int freezeTime = buf.readInt();
             boolean teammateRespawn = buf.readBoolean();
-            return new GameStartPacket(gameMode, team1, team2,  board, startTime, freezeTime, teammateRespawn);
+            boolean paused = buf.readBoolean();
+            long pauseOffset = buf.readLong();
+            return new GameStartPacket(gameMode, team1, team2, board, startTime, freezeTime, teammateRespawn, paused, pauseOffset);
         }
 
         @Override
@@ -89,6 +108,8 @@ public class GameStartPacket implements CustomPayload {
             buf.writeLong(value.startTime());
             buf.writeInt(value.freezeTime());
             buf.writeBoolean(value.teammateRespawn);
+            buf.writeBoolean(value.paused());
+            buf.writeLong(value.pauseOffset());
         }
     };
 

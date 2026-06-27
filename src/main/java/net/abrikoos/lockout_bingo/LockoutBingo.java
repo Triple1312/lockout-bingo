@@ -18,6 +18,8 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.abrikoos.lockout_bingo.chunkgenerators.CustomWorldManager;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.command.argument.EntityArgumentType;
@@ -113,6 +115,14 @@ public class LockoutBingo implements ModInitializer {
 
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
 			GameState.playerServerLeave(handler.getPlayer());
+		});
+
+		ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
+			if (alive) return; // dimension change, not death
+			if (!CustomWorldManager.worldsActive) return;
+			if (CustomWorldManager.isCustomDimension(newPlayer.getServerWorld().getRegistryKey())) return;
+			if (!GameState.teamRegistry.playerInTeam(newPlayer.getUuidAsString())) return;
+			CustomWorldManager.respawnInCustomOverworld(newPlayer, newPlayer.getServer());
 		});
 
 		ServerPlayNetworking.registerGlobalReceiver(GetBoard.ID, (payload, context) -> {

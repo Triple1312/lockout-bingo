@@ -152,7 +152,7 @@ public class LockoutBingoClient implements ClientModInitializer {
                 ClientPlayNetworking.send(new GetTeamData());
             }
             else if (client.world == null && hasJoinedWorld) {
-                LockoutLogger.log(client.currentScreen.getTitle().toString());
+                LockoutLogger.log(client.currentScreen != null ? client.currentScreen.getTitle().toString() : "no screen");
                 hasJoinedWorld = false;
             }
         });

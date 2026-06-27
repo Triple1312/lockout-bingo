@@ -22,12 +22,14 @@
     "ScreenHandlerMixin",
     "ServerChunkLoadingManagerMixin",
     "ServerPlayerMixin",
+    "ServerWorldMixin",
     "StructureFindMixin",
     "TameMixin",
     "ZombieAlwaysConvertMixin",
     "accessors.CombinedEntryMixin",
     "accessors.ItemEntryMixin",
-    "accessors.LootTableAccessor"
+    "accessors.LootTableAccessor",
+    "accessors.MinecraftServerAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

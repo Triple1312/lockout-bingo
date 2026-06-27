@@ -7,6 +7,7 @@ import net.abrikoos.lockout_bingo.networkv2.team.Colors;
 import net.abrikoos.lockout_bingo.networkv2.team.PlayerData;
 import net.abrikoos.lockout_bingo.networkv2.team.ServerTeamRegV2;
 import net.abrikoos.lockout_bingo.networkv2.team.TeamData;
+import net.abrikoos.lockout_bingo.chunkgenerators.CustomWorldManager;
 import net.abrikoos.lockout_bingo.server.ThunderyWeatherCycle;
 import net.abrikoos.lockout_bingo.server.builder.BlockDropChangeBuilder;
 import net.abrikoos.lockout_bingo.server.builder.EvenMoreReworkedLockoutBuilder;
@@ -74,6 +75,12 @@ public class GameState {
 
     public static ThunderyWeatherCycle thunderyWeatherCycle = null;
 
+    public static boolean paused = false;
+
+    public static long pauseStartTime = 0;
+
+    public static long pauseOffset = 0;
+
     public static void playerServerJoin(ServerPlayerEntity player) {
         try {
             teamRegistry.getPlayerDataByUUID(player.getUuid().toString());
@@ -83,7 +90,7 @@ public class GameState {
             teamRegistry.addPlayerData(new PlayerData(player.getUuid().toString(), player.getName().getString(), true));
         }
         if (inGame()) {
-            ServerPlayNetworking.send(player, board());
+            ServerPlayNetworking.send(player, info);
         }
     }
 
@@ -284,6 +291,23 @@ public class GameState {
             player.giveItemStack(LockoutModItems.PLAYER_TRACKING_COMPASS.getDefaultStack());
         }
 
+        // create custom world and teleport players that are in a playing team
+        long gameSeed = new Random().nextLong();
+        CustomWorldManager.createWorlds(server, gameSeed, false);
+
+        List<ServerPlayerEntity> gamePlayers = new ArrayList<>();
+        for (String teamUUID : packet.teamUUIDs()) {
+            try {
+                TeamData team = teamRegistry.getTeamDataByUUID(teamUUID);
+                for (String playerUUID : team.playerUUIDs) {
+                    ServerPlayerEntity p = getPlayerByUUID(playerUUID);
+                    if (p != null) gamePlayers.add(p);
+                }
+            } catch (Exception e) {
+                LockoutLogger.log("Error getting team for teleport: " + e.getMessage());
+            }
+        }
+        CustomWorldManager.teleportPlayers(server, gamePlayers);
 
         // send new game packet to all players
         for (ServerPlayerEntity player : players()) {
@@ -342,9 +366,13 @@ public class GameState {
         BlockDropChangeBuilder.resetHashMap();
         goals.clear();
         increasedSkulls = false;
+        paused = false;
+        pauseStartTime = 0;
+        pauseOffset = 0;
     }
 
     public static String onGoalComplete(LockoutGoalEvent event) {
+        if (paused) return null;
 
         // new data for board
         List<GoalInfoPacket> new_goals_data = getBoard().goals();
@@ -445,6 +473,53 @@ public class GameState {
             sh.setStat(player, killedByStat, 0);
         }
 
+    }
+
+    public static void pause() {
+        if (!inGame() || paused) return;
+        paused = true;
+        pauseStartTime = System.currentTimeMillis();
+        info.updatePauseState(true, pauseOffset);
+        GamePauseUpdatePacket packet = new GamePauseUpdatePacket(true, pauseOffset);
+        for (ServerPlayerEntity player : players()) {
+            ServerPlayNetworking.send(player, packet);
+        }
+        for (ServerPlayerEntity player : players()) {
+            player.sendMessage(Text.literal("[Lockout] Game paused."));
+        }
+    }
+
+    public static void resume() {
+        if (!inGame() || !paused) return;
+        pauseOffset += System.currentTimeMillis() - pauseStartTime;
+        paused = false;
+        pauseStartTime = 0;
+        info.updatePauseState(false, pauseOffset);
+        GamePauseUpdatePacket packet = new GamePauseUpdatePacket(false, pauseOffset);
+        for (ServerPlayerEntity player : players()) {
+            ServerPlayNetworking.send(player, packet);
+        }
+        for (ServerPlayerEntity player : players()) {
+            player.sendMessage(Text.literal("[Lockout] Game resumed."));
+        }
+    }
+
+    public static void resumeGame(GameStartPacket packet, List<LockoutGoal> loadedGoals, ServerTeamRegV2 registry) {
+        if (!goals.isEmpty()) {
+            destroyGame();
+        }
+        teamRegistry = registry;
+        info = packet;
+        goals = new ArrayList<>(loadedGoals);
+        paused = packet.paused();
+        pauseOffset = packet.pauseOffset();
+        pauseStartTime = 0;
+
+        for (LockoutGoal goal : goals) {
+            if (!(goal instanceof net.abrikoos.lockout_bingo.server.goals.CompletedGoalPlaceholder)) {
+                goal.subscribe(GameState::onGoalComplete);
+            }
+        }
     }
 
     public static boolean inGame() {

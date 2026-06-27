@@ -21,7 +21,7 @@ public class TeamData implements CustomPayload {
 
     public List<String> playerUUIDs;
 
-    TeamData(String teamName, int teamColor, String teamUUID) {
+    public TeamData(String teamName, int teamColor, String teamUUID) {
         this.teamName = teamName;
         this.teamUUID = teamUUID;
         this.teamColor = teamColor;
