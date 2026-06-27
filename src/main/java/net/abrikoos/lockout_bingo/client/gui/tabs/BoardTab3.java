@@ -7,6 +7,7 @@ import net.abrikoos.lockout_bingo.client.ClientGameStateV2;
 import net.abrikoos.lockout_bingo.client.gui.LockoutUtils;
 import net.abrikoos.lockout_bingo.client.gui.goalExplanations.GoalExplanationRegistry;
 import net.abrikoos.lockout_bingo.networkv2.compass.AskCompassPacket;
+import net.abrikoos.lockout_bingo.networkv2.game.EndGamePacket;
 import net.abrikoos.lockout_bingo.networkv2.game.GoalInfoPacket;
 import net.abrikoos.lockout_bingo.networkv2.team.Colors;
 import net.abrikoos.lockout_bingo.server.goals.GoalItemRegistry;
@@ -54,6 +55,9 @@ public class BoardTab3 implements Tab {
         boardTabWidget.textFieldWidget.setY(tabArea.getTop() + 16);
         boardTabWidget.textSize.setX(tabArea.getRight() - 116);
         boardTabWidget.textSize.setY(tabArea.getTop() + 16 + 24);
+
+        boardTabWidget.endGameButton.setX(tabArea.getLeft() + 4);
+        boardTabWidget.endGameButton.setY(tabArea.getTop() + 4);
     }
 
     public BoardTab3() {
@@ -61,6 +65,7 @@ public class BoardTab3 implements Tab {
 
         children.add(boardTabWidget.textFieldWidget);
         children.add(boardTabWidget.textSize);
+        children.add(boardTabWidget.endGameButton);
     }
 
     class BoardTabWidget extends ClickableWidget {
@@ -69,6 +74,7 @@ public class BoardTab3 implements Tab {
 
         public TextFieldWidget textFieldWidget;
         public ButtonWidget textSize;
+        public ButtonWidget endGameButton;
         public float explanationtextsize = 2.3f;
 
 
@@ -86,6 +92,10 @@ public class BoardTab3 implements Tab {
                 }
 
             }).dimensions(500, 130, 100, 20).build();
+            this.endGameButton = ButtonWidget.builder(Text.of("End Game"), button -> {
+                ClientPlayNetworking.send(new EndGamePacket());
+                MinecraftClient.getInstance().setScreen(null);
+            }).dimensions(0, 0, 80, 20).build();
         }
 
         private boolean intersect(int x1, int y1, int x2, int y2, int mouseX, int mouseY) {

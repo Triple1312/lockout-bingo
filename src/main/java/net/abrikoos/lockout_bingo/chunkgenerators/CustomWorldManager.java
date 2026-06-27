@@ -58,6 +58,9 @@ public class CustomWorldManager {
     // Stored per player-UUID: the position they were at before being teleported into a custom world.
     private static final Map<String, SavedLocation> savedLocations = new HashMap<>();
 
+    // Stored per player-UUID: the last position they were at inside the game dimensions.
+    private static final Map<String, SavedLocation> savedInGameLocations = new HashMap<>();
+
     private static final Map<RegistryKey<World>, Long> customSeeds = new HashMap<>();
 
     public static boolean worldsActive = false;
@@ -148,6 +151,7 @@ public class CustomWorldManager {
         }
 
         customSeeds.clear();
+        savedInGameLocations.clear();
         worldsActive = false;
         LockoutLogger.log("Custom worlds removed.");
     }
@@ -251,6 +255,56 @@ public class CustomWorldManager {
         ServerWorld customOverworld = server.getWorld(CUSTOM_OVERWORLD);
         if (customOverworld == null) return;
         teleportToWorldSpawn(player, customOverworld);
+    }
+
+    /** Saves the player's current position and teleports them into the game dimensions.
+     *  Restores their last known in-game position if they have been in before. */
+    public static void teleportPlayerIn(ServerPlayerEntity player, MinecraftServer server) {
+        ServerWorld customOverworld = server.getWorld(CUSTOM_OVERWORLD);
+        if (customOverworld == null) return;
+        // Only save the pre-game location the first time (don't overwrite it on re-entry).
+        if (!savedLocations.containsKey(player.getUuidAsString())) {
+            savedLocations.put(
+                    player.getUuidAsString(),
+                    new SavedLocation(
+                            player.getServerWorld().getRegistryKey(),
+                            player.getX(), player.getY(), player.getZ(),
+                            player.getYaw(), player.getPitch()
+                    )
+            );
+        }
+        SavedLocation inGame = savedInGameLocations.get(player.getUuidAsString());
+        if (inGame != null) {
+            ServerWorld target = server.getWorld(inGame.world());
+            if (target == null) target = customOverworld;
+            player.teleportTo(new TeleportTarget(target, new Vec3d(inGame.x(), inGame.y(), inGame.z()), Vec3d.ZERO, inGame.yaw(), inGame.pitch(), TeleportTarget.NO_OP));
+        } else {
+            teleportToWorldSpawn(player, customOverworld);
+        }
+    }
+
+    /** Saves the player's current in-game position then returns them to their pre-game position. */
+    public static void returnPlayer(ServerPlayerEntity player, MinecraftServer server) {
+        if (isCustomDimension(player.getServerWorld().getRegistryKey())) {
+            savedInGameLocations.put(
+                    player.getUuidAsString(),
+                    new SavedLocation(
+                            player.getServerWorld().getRegistryKey(),
+                            player.getX(), player.getY(), player.getZ(),
+                            player.getYaw(), player.getPitch()
+                    )
+            );
+        }
+        SavedLocation loc = savedLocations.remove(player.getUuidAsString());
+        if (loc == null) {
+            ServerWorld overworld = server.getOverworld();
+            BlockPos spawn = overworld.getSpawnPos();
+            player.teleportTo(new TeleportTarget(overworld, new Vec3d(spawn.getX() + 0.5, spawn.getY(), spawn.getZ() + 0.5), Vec3d.ZERO, 0f, 0f, TeleportTarget.NO_OP));
+            return;
+        }
+        ServerWorld target = server.getWorld(loc.world());
+        if (target == null) target = server.getOverworld();
+        player.teleportTo(new TeleportTarget(target, new Vec3d(loc.x(), loc.y(), loc.z()), Vec3d.ZERO, loc.yaw(), loc.pitch(), TeleportTarget.NO_OP));
     }
 
     private static void teleportToWorldSpawn(ServerPlayerEntity player, ServerWorld world) {

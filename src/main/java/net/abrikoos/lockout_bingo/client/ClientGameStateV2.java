@@ -45,8 +45,11 @@ public class ClientGameStateV2 {
 
     public static void startGame(GameStartPacket packet) {
         game = packet;
-        // means its not a real game
         if (Objects.equals(packet.game_mode(), "")) {
+            goals.clear();
+            boardTimeOver = true;
+            CompleteFullScreenState.selectedTab = 0;
+            LockoutScreens.completeFullScreen.init();
             return;
         }
         goals.clear();

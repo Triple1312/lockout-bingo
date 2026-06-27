@@ -19,6 +19,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.abrikoos.lockout_bingo.chunkgenerators.CustomWorldManager;
+import net.abrikoos.lockout_bingo.networkv2.game.EndGamePacket;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -74,6 +75,7 @@ public class LockoutBingo implements ModInitializer {
 		PayloadTypeRegistry.playC2S().register(AskCompassPacket.ID, AskCompassPacket.CODEC);
 		PayloadTypeRegistry.playC2S().register(RotateTeamColor.ID, RotateTeamColor.CODEC);
 		PayloadTypeRegistry.playC2S().register(TeammateRespawnRequestPacket.ID, TeammateRespawnRequestPacket.CODEC);
+		PayloadTypeRegistry.playC2S().register(EndGamePacket.ID, EndGamePacket.CODEC);
 
 
 
@@ -143,13 +145,31 @@ public class LockoutBingo implements ModInitializer {
 
 		ServerPlayNetworking.registerGlobalReceiver(AddPlayerToTeamV2.ID, (payload, context) -> {
             try {
+				boolean oldTeamPlaying = false;
+				if (GameState.inGame() && CustomWorldManager.worldsActive) {
+					try {
+						String oldTeamUUID = GameState.teamRegistry.getTeamDataByPlayerUUID(payload.puuid()).teamUUID;
+						oldTeamPlaying = GameState.info.teamUUIDs().contains(oldTeamUUID);
+					} catch (Exception ignored) {}
+				}
+
 				try {
 					GameState.teamRegistry.removePlayerFromTeam(payload.puuid());
-				}
-				catch (Exception e) {
-					// do nothing
-				}
+				} catch (Exception ignored) {}
+
                 GameState.teamRegistry.addPlayerToTeam(payload.puuid(), payload.teamuuid());
+
+				if (GameState.inGame() && CustomWorldManager.worldsActive) {
+					boolean newTeamPlaying = GameState.info.teamUUIDs().contains(payload.teamuuid());
+					net.minecraft.server.network.ServerPlayerEntity p = context.server().getPlayerManager().getPlayer(java.util.UUID.fromString(payload.puuid()));
+					if (p != null) {
+						if (!oldTeamPlaying && newTeamPlaying) {
+							CustomWorldManager.teleportPlayerIn(p, context.server());
+						} else if (oldTeamPlaying && !newTeamPlaying) {
+							CustomWorldManager.returnPlayer(p, context.server());
+						}
+					}
+				}
             } catch (Exception e) {
                 LockoutLogger.log("Error adding player to team: " + e.getMessage());
             }
@@ -177,6 +197,15 @@ public class LockoutBingo implements ModInitializer {
 
 		ServerPlayNetworking.registerGlobalReceiver(RemovePlayerFromTeamV2.ID, (payload, context) -> {
 			try {
+				if (GameState.inGame() && CustomWorldManager.worldsActive) {
+					try {
+						String oldTeamUUID = GameState.teamRegistry.getTeamDataByPlayerUUID(payload.puuid()).teamUUID;
+						if (GameState.info.teamUUIDs().contains(oldTeamUUID)) {
+							net.minecraft.server.network.ServerPlayerEntity p = context.server().getPlayerManager().getPlayer(java.util.UUID.fromString(payload.puuid()));
+							if (p != null) CustomWorldManager.returnPlayer(p, context.server());
+						}
+					} catch (Exception ignored) {}
+				}
 				GameState.teamRegistry.removePlayerFromTeam(payload.puuid());
 			} catch (Exception e) {
 				LockoutLogger.log("Error removing player from team: " + e.getMessage());
@@ -196,6 +225,17 @@ public class LockoutBingo implements ModInitializer {
 		ServerPlayNetworking.registerGlobalReceiver(TeammateRespawnRequestPacket.ID, (payload, context) -> {
 			GameState.registerPlayerRespawnTarget(context.player().getUuidAsString(), payload.playerUUID());
 //			context.server().getPlayerManager().respawnPlayer(context.player(), false, Entity.RemovalReason.CHANGED_DIMENSION);
+		});
+
+		ServerPlayNetworking.registerGlobalReceiver(EndGamePacket.ID, (payload, context) -> {
+			if (!GameState.inGame()) return;
+			GameState.destroyGame();
+			CustomWorldManager.removeWorlds(context.server());
+			GameStartPacket emptyPacket = GameStartPacket.empty();
+			for (net.minecraft.server.network.ServerPlayerEntity p : context.server().getPlayerManager().getPlayerList()) {
+				p.getInventory().remove(stack -> stack.isOf(LockoutModItems.PLAYER_TRACKING_COMPASS), Integer.MAX_VALUE, p.playerScreenHandler.getCraftingInput());
+				ServerPlayNetworking.send(p, emptyPacket);
+			}
 		});
 
 
