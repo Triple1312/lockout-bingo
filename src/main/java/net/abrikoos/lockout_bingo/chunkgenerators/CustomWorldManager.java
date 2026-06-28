@@ -19,6 +19,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
+import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.MultiNoiseBiomeSource;
 import net.minecraft.world.biome.source.TheEndBiomeSource;
@@ -30,7 +31,7 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.dimension.DimensionTypes;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
-import net.minecraft.world.gen.chunk.NoiseChunkGenerator;
+import net.abrikoos.lockout_bingo.chunkgenerators.BlockoutNoiseGenerator;
 import net.minecraft.world.level.ServerWorldProperties;
 import net.minecraft.world.level.storage.LevelStorage;
 import org.jetbrains.annotations.Nullable;
@@ -75,16 +76,23 @@ public class CustomWorldManager {
     // Public API
     // -------------------------------------------------------------------------
 
+    public enum GeneratorMode { NORMAL, BLOCK_SWAP, SINGLE_BLOCK }
+
     /**
      * Creates the three custom worlds (overworld, nether, end) with the given seed.
-     * @param useBlockSwap if true the custom overworld uses BlockSwapChunkGenerator instead of normal noise.
+     * @param mode controls which chunk generator the custom overworld uses; nether and end always use normal noise.
      */
-    public static void createWorlds(MinecraftServer server, long seed, boolean useBlockSwap) {
-        spawnWorld(server, CUSTOM_OVERWORLD, DimensionTypes.OVERWORLD, seed, useBlockSwap);
-        spawnWorld(server, CUSTOM_NETHER,    DimensionTypes.THE_NETHER, seed, false);
-        spawnWorld(server, CUSTOM_END,       DimensionTypes.THE_END,    seed, false);
+    public static void createWorlds(MinecraftServer server, long seed, GeneratorMode mode) {
+        spawnWorld(server, CUSTOM_OVERWORLD, DimensionTypes.OVERWORLD, seed, mode);
+        spawnWorld(server, CUSTOM_NETHER,    DimensionTypes.THE_NETHER, seed, GeneratorMode.NORMAL);
+        spawnWorld(server, CUSTOM_END,       DimensionTypes.THE_END,    seed, GeneratorMode.NORMAL);
         worldsActive = true;
-        LockoutLogger.log("Custom worlds created with seed " + seed + (useBlockSwap ? " (block swap)" : ""));
+        LockoutLogger.log("Custom worlds created with seed " + seed + " (" + mode + ")");
+    }
+
+    /** Convenience overload kept for existing call-sites. */
+    public static void createWorlds(MinecraftServer server, long seed, boolean useBlockSwap) {
+        createWorlds(server, seed, useBlockSwap ? GeneratorMode.BLOCK_SWAP : GeneratorMode.NORMAL);
     }
 
     /**
@@ -164,7 +172,7 @@ public class CustomWorldManager {
                                           RegistryKey<World> key,
                                           RegistryKey<DimensionType> dimTypeKey,
                                           long seed,
-                                          boolean useBlockSwap) {
+                                          GeneratorMode mode) {
         MinecraftServerAccessor accessor = (MinecraftServerAccessor) server;
 
         // Idempotent: skip if already exists.
@@ -178,7 +186,7 @@ public class CustomWorldManager {
                 .getEntry(dimTypeKey)
                 .orElseThrow(() -> new IllegalStateException("Missing dimension type: " + dimTypeKey));
 
-        ChunkGenerator generator = buildGenerator(server, dimTypeKey, useBlockSwap);
+        ChunkGenerator generator = buildGenerator(server, dimTypeKey, mode);
         DimensionOptions options = new DimensionOptions(dimType, generator);
 
         ServerWorld overworld = server.getOverworld();
@@ -203,7 +211,7 @@ public class CustomWorldManager {
 
     private static ChunkGenerator buildGenerator(MinecraftServer server,
                                                   RegistryKey<DimensionType> dimTypeKey,
-                                                  boolean useBlockSwap) {
+                                                  GeneratorMode mode) {
         var lookup = server.getRegistryManager().createRegistryLookup();
 
         RegistryEntryLookup<Biome> biomeLookup =
@@ -214,12 +222,12 @@ public class CustomWorldManager {
                 lookup.getOrThrow(RegistryKeys.CHUNK_GENERATOR_SETTINGS);
 
         if (dimTypeKey.equals(DimensionTypes.THE_END)) {
-            return new NoiseChunkGenerator(
+            return new BlockoutNoiseGenerator(
                     TheEndBiomeSource.createVanilla(biomeLookup),
                     settingsLookup.getOrThrow(ChunkGeneratorSettings.END)
             );
         } else if (dimTypeKey.equals(DimensionTypes.THE_NETHER)) {
-            return new NoiseChunkGenerator(
+            return new BlockoutNoiseGenerator(
                     MultiNoiseBiomeSource.create(paramLookup.getOrThrow(MultiNoiseBiomeSourceParameterLists.NETHER)),
                     settingsLookup.getOrThrow(ChunkGeneratorSettings.NETHER)
             );
@@ -228,9 +236,11 @@ public class CustomWorldManager {
             var biomeSource = MultiNoiseBiomeSource.create(
                     paramLookup.getOrThrow(MultiNoiseBiomeSourceParameterLists.OVERWORLD));
             var settings = settingsLookup.getOrThrow(ChunkGeneratorSettings.OVERWORLD);
-            return useBlockSwap
-                    ? new BlockSwapChunkGenerator(biomeSource, settings)
-                    : new NoiseChunkGenerator(biomeSource, settings);
+            return switch (mode) {
+                case BLOCK_SWAP    -> new BlockSwapChunkGenerator(biomeSource, settings);
+                case SINGLE_BLOCK  -> new SingleBlockChunkGenerator(biomeSource, settings);
+                default            -> new BlockoutNoiseGenerator(biomeSource, settings);
+            };
         }
     }
 
@@ -308,7 +318,7 @@ public class CustomWorldManager {
     }
 
     private static void teleportToWorldSpawn(ServerPlayerEntity player, ServerWorld world) {
-        BlockPos spawnPos = world.getSpawnPos();
+        BlockPos spawnPos = findGoodSpawnPos(world);
         ChunkPos chunkPos = new ChunkPos(spawnPos);
         world.getChunk(chunkPos.x, chunkPos.z); // force-generate spawn chunk
         BlockPos safePos = SpawnLocating.findServerSpawnPoint(world, chunkPos);
@@ -318,6 +328,19 @@ public class CustomWorldManager {
         }
         Vec3d pos = new Vec3d(safePos.getX() + 0.5, safePos.getY(), safePos.getZ() + 0.5);
         player.teleportTo(new TeleportTarget(world, pos, Vec3d.ZERO, 0f, 0f, TeleportTarget.NO_OP));
+    }
+
+    /** Searches outward from the world's default spawn for a biome that isn't an ocean or river. */
+    private static BlockPos findGoodSpawnPos(ServerWorld world) {
+        BlockPos origin = world.getSpawnPos();
+        var result = world.locateBiome(
+                biome -> !biome.isIn(BiomeTags.IS_OCEAN) && !biome.isIn(BiomeTags.IS_RIVER),
+                origin,
+                6400,
+                32,
+                64
+        );
+        return result != null ? result.getFirst() : origin;
     }
 
     private static void deleteWorldDirectory(LevelStorage.Session session, RegistryKey<World> key) {

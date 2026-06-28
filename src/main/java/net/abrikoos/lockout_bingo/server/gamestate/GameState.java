@@ -256,6 +256,9 @@ public class GameState {
             case "lockout":
                 newLockout(packet);
                 break;
+            case "single_block":
+                newSingleBlock(packet);
+                break;
             case "dropshuffle":
                 newDropShuffle(packet);
                 break;
@@ -293,7 +296,10 @@ public class GameState {
 
         // create custom world and teleport players that are in a playing team
         long gameSeed = new Random().nextLong();
-        CustomWorldManager.createWorlds(server, gameSeed, false);
+        CustomWorldManager.GeneratorMode genMode = packet.gameMode().equals("single_block")
+                ? CustomWorldManager.GeneratorMode.SINGLE_BLOCK
+                : CustomWorldManager.GeneratorMode.NORMAL;
+        CustomWorldManager.createWorlds(server, gameSeed, genMode);
 
         List<ServerPlayerEntity> gamePlayers = new ArrayList<>();
         for (String teamUUID : packet.teamUUIDs()) {
@@ -336,6 +342,19 @@ public class GameState {
         int freezetime = 60000;
 
         info = new GameStartPacket("lockout", packet.teamUUIDs().get(0), packet.teamUUIDs().get(1), builder.packet, startTime, freezetime, packet.teammateRespawn());
+
+        for (GoalInfoPacket goal : builder.packet.goals()) {
+            LockoutGoal lg = GoalFactory.buildGoal(goal.goalID(), goal.goalIndex());
+            goals.add(lg);
+        }
+    }
+
+    private static void newSingleBlock(StartGameRequestPacket packet) {
+        EvenMoreReworkedLockoutBuilder builder = new EvenMoreReworkedLockoutBuilder(packet);
+        long startTime = System.currentTimeMillis();
+        int freezetime = 60000;
+
+        info = new GameStartPacket("single_block", packet.teamUUIDs().get(0), packet.teamUUIDs().get(1), builder.packet, startTime, freezetime, packet.teammateRespawn());
 
         for (GoalInfoPacket goal : builder.packet.goals()) {
             LockoutGoal lg = GoalFactory.buildGoal(goal.goalID(), goal.goalIndex());

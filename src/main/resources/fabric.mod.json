@@ -22,6 +22,7 @@
 			"net.abrikoos.lockout_bingo.LockoutBingoClient"
 		]
 	},
+	"accessWidener": "lockout_bingo.accesswidener",
 	"mixins": [
 		"lockout-bingo.mixins.json"
 	],

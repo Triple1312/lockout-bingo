@@ -1,6 +1,8 @@
 package net.abrikoos.lockout_bingo.server.goals;
 
 import net.abrikoos.lockout_bingo.LockoutLogger;
+import net.abrikoos.lockout_bingo.registries.ItemGroups;
+import net.abrikoos.lockout_bingo.registries.ItemRegistry;
 import net.abrikoos.lockout_bingo.util.BlockoutList;
 import net.minecraft.component.ComponentChanges;
 import net.minecraft.component.DataComponentTypes;
@@ -109,7 +111,8 @@ public class GoalItemRegistry {
         items.add(GoalListItemV2.createImaged("wear a fully trimmed armor set", "", 3, List.of(armor, C4), "wear_trimmed_set", List.of(Identifier.of("lockout-bingo:goalicon/item/armor/emerald_trimmed_iron_helmet.png"), Identifier.of("lockout-bingo:goalicon/item/armor/copper_trimmed_diamond_leggings.png"),Identifier.of("lockout-bingo:goalicon/item/armor/redstone_trimmed_gold_chestplate.png"), Identifier.of("lockout-bingo:goalicon/item/armor/quartz_trimmed_netherite_boots.png")) ));
         items.add(GoalListItemV2.createStackedString("wear a carved pumpkin for 1 minute", "", 3, List.of(armor), "wear_pumpkin", List.of("carved_pumpkin"))); // todo change time
 
-        items.add(GoalListItemV2.createStackedString("obtain 4 types of seeds", "", 3, List.of(C4, unique, obtain), "obtain_all_seeds", List.of("wheat_seeds", "melon_seeds", "pumpkin_seeds", "beetroot_seeds", "torchflower_seeds")).addBottomRight("4"));
+        int seedCount = ItemRegistry.get(ItemGroups.SEEDS).size();
+        items.add(GoalListItemV2.createStackedString("obtain " + seedCount + " types of seeds", "", 3, List.of(C4, unique, obtain), "obtain_all_seeds", ItemRegistry.getRawIds(ItemGroups.SEEDS)).addBottomRight(String.valueOf(seedCount)));
         items.add(GoalListItemV2.createStackedString("obtain 6 types of flowers", "", 3, List.of(C6, unique, obtain), "obtain_6_flowers", List.of("poppy", "dandelion", "blue_orchid", "allium", "azure_bluet", "red_tulip", "orange_tulip", "white_tulip",  "oxeye_daisy", "cornflower", "lily_of_the_valley", "wither_rose")).addBottomRight("6"));
         items.add(GoalListItemV2.createStackedString("obtain black glazed terracotta", "", 2, List.of( obtain), "obtain_black_glazed_terracotta", List.of("black_glazed_terracotta")));
         items.add(GoalListItemV2.createStackedString("obtain all saplings", "", 4, List.of(obtain), "obtain_all_saplings", List.of("oak_sapling", "spruce_sapling", "birch_sapling", "jungle_sapling", "acacia_sapling", "dark_oak_sapling", "mangrove_propagule", "cherry_sapling")));

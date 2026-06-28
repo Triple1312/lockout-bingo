@@ -1,12 +1,15 @@
 package net.abrikoos.lockout_bingo.server.goals.obtain;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
+import net.abrikoos.lockout_bingo.registries.BlockGroups;
+import net.abrikoos.lockout_bingo.registries.BlockRegistry;
+import net.minecraft.block.Block;
 
-import java.util.List;
+import java.util.stream.Collectors;
 
-public class ObtainXFlowers extends ObtainXofSetItemsGoal{
+public class ObtainXFlowers extends ObtainXofSetItemsGoal {
     public ObtainXFlowers(int id, int count) {
-        super(id, List.of( Items.DANDELION, Items.POPPY, Items.BLUE_ORCHID, Items.ALLIUM, Items.AZURE_BLUET, Items.ORANGE_TULIP, Items.PINK_TULIP, Items.RED_TULIP, Items.WHITE_TULIP, Items.OXEYE_DAISY, Items.CORNFLOWER, Items.LILY_OF_THE_VALLEY, Items.TORCHFLOWER, Items.WITHER_ROSE, Items.LILAC, Items.ROSE_BUSH, Items.SUNFLOWER, Items.PEONY ), count);
+        super(id, BlockRegistry.get(BlockGroups.FLOWERS).stream()
+                .map(Block::asItem)
+                .collect(Collectors.toList()), count);
     }
 }

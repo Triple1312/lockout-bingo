@@ -191,7 +191,8 @@ public class ClientGameStateV2 {
     public static void buildGameBoard(GameStartPacket gsp) {
         switch (gsp.game_mode()) {
             case "lockout":
-                for (GoalInfoPacket goal : gsp.board().goals()) { // todo maybe in future redo with every board update
+            case "single_block":
+                for (GoalInfoPacket goal : gsp.board().goals()) {
                     goals.add(GoalItemRegistry.getGoal(goal.goalID()));
                 }
                 break;

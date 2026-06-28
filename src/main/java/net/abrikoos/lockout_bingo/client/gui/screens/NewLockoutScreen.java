@@ -28,6 +28,7 @@ import java.util.List;
 @Environment(EnvType.CLIENT)
 public class NewLockoutScreen extends Screen {
     final Screen parent;
+    final String gameMode;
     private static final int field_42170 = 10;
     private static final int field_42171 = 8;
     private static final int field_42165 = 1;
@@ -44,13 +45,23 @@ public class NewLockoutScreen extends Screen {
     ButtonWidget startLockoutButton;
     ButtonWidget startBlackoutButton;
 
-
+    /** Opens with the standard lockout game mode. */
     protected NewLockoutScreen(Screen parent) {
-        super(Text.of("New Lockout"));
+        this(parent, "lockout");
+    }
+
+    protected NewLockoutScreen(Screen parent, String gameMode) {
+        super(Text.of("New " + capitalize(gameMode)));
         this.parent = parent;
-        startLockoutButton = ButtonWidget.builder(Text.translatable("Start Lockout"), button -> {startLockout();}).width(80).build();
+        this.gameMode = gameMode;
+        startLockoutButton = ButtonWidget.builder(Text.of("Start " + capitalize(gameMode)), button -> startLockout()).width(120).build();
         startBlackoutButton = ButtonWidget.builder(Text.translatable("Start Blackout"), button -> {}).width(80).build();
         startBlackoutButton.active = false;
+    }
+
+    private static String capitalize(String s) {
+        if (s == null || s.isEmpty()) return s;
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1).replace('_', ' ');
     }
 
     protected void init() {
@@ -139,7 +150,7 @@ public class NewLockoutScreen extends Screen {
         teams.add(mainTab.team1.getValue().teamUUID);
         teams.add(mainTab.team2.getValue().teamUUID);
 
-        StartGameRequestPacket packet = new StartGameRequestPacket("lockout", teams, difficulty, goalCount,false, mainTab.teammateRespawn.getValue(),  goalTypes, modifiers);
+        StartGameRequestPacket packet = new StartGameRequestPacket(gameMode, teams, difficulty, goalCount, false, mainTab.teammateRespawn.getValue(), goalTypes, modifiers);
 
         ClientPlayNetworking.send(packet);
     }

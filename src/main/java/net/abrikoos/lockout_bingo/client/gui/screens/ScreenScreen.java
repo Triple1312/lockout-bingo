@@ -188,6 +188,15 @@ public class ScreenScreen extends Screen {
                 positioner
             );
 
+            adder.add(
+                ButtonWidget.builder(
+                    Text.of("Single Block"), btn -> {
+                        client.setScreen(new NewLockoutScreen(ScreenScreen.this, "single_block"));
+                    }
+                ).width(120).build(),
+                positioner
+            );
+
             ButtonWidget lbbtn = adder.add(
                 ButtonWidget.builder(
                     Text.of("Drop Shuffle"), btn -> {
