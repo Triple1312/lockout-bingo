@@ -1,0 +1,194 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "item/clock"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "blockout:angle": 0.000
+      },
+      "model": "blockout:item/player_tracker_compass_00"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.016666666666666666
+      },
+      "model": "blockout:item/player_tracker_compass_01"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.05
+      },
+      "model": "blockout:item/player_tracker_compass_02"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.08333333333333333
+      },
+      "model": "blockout:item/player_tracker_compass_03"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.1166666666666666
+      },
+      "model": "blockout:item/player_tracker_compass_04"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.15
+      },
+      "model": "blockout:item/player_tracker_compass_05"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.18333333333333333
+      },
+      "model": "blockout:item/player_tracker_compass_06"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.2166666666666666
+      },
+      "model": "blockout:item/player_tracker_compass_07"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.25
+      },
+      "model": "blockout:item/player_tracker_compass_08"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.28333333333333333
+      },
+      "model": "blockout:item/player_tracker_compass_09"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.3166666666666666
+      },
+      "model": "blockout:item/player_tracker_compass_10"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.35
+      },
+      "model": "blockout:item/player_tracker_compass_11"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.38333333333333333
+      },
+      "model": "blockout:item/player_tracker_compass_12"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.4166666666666666
+      },
+      "model": "blockout:item/player_tracker_compass_13"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.45
+      },
+      "model": "blockout:item/player_tracker_compass_14"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.48333333333333333
+      },
+      "model": "blockout:item/player_tracker_compass_15"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.5166666666666666
+        },
+        "model": "blockout:item/player_tracker_compass_16"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.55
+      },
+      "model": "blockout:item/player_tracker_compass_17"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.58333333333333333
+      },
+      "model": "blockout:item/player_tracker_compass_18"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.6166666666666666
+      },
+      "model": "blockout:item/player_tracker_compass_19"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.65
+      },
+      "model": "blockout:item/player_tracker_compass_20"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.68333333333333333
+      },
+      "model": "blockout:item/player_tracker_compass_21"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.7166666666666666
+      },
+      "model": "blockout:item/player_tracker_compass_22"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.75
+      },
+      "model": "blockout:item/player_tracker_compass_23"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.78333333333333333
+      },
+      "model": "blockout:item/player_tracker_compass_24"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.8166666666666666
+      },
+      "model": "blockout:item/player_tracker_compass_25"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.85
+      },
+      "model": "blockout:item/player_tracker_compass_26"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.88333333333333333
+      },
+      "model": "blockout:item/player_tracker_compass_27"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.9166666666666666
+      },
+      "model": "blockout:item/player_tracker_compass_28"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.95
+      },
+      "model": "blockout:item/player_tracker_compass_00"
+    },
+    {
+      "predicate": {
+        "blockout:angle": 0.98333333333333333
+      },
+      "model": "blockout:item/player_tracker_compass_00"
+    }
+  ]
+}

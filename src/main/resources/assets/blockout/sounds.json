@@ -1,0 +1,27 @@
+{
+  "goal_complete": {
+    "sounds": [
+      "blockout:goal_complete"
+    ]
+  },
+  "goal_fail": {
+      "sounds": [
+      "blockout:goal_fail"
+      ]
+  },
+  "goal_success": {
+      "sounds": [
+      "blockout:goal_success"
+      ]
+  },
+  "race_start": {
+    "sounds": [
+      "blockout:race_start"
+    ]
+  },
+  "finish_countdown": {
+    "sounds": [
+      "blockout:finish_countdown"
+    ]
+  }
+}

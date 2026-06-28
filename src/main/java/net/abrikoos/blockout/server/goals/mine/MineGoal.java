@@ -1,0 +1,26 @@
+package net.abrikoos.blockout.server.goals.mine;
+
+import net.abrikoos.blockout.server.goals.stats.StatGoal;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.damage.DamageSources;
+import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.projectile.thrown.SnowballEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.stat.Stats;
+
+public class MineGoal extends StatGoal {
+    final Block block;
+    final int amount;
+
+    public MineGoal(int id, Block block, int amount) {
+        super(id);
+        this.block = block;
+        this.amount = amount;
+    }
+
+    @Override
+    protected boolean validateProgress(ServerPlayerEntity player) {
+        return player.getStatHandler().getStat(Stats.MINED.getOrCreateStat(Blocks.DIAMOND_ORE)) >= amount;
+    }
+}

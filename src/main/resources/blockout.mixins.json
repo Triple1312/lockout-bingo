@@ -1,0 +1,44 @@
+{
+  "required": true,
+  "package": "net.abrikoos.blockout.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AbstractCauldronMixin",
+    "ChunkRegionMixin",
+    "AbstractHorseEntityMixin",
+    "BlockDropMixin",
+    "CompassVanishMixin",
+    "ComposterMixin",
+    "EntityDeathMixin",
+    "GammaMixin",
+    "BlockoutLivingEntityMixin",
+    "BlockoutPlayerAdvancementTrackerMixin",
+    "LootTableMixin",
+    "MilkBucketMixin",
+    "MinecraftServerMixin",
+    "NoiseChunkGeneratorMixin",
+    "PlayerEntityMixin",
+    "PlayerInventorymixin",
+    "PlayerRespawnMixin",
+    "ScreenHandlerMixin",
+    "ServerChunkLoadingManagerMixin",
+    "ServerPlayerMixin",
+    "ServerWorldMixin",
+    "StructureFindMixin",
+    "TameMixin",
+    "ZombieAlwaysConvertMixin",
+    "accessors.CombinedEntryMixin",
+    "accessors.ItemEntryMixin",
+    "accessors.LootTableAccessor",
+    "accessors.MinecraftServerAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "HudBoardMixin",
+    "RespawnScreenMixin",
+    "ScreenMixin",
+    "WorldRenderMixin"
+  ]
+}

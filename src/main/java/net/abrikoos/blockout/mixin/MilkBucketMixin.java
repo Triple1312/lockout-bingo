@@ -1,0 +1,25 @@
+package net.abrikoos.blockout.mixin;
+
+import net.abrikoos.blockout.server.listeners.items.MilkBucketUseListener;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.MilkBucketItem;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+@Mixin(MilkBucketItem.class)
+public class MilkBucketMixin {
+
+    @Inject(method = "finishUsing", at = @At("HEAD"))
+    public void use(ItemStack stack, World world, LivingEntity user, CallbackInfoReturnable<ItemStack> cir) {
+        if (user instanceof PlayerEntity) {
+            MilkBucketUseListener.registerEvent(world, (PlayerEntity) user);
+        }
+    }
+}
