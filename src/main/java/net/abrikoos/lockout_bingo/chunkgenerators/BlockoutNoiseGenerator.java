@@ -18,6 +18,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.CheckedRandom;
 import net.minecraft.util.math.random.ChunkRandom;
 import net.minecraft.util.math.random.RandomSeed;
+import net.minecraft.registry.tag.BiomeTags;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.Heightmap;
@@ -411,6 +413,22 @@ public class BlockoutNoiseGenerator extends NoiseChunkGenerator {
                         + " AS: " + fmt.format(router.initialDensityWithoutJaggedness().sample(noisePos))
                         + " N: " + fmt.format(router.finalDensity().sample(noisePos))
         );
+    }
+
+    // ── spawn ─────────────────────────────────────────────────────────────────
+
+    /**
+     * Finds the nearest spawn position that is not inside an ocean or river biome.
+     * Searches up to 6400 blocks from the world's default spawn point.
+     * Falls back to the default spawn if no valid position is found.
+     */
+    public BlockPos findSpawnPos(ServerWorld world) {
+        BlockPos origin = world.getSpawnPos();
+        var result = world.locateBiome(
+                biome -> !biome.isIn(BiomeTags.IS_OCEAN) && !biome.isIn(BiomeTags.IS_RIVER),
+                origin, 6400, 32, 64
+        );
+        return result != null ? result.getFirst() : origin;
     }
 
     // ── misc ──────────────────────────────────────────────────────────────────

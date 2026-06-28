@@ -21,7 +21,9 @@ import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 import net.minecraft.registry.tag.BiomeTags;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.source.BiomeCoords;
 import net.minecraft.world.biome.source.MultiNoiseBiomeSource;
+import net.minecraft.world.gen.noise.NoiseConfig;
 import net.minecraft.world.biome.source.TheEndBiomeSource;
 import net.minecraft.world.biome.source.MultiNoiseBiomeSourceParameterList;
 import net.minecraft.world.biome.source.MultiNoiseBiomeSourceParameterLists;
@@ -83,11 +85,38 @@ public class CustomWorldManager {
      * @param mode controls which chunk generator the custom overworld uses; nether and end always use normal noise.
      */
     public static void createWorlds(MinecraftServer server, long seed, GeneratorMode mode) {
-        spawnWorld(server, CUSTOM_OVERWORLD, DimensionTypes.OVERWORLD, seed, mode);
-        spawnWorld(server, CUSTOM_NETHER,    DimensionTypes.THE_NETHER, seed, GeneratorMode.NORMAL);
-        spawnWorld(server, CUSTOM_END,       DimensionTypes.THE_END,    seed, GeneratorMode.NORMAL);
+        long validSeed = findValidSeed(server, seed);
+        spawnWorld(server, CUSTOM_OVERWORLD, DimensionTypes.OVERWORLD, validSeed, mode);
+        spawnWorld(server, CUSTOM_NETHER,    DimensionTypes.THE_NETHER, validSeed, GeneratorMode.NORMAL);
+        spawnWorld(server, CUSTOM_END,       DimensionTypes.THE_END,    validSeed, GeneratorMode.NORMAL);
         worldsActive = true;
-        LockoutLogger.log("Custom worlds created with seed " + seed + " (" + mode + ")");
+        LockoutLogger.log("Custom worlds created with seed " + validSeed + " (" + mode + ")");
+    }
+
+    /**
+     * Returns the first seed >= the given seed for which block (0, 0) in the overworld
+     * is not an ocean or river biome. Tries up to 100 candidates before giving up.
+     */
+    private static long findValidSeed(MinecraftServer server, long seed) {
+        var lookup = server.getRegistryManager().createRegistryLookup();
+        var settings = lookup.getOrThrow(RegistryKeys.CHUNK_GENERATOR_SETTINGS)
+                             .getOrThrow(ChunkGeneratorSettings.OVERWORLD).value();
+        var biomeSource = MultiNoiseBiomeSource.create(
+                lookup.getOrThrow(RegistryKeys.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST)
+                      .getOrThrow(MultiNoiseBiomeSourceParameterLists.OVERWORLD));
+        var noiseParams = lookup.getOrThrow(RegistryKeys.NOISE_PARAMETERS);
+
+        for (long candidate = seed; candidate < seed + 100; candidate++) {
+            var sampler = NoiseConfig.create(settings, noiseParams, candidate).getMultiNoiseSampler();
+            var biome = biomeSource.getBiome(0, BiomeCoords.fromBlock(64), 0, sampler);
+            if (!biome.isIn(BiomeTags.IS_OCEAN) && !biome.isIn(BiomeTags.IS_RIVER)) {
+                if (candidate != seed)
+                    LockoutLogger.log("Seed " + seed + " had ocean/river at origin, using " + candidate + " instead");
+                return candidate;
+            }
+        }
+        LockoutLogger.log("Could not find valid seed after 100 attempts, using original: " + seed);
+        return seed;
     }
 
     /** Convenience overload kept for existing call-sites. */
@@ -332,15 +361,10 @@ public class CustomWorldManager {
 
     /** Searches outward from the world's default spawn for a biome that isn't an ocean or river. */
     private static BlockPos findGoodSpawnPos(ServerWorld world) {
-        BlockPos origin = world.getSpawnPos();
-        var result = world.locateBiome(
-                biome -> !biome.isIn(BiomeTags.IS_OCEAN) && !biome.isIn(BiomeTags.IS_RIVER),
-                origin,
-                6400,
-                32,
-                64
-        );
-        return result != null ? result.getFirst() : origin;
+        if (world.getChunkManager().getChunkGenerator() instanceof BlockoutNoiseGenerator gen) {
+            return gen.findSpawnPos(world);
+        }
+        return world.getSpawnPos();
     }
 
     private static void deleteWorldDirectory(LevelStorage.Session session, RegistryKey<World> key) {

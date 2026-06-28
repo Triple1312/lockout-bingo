@@ -7,6 +7,7 @@ import net.abrikoos.lockout_bingo.registries.BlockGroups;
 import net.abrikoos.lockout_bingo.registries.BlockRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
@@ -46,6 +47,7 @@ public class SingleBlockChunkGenerator extends BlockoutNoiseGenerator {
     protected BlockState getBlockState(ChunkNoiseSampler sampler, int x, int y, int z, BlockState state) {
         BlockState proposed = super.getBlockState(sampler, x, y, z, state);
         if (proposed.isAir()) return proposed;
+        if (y <= getMinimumY() + 4) return Blocks.BEDROCK.getDefaultState();
 
         int chunkX = x >> 4;
         int chunkZ = z >> 4;
