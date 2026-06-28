@@ -174,9 +174,11 @@ public class GameStatePersistence {
 
             // Recreate custom worlds with the original seed
             long seed = root.get("gameSeed").getAsLong();
-            CustomWorldManager.GeneratorMode genMode = "single_block".equals(gameMode)
-                    ? CustomWorldManager.GeneratorMode.SINGLE_BLOCK
-                    : CustomWorldManager.GeneratorMode.NORMAL;
+            CustomWorldManager.GeneratorMode genMode = switch (gameMode) {
+                case "single_block" -> CustomWorldManager.GeneratorMode.SINGLE_BLOCK;
+                case "block_swap"   -> CustomWorldManager.GeneratorMode.BLOCK_SWAP;
+                default             -> CustomWorldManager.GeneratorMode.NORMAL;
+            };
             CustomWorldManager.createWorlds(server, seed, genMode);
 
             GameState.resumeGame(packet, goals, registry);
