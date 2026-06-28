@@ -15,7 +15,9 @@ import net.abrikoos.lockout_bingo.server.listeners.TickListener;
 import net.abrikoos.lockout_bingo.networkv2.compass.PlayersPositionPacket;
 import net.fabricmc.api.ModInitializer;
 
+import net.abrikoos.lockout_bingo.server.gamestate.GameStatePersistence;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.abrikoos.lockout_bingo.chunkgenerators.CustomWorldManager;
@@ -286,6 +288,9 @@ public class LockoutBingo implements ModInitializer {
 //		ServerPlayNetworking.registerGlobalReceiver(ChangeTeamIdPacket.ID, (payload, client) -> {
 //			GameState.changeTeamId(payload.oldIndex(), payload.newIndex());
 //		});
+
+		ServerLifecycleEvents.SERVER_STARTED.register(GameStatePersistence::load);
+		ServerLifecycleEvents.SERVER_STOPPING.register(GameStatePersistence::save);
 
 		LockoutModItems.initialize();
 
