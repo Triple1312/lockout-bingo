@@ -2,23 +2,18 @@ package net.abrikoos.blockout.chunkgenerators;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.abrikoos.blockout.registries.BlockRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.block.Blocks;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.ChunkRegion;
-import net.minecraft.world.EmptyBlockView;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
 import net.minecraft.world.gen.noise.NoiseConfig;
-import net.minecraft.util.shape.VoxelShape;
 
 import java.util.*;
 
@@ -46,26 +41,8 @@ public class BlockSwapChunkGenerator extends BlockoutNoiseGenerator {
         return CODEC;
     }
 
-    private static boolean hasFullFace(Block block) {
-        try {
-            VoxelShape shape = block.getDefaultState()
-                    .getCollisionShape(EmptyBlockView.INSTANCE, BlockPos.ORIGIN);
-            for (Direction dir : Direction.values()) {
-                if (Block.isFaceFullSquare(shape, dir)) return true;
-            }
-        } catch (Exception ignored) {}
-        return false;
-    }
-
     private Map<Block, Block> buildSwapMap(long seed) {
-        List<Block> blocks = new ArrayList<>();
-        for (Block block : Registries.BLOCK) {
-            if (block != Blocks.AIR && block != Blocks.CAVE_AIR && block != Blocks.VOID_AIR
-                    && !(block instanceof ShulkerBoxBlock)
-                    && hasFullFace(block)) {
-                blocks.add(block);
-            }
-        }
+        List<Block> blocks = new ArrayList<>(BlockRegistry.getSwappableBlocks());
         Collections.shuffle(blocks, new Random(seed));
 
         Map<Block, Block> map = new HashMap<>();
