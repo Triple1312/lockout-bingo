@@ -6,7 +6,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.abrikoos.blockout.server.listeners.TickListener;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class ObtainXofSetItemsGoal extends BlockoutGoal {
         super(id);
         this.items = items;
         this.count = count;
-        ServerTickEvents.START_SERVER_TICK.register(this::checkCompletion);
+        TickListener.subscribe(this::checkCompletion);
     }
 
 

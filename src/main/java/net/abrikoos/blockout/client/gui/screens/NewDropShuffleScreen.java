@@ -7,7 +7,7 @@ import net.abrikoos.blockout.client.gui.screens.tabscreen.BlockoutTabNavigationW
 import net.abrikoos.blockout.networkv2.game.StartGameRequestPacket;
 import net.abrikoos.blockout.networkv2.team.Colors;
 import net.abrikoos.blockout.networkv2.team.TeamData;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.abrikoos.blockout.network.NetworkBridge;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenRect;
@@ -111,7 +111,7 @@ public class NewDropShuffleScreen extends Screen {
 
         StartGameRequestPacket packet = new StartGameRequestPacket("dropshuffle", teams, difficulty, goalCount, false, mainTab.teammateRespawn.getValue(), goalTypes, modifiers);
 
-        ClientPlayNetworking.send(packet);
+        NetworkBridge.sendToServer(packet);
     }
 
     public void setEnableModifiers(boolean enable) {

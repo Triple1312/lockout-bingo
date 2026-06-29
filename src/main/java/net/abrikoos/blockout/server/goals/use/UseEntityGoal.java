@@ -1,20 +1,21 @@
 package net.abrikoos.blockout.server.goals.use;
 
 import net.abrikoos.blockout.server.goals.BlockoutGoal;
-import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class UseEntityGoal extends BlockoutGoal {
+
+    public record InteractContext(PlayerEntity player, Entity entity, Hand hand) {}
+
+    public static final List<Consumer<InteractContext>> entityInteractListeners = new ArrayList<>();
 
     EntityType<?> entityType;
     Item item;
@@ -23,15 +24,12 @@ public class UseEntityGoal extends BlockoutGoal {
         super(id);
         this.entityType = entityType;
         this.item = item;
-        UseEntityCallback.EVENT.register(this::checkCompletion);
+        entityInteractListeners.add(this::checkCompletion);
     }
 
-    private ActionResult checkCompletion(PlayerEntity player, World world, Hand hand, Entity entity, EntityHitResult entityHitResult) {
-        if (entityType == entity.getType() && player.getStackInHand(hand).getItem().equals(item)) {
-            this.completed(player);
+    private void checkCompletion(InteractContext ctx) {
+        if (entityType == ctx.entity().getType() && ctx.player().getStackInHand(ctx.hand()).getItem().equals(item)) {
+            this.completed(ctx.player());
         }
-        return ActionResult.PASS;
     }
-
-
 }

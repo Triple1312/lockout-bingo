@@ -22,13 +22,16 @@
     "PlayerRespawnMixin",
     "ScreenHandlerMixin",
     "ServerChunkLoadingManagerMixin",
+    "ServerPlayNetworkHandlerMixin",
     "ServerPlayerMixin",
     "ServerWorldMixin",
     "StructureFindMixin",
     "TameMixin",
+    "UseEntityMixin",
     "ZombieAlwaysConvertMixin",
     "accessors.CombinedEntryMixin",
     "accessors.ItemEntryMixin",
+    "accessors.LootPoolAccessor",
     "accessors.LootTableAccessor",
     "accessors.MinecraftServerAccessor"
   ],
@@ -37,6 +40,7 @@
   },
   "client": [
     "HudBoardMixin",
+    "MinecraftClientMixin",
     "RespawnScreenMixin",
     "ScreenMixin",
     "WorldRenderMixin"

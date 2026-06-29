@@ -59,7 +59,7 @@ public class GameStatePersistence {
             root.add("scores", scoresArr);
 
             JsonArray goalsArr = new JsonArray();
-            for (GoalInfoPacket g : board.goals()) {
+            board.goals().forEach(g -> {
                 JsonObject gObj = new JsonObject();
                 gObj.addProperty("goalName", g.goalName());
                 gObj.addProperty("goalID", g.goalID());
@@ -68,11 +68,11 @@ public class GameStatePersistence {
                 gObj.addProperty("completedTeamUUID", g.completedTeamUUID());
                 gObj.addProperty("color", g.color());
                 goalsArr.add(gObj);
-            }
+            });
             root.add("goals", goalsArr);
 
             JsonArray teamsArr = new JsonArray();
-            for (TeamData t : GameState.teamRegistry.teams) {
+            GameState.teamRegistry.teams.forEach(t -> {
                 JsonObject tObj = new JsonObject();
                 tObj.addProperty("teamName", t.teamName);
                 tObj.addProperty("teamUUID", t.teamUUID);
@@ -81,16 +81,16 @@ public class GameStatePersistence {
                 t.playerUUIDs.forEach(puuids::add);
                 tObj.add("playerUUIDs", puuids);
                 teamsArr.add(tObj);
-            }
+            });
             root.add("teams", teamsArr);
 
             JsonArray playersArr = new JsonArray();
-            for (PlayerData p : GameState.teamRegistry.players) {
+            GameState.teamRegistry.players.forEach(p -> {
                 JsonObject pObj = new JsonObject();
                 pObj.addProperty("puuid", p.puuid);
                 pObj.addProperty("name", p.name);
                 playersArr.add(pObj);
-            }
+            });
             root.add("players", playersArr);
 
             Files.writeString(savePath(server), GSON.toJson(root));

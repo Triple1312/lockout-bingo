@@ -1,6 +1,6 @@
 package net.abrikoos.blockout.mixin;
 
-
+import net.abrikoos.blockout.Blockout;
 import net.abrikoos.blockout.server.gamestate.GameState;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.PlayerManager;
@@ -13,11 +13,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PlayerManager.class)
 public abstract class PlayerRespawnMixin {
 
-    @Inject(method = "respawnPlayer", at = @At("TAIL") )
-    private void onRespawnPlayer(ServerPlayerEntity player, boolean alive, Entity.RemovalReason removalReason, CallbackInfoReturnable<ServerPlayerEntity> cir) {
+    @Inject(method = "respawnPlayer", at = @At("TAIL"))
+    private void onRespawnPlayerTeleport(ServerPlayerEntity player, boolean alive, Entity.RemovalReason removalReason, CallbackInfoReturnable<ServerPlayerEntity> cir) {
+        ServerPlayerEntity newPlayer = cir.getReturnValue();
         ServerPlayerEntity teleportTarget = GameState.getPlayerRespawnTarget(player.getUuidAsString());
         if (teleportTarget != null) {
-            cir.getReturnValue().teleport(teleportTarget.getServerWorld(), teleportTarget.getX(), teleportTarget.getY(), teleportTarget.getZ(), teleportTarget.getYaw(), teleportTarget.getPitch());
+            newPlayer.teleport(teleportTarget.getServerWorld(), teleportTarget.getX(), teleportTarget.getY(), teleportTarget.getZ(), teleportTarget.getYaw(), teleportTarget.getPitch());
         }
+        Blockout.handlePlayerRespawn(newPlayer);
     }
 }

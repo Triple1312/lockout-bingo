@@ -11,7 +11,7 @@ import net.abrikoos.blockout.networkv2.game.EndGamePacket;
 import net.abrikoos.blockout.networkv2.game.GoalInfoPacket;
 import net.abrikoos.blockout.networkv2.team.Colors;
 import net.abrikoos.blockout.server.goals.GoalItemRegistry;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.abrikoos.blockout.network.NetworkBridge;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenRect;
@@ -93,7 +93,7 @@ public class BoardTab3 implements Tab {
 
             }).dimensions(500, 130, 100, 20).build();
             this.endGameButton = ButtonWidget.builder(Text.of("End Game"), button -> {
-                ClientPlayNetworking.send(new EndGamePacket());
+                NetworkBridge.sendToServer(new EndGamePacket());
                 MinecraftClient.getInstance().setScreen(null);
             }).dimensions(0, 0, 80, 20).build();
         }
@@ -264,7 +264,7 @@ public class BoardTab3 implements Tab {
 
             @Override
             public void onClick(double mouseX, double mouseY) {
-                ClientPlayNetworking.send(new AskCompassPacket());
+                NetworkBridge.sendToServer(new AskCompassPacket());
                 MinecraftClient.getInstance().setScreen(null);
             }
         }

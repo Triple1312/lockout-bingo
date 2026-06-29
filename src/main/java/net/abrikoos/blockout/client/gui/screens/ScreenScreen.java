@@ -71,7 +71,7 @@ public class ScreenScreen extends Screen {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         // board opening/closing key is handled in BlockoutClient oninitializeClient
 
-        if (BlockoutClient.boardKey.matchesKey(keyCode, scanCode)) {
+        if (BlockoutClient.boardKeyMatches(keyCode, scanCode)) {
             if (ClientGameStateV2.gameHasStarted()) {
 //                if (this.tabManager.getCurrentTab().getTitle().getString().equals("TeamsTab")) {
 //                    return false;

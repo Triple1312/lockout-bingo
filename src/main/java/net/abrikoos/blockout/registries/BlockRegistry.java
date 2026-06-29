@@ -1,14 +1,8 @@
 package net.abrikoos.blockout.registries;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.block.Blocks;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.EmptyBlockView;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -484,28 +478,4 @@ public final class BlockRegistry {
         return Collections.unmodifiableSet(GROUPS.keySet());
     }
 
-    /**
-     * Returns every block in the game registry that is eligible for block-swap:
-     * non-air, not a shulker box, and has at least one full-square face.
-     */
-    public static List<Block> getSwappableBlocks() {
-        List<Block> result = new ArrayList<>();
-        for (Block block : Registries.BLOCK) {
-            if (block == Blocks.AIR || block == Blocks.CAVE_AIR || block == Blocks.VOID_AIR) continue;
-            if (block instanceof ShulkerBoxBlock) continue;
-            if (hasFullFace(block)) result.add(block);
-        }
-        return result;
-    }
-
-    private static boolean hasFullFace(Block block) {
-        try {
-            VoxelShape shape = block.getDefaultState()
-                    .getCollisionShape(EmptyBlockView.INSTANCE, BlockPos.ORIGIN);
-            for (Direction dir : Direction.values()) {
-                if (Block.isFaceFullSquare(shape, dir)) return true;
-            }
-        } catch (Exception ignored) {}
-        return false;
-    }
 }

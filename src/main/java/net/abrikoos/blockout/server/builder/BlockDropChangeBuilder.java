@@ -2,6 +2,7 @@ package net.abrikoos.blockout.server.builder;
 
 import net.abrikoos.blockout.mixin.accessors.CombinedEntryMixin;
 import net.abrikoos.blockout.mixin.accessors.ItemEntryMixin;
+import net.abrikoos.blockout.mixin.accessors.LootPoolAccessor;
 import net.abrikoos.blockout.mixin.accessors.LootTableAccessor;
 import net.abrikoos.blockout.networkv2.game.GoalBoardUpdatePacket;
 import net.abrikoos.blockout.networkv2.game.GoalInfoPacket;
@@ -36,7 +37,7 @@ public class BlockDropChangeBuilder {
             LootTable lootTable = server.getReloadableRegistries().getLootTable(lootTableId);
             List<LootPool> pools = ((LootTableAccessor) lootTable).getPools();
             for (LootPool pool : pools) {
-                for (LootPoolEntry entry : pool.entries) {
+                for (LootPoolEntry entry : ((LootPoolAccessor) pool).getEntries()) {
                     if (entry instanceof ItemEntry) {
                         droppableItems.add(((ItemEntryMixin) entry).getItem().value());
                     }

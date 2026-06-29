@@ -2,7 +2,7 @@ package net.abrikoos.blockout.server.goals.tools;
 
 import net.abrikoos.blockout.server.goals.BlockoutGoal;
 import net.abrikoos.blockout.server.goals.BlockoutGoalEvent;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.abrikoos.blockout.server.listeners.TickListener;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -24,7 +24,7 @@ public class ObtainAllToolTypeTypesGoal extends BlockoutGoal {
         super(id);
         this.tooltype = tooltype;
 
-        ServerTickEvents.START_SERVER_TICK.register(this::checkCompletion);
+        TickListener.subscribe(this::checkCompletion);
     }
 
     public void checkCompletion(MinecraftServer minecraftServer) { // todo not tested

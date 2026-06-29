@@ -2,7 +2,7 @@ package net.abrikoos.blockout.server.goals.biome;
 
 import net.abrikoos.blockout.server.goals.BlockoutGoal;
 import net.abrikoos.blockout.server.goals.BlockoutGoalEvent;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.abrikoos.blockout.server.listeners.TickListener;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -15,7 +15,7 @@ public class FindBiomeGoal extends BlockoutGoal {
     public FindBiomeGoal(int id, Identifier biome) {
         super(id);
         this.biome = biome;
-        ServerTickEvents.START_SERVER_TICK.register(this::checkCompletion);
+        TickListener.subscribe(this::checkCompletion);
     }
 
     private void checkCompletion(MinecraftServer minecraftServer) {

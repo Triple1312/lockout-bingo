@@ -19,7 +19,7 @@ import net.abrikoos.blockout.server.listeners.*;
 import net.abrikoos.blockout.client.modes.random_block_finder.RandomBlockFinder;
 import net.abrikoos.blockout.networkv2.compass.CompassPlayerPosition;
 import net.abrikoos.blockout.networkv2.compass.PlayersPositionPacket;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.abrikoos.blockout.network.NetworkBridge;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.advancement.PlayerAdvancementTracker;
 import net.minecraft.block.Block;
@@ -90,7 +90,7 @@ public class GameState {
             teamRegistry.addPlayerData(new PlayerData(player.getUuid().toString(), player.getName().getString(), true));
         }
         if (inGame()) {
-            ServerPlayNetworking.send(player, info);
+            NetworkBridge.sendToPlayer(player,info);
         }
     }
 
@@ -172,12 +172,12 @@ public class GameState {
     }
 
     public static void sendStructuresLocation(ServerPlayerEntity player) {
-        ServerPlayNetworking.send(player, new StructureLocationsPacket(structures));
+        NetworkBridge.sendToPlayer(player,new StructureLocationsPacket(structures));
     }
 
     public static void sendStructuresLocationToAll() {
         for (ServerPlayerEntity player : players()) {
-            ServerPlayNetworking.send(player, new StructureLocationsPacket(structures));
+            NetworkBridge.sendToPlayer(player,new StructureLocationsPacket(structures));
         }
     }
 
@@ -267,35 +267,25 @@ public class GameState {
                 break;
         }
 
-        for (BlockoutGoal goal : goals) {
-            goal.subscribe(GameState::onGoalComplete);
-        }
+        goals.forEach(goal -> goal.subscribe(GameState::onGoalComplete));
 
         GameSettings.settings = packet;
 
         // reset all player stats
-        for (ServerPlayerEntity player : players()) {
+        players().forEach(player -> {
             player.getInventory().clear();
-//            player.giveItemStack(BlockoutModItems.PLAYER_TRACKING_COMPASS.getDefaultStack());
-
             PlayerAdvancementTracker tracker = player.getAdvancementTracker();
-            MinecraftServer server = player.getServer();
-            assert server != null;
-            ServerAdvancementLoader loader = server.getAdvancementLoader();
-            for (AdvancementEntry advancement : loader.getAdvancements()) {
-                advancement.value().criteria().forEach((criterion, conditions) -> {
-                    tracker.revokeCriterion(advancement, criterion);
-                });
-            }
-
-
+            MinecraftServer playerServer = player.getServer();
+            assert playerServer != null;
+            ServerAdvancementLoader loader = playerServer.getAdvancementLoader();
+            loader.getAdvancements().forEach(advancement ->
+                advancement.value().criteria().forEach((criterion, conditions) ->
+                    tracker.revokeCriterion(advancement, criterion)));
             StatHandler sh = player.getStatHandler();
-            for (Stat<?> stat : Stats.CUSTOM) {
-                sh.setStat(player, stat, 0);
-            } //todo needs to remove more stuff
+            Stats.CUSTOM.forEach(stat -> sh.setStat(player, stat, 0));
             player.heal(player.getMaxHealth());
             player.giveItemStack(BlockoutModItems.PLAYER_TRACKING_COMPASS.getDefaultStack());
-        }
+        });
 
         // create custom world and teleport players that are in a playing team
         long gameSeed = new Random().nextLong();
@@ -307,7 +297,7 @@ public class GameState {
         CustomWorldManager.createWorlds(server, gameSeed, genMode);
 
         List<ServerPlayerEntity> gamePlayers = new ArrayList<>();
-        for (String teamUUID : packet.teamUUIDs()) {
+        packet.teamUUIDs().forEach(teamUUID -> {
             try {
                 TeamData team = teamRegistry.getTeamDataByUUID(teamUUID);
                 for (String playerUUID : team.playerUUIDs) {
@@ -317,13 +307,11 @@ public class GameState {
             } catch (Exception e) {
                 BlockoutLogger.log("Error getting team for teleport: " + e.getMessage());
             }
-        }
+        });
         CustomWorldManager.teleportPlayers(server, gamePlayers);
 
         // send new game packet to all players
-        for (ServerPlayerEntity player : players()) {
-            ServerPlayNetworking.send(player, info);
-        }
+        players().forEach(player -> NetworkBridge.sendToPlayer(player, info));
 
     }
 
@@ -443,28 +431,26 @@ public class GameState {
         new_goals_data.set(event.goalId, new GoalInfoPacket( goalinfopacket.goalName(), goalinfopacket.goalID(), event.goalId, event.puuid, goal_recipiant_team.teamUUID, goal_recipiant_team.teamColor));
 
         // calculate scores
-        for (String teamUUID: GameState.info.teamUUIDs()) {
-            int goal_completed_count = 0;
-            for (GoalInfoPacket goal : new_goals_data) {
-                if (Objects.equals(goal.completedTeamUUID(), teamUUID)) {
-                    goal_completed_count++;
-                }
-            }
-            new_scores.add(goal_completed_count);
-        }
+        GameState.info.teamUUIDs().forEach(teamUUID -> {
+            int count = (int) new_goals_data.stream()
+                    .filter(goal -> Objects.equals(goal.completedTeamUUID(), teamUUID))
+                    .count();
+            new_scores.add(count);
+        });
 
         GameState.info.updateBoard(new GoalBoardUpdatePacket(new_goals_data, justcompletedgoal, new_scores));
 
         // send new board to all players
         String playerName = getPlayerByUUID(event.puuid).getName().getString();
-        for (ServerPlayerEntity player : players()) {
+        final TeamData finalRecipiantTeam = goal_recipiant_team;
+        players().forEach(player -> {
             try {
-                ServerPlayNetworking.send(player, board());
-                player.sendMessage(Text.literal(playerName).withColor(Colors.get(goal_recipiant_team.teamColor)).append(Text.of(" has completed goal: " + goalinfopacket.goalName())));
+                NetworkBridge.sendToPlayer(player, board());
+                player.sendMessage(Text.literal(playerName).withColor(Colors.get(finalRecipiantTeam.teamColor)).append(Text.of(" has completed goal: " + goalinfopacket.goalName())));
             } catch (Exception e) {
                 BlockoutLogger.log("Error sending packet to player " + player.getName().getString());
             }
-        }
+        });
         return event.recipiant;
     }
 
@@ -472,45 +458,6 @@ public class GameState {
         return board();
     }
 
-    protected void resetPlayerStats(ServerPlayerEntity player) {
-        player.getInventory().clear();
-        player.getAdvancementTracker().clearCriteria();
-        StatHandler sh = player.getStatHandler();
-        for (Stat<?> stat : Stats.CUSTOM) {
-            sh.setStat(player, stat, 0);
-        }
-
-        // Reset block stats
-        for (Block block : Registries.BLOCK) {
-            Stat<Block> stat = Stats.MINED.getOrCreateStat(block);
-            sh.setStat(player ,stat, 0);
-        }
-
-        // Reset item stats
-        for (Item item : Registries.ITEM) {
-            Stat<Item> usedStat = Stats.USED.getOrCreateStat(item);
-            sh.setStat(player, usedStat, 0);
-
-            Stat<Item> brokenStat = Stats.BROKEN.getOrCreateStat(item);
-            sh.setStat(player, brokenStat, 0);
-
-            Stat<Item> pickedUpStat = Stats.PICKED_UP.getOrCreateStat(item);
-            sh.setStat(player, pickedUpStat, 0);
-
-            Stat<Item> droppedStat = Stats.DROPPED.getOrCreateStat(item);
-            sh.setStat(player, droppedStat, 0);
-        }
-
-        // Reset entity stats (kills, killed by)
-        for (EntityType<?> entityType : Registries.ENTITY_TYPE) {
-            Stat<EntityType<?>> killedStat = Stats.KILLED.getOrCreateStat(entityType);
-            sh.setStat(player, killedStat, 0);
-
-            Stat<EntityType<?>> killedByStat = Stats.KILLED_BY.getOrCreateStat(entityType);
-            sh.setStat(player, killedByStat, 0);
-        }
-
-    }
 
     public static void pause() {
         if (!inGame() || paused) return;
@@ -519,7 +466,7 @@ public class GameState {
         info.updatePauseState(true, pauseOffset);
         GamePauseUpdatePacket packet = new GamePauseUpdatePacket(true, pauseOffset);
         for (ServerPlayerEntity player : players()) {
-            ServerPlayNetworking.send(player, packet);
+            NetworkBridge.sendToPlayer(player,packet);
         }
         for (ServerPlayerEntity player : players()) {
             player.sendMessage(Text.literal("[Lockout] Game paused."));
@@ -534,7 +481,7 @@ public class GameState {
         info.updatePauseState(false, pauseOffset);
         GamePauseUpdatePacket packet = new GamePauseUpdatePacket(false, pauseOffset);
         for (ServerPlayerEntity player : players()) {
-            ServerPlayNetworking.send(player, packet);
+            NetworkBridge.sendToPlayer(player,packet);
         }
         for (ServerPlayerEntity player : players()) {
             player.sendMessage(Text.literal("[Lockout] Game resumed."));
@@ -571,7 +518,7 @@ public class GameState {
             }
 
             for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-                ServerPlayNetworking.send(player, new PlayersPositionPacket(pos));
+                NetworkBridge.sendToPlayer(player,new PlayersPositionPacket(pos));
             }
         }
     }

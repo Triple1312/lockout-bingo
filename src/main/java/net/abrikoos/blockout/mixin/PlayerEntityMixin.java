@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PlayerEntity.class)
 public class PlayerEntityMixin {
 
-    @Inject(method="damage", at=@At("HEAD"))
+    @Inject(method="damage(Lnet/minecraft/entity/damage/DamageSource;F)Z", at=@At("HEAD"))
     private void onDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         PlayerEntity player = (PlayerEntity) (Object) this;
         PlayerDamageListener.registerEvent(player, source, (int) amount);

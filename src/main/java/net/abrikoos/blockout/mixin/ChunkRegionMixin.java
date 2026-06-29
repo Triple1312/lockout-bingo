@@ -6,7 +6,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkRegion;
-import net.minecraft.world.gen.chunk.ChunkGenerator;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -32,7 +31,7 @@ public abstract class ChunkRegionMixin {
     private void applyBlockSwap(BlockPos pos, BlockState state, int flags, int maxUpdateDepth,
                                 CallbackInfoReturnable<Boolean> cir) {
         if (swapGuard) return;
-        ChunkGenerator gen = world.getChunkManager().getChunkGenerator();
+        Object gen = world.getChunkManager().getChunkGenerator();
         if (!(gen instanceof BlockSwapChunkGenerator bsGen)) return;
         Map<Block, Block> map = bsGen.getSwapMap();
         if (map == null) return;

@@ -6,7 +6,7 @@ import net.abrikoos.blockout.client.ClientGameStateV2;
 import net.abrikoos.blockout.client.gui.screens.ScreenScreen;
 import net.abrikoos.blockout.client.gui.widget.ColoredButton;
 import net.abrikoos.blockout.networkv2.team.*;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.abrikoos.blockout.network.NetworkBridge;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ScreenRect;
@@ -28,10 +28,10 @@ public class TeamsTab implements Tab {
     public void addSelectedToTeam(String teamUUID) {
         PlayerList.PlayerEntry selected = playerList.selected();
         if (selected != null) {
-            ClientPlayNetworking.send(new AddPlayerToTeamV2(selected.player.puuid, teamUUID));
+            NetworkBridge.sendToServer(new AddPlayerToTeamV2(selected.player.puuid, teamUUID));
         }
         else {
-            ClientPlayNetworking.send(new AddPlayerToTeamV2(MinecraftClient.getInstance().player.getUuid().toString(), teamUUID));
+            NetworkBridge.sendToServer(new AddPlayerToTeamV2(MinecraftClient.getInstance().player.getUuid().toString(), teamUUID));
         }
     }
 
@@ -175,21 +175,21 @@ public class TeamsTab implements Tab {
             // header
             if (players.isEmpty()) {
                 ButtonWidget btn = ButtonWidget.builder(Text.of("X"), (button) -> {
-                    ClientPlayNetworking.send(new RemoveTeamV2(team.teamUUID));
+                    NetworkBridge.sendToServer(new RemoveTeamV2(team.teamUUID));
                 }).dimensions(x+2, y+2, 10, 10).build();
                 btn.render(context, mouseX, mouseY, delta);
                 clickables.add(btn);
             }
             ButtonWidget btn2 = ButtonWidget.builder(Text.of("+"), (button) -> {
                 this.JoinTeam.accept(team.teamUUID);
-//                ClientPlayNetworking.send(new LockoutJoinTeamPacket(team.teamId));
+//                NetworkBridge.sendToServer(new LockoutJoinTeamPacket(team.teamId));
             }).dimensions(x+ width - 12, y+2, 10, 10).build();
             btn2.render(context, mouseX, mouseY, delta);
             clickables.add(btn2);
             TextWidget tw = new TextWidget( x, y+2, width, 10, Text.literal(team.teamName).withColor(Colors.get(team.teamColor)), MinecraftClient.getInstance().textRenderer );
             tw.renderWidget(context, mouseX, mouseY, delta);
             ColoredButton tsb = new ColoredButton(x + width/4, y+2, width/2, 10, Text.of(""), (button) -> {
-                ClientPlayNetworking.send(new RotateTeamColor(team.teamUUID));
+                NetworkBridge.sendToServer(new RotateTeamColor(team.teamUUID));
 
             }, 0x00000000);
             tsb.render(context, mouseX, mouseY, delta);
@@ -212,7 +212,7 @@ public class TeamsTab implements Tab {
             this.teamNameField.setX(x + 2);
             this.teamNameField.setY(y + 15);
             ButtonWidget btn = ButtonWidget.builder(Text.of("Add Team"), (button) -> {
-                ClientPlayNetworking.send(new AddTeamV2(teamNameField.getText()));
+                NetworkBridge.sendToServer(new AddTeamV2(teamNameField.getText()));
                 teamNameField.setText("");
             }).dimensions(x + 2, y+ height -17, width -4 , 15).build();
             btn.render(context, mouseX, mouseY, delta);

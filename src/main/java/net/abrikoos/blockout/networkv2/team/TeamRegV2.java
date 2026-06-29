@@ -44,13 +44,9 @@ public class TeamRegV2 implements CustomPayload {
         @Override
         public void encode(RegistryByteBuf buf, TeamRegV2 value) {
             buf.writeByte(value.teams.size());
-            for (TeamData team : value.teams) {
-                TeamData.CODEC.encode(buf, team);
-            }
+            value.teams.forEach(team -> TeamData.CODEC.encode(buf, team));
             buf.writeByte(value.players.size());
-            for (PlayerData player : value.players) {
-                PlayerData.CODEC.encode(buf, player);
-            }
+            value.players.forEach(player -> PlayerData.CODEC.encode(buf, player));
         }
     };
 

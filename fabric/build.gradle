@@ -1,0 +1,80 @@
+plugins {
+	id 'com.github.johnrengelman.shadow'
+	id 'dev.architectury.loom'
+}
+
+architectury {
+	platformSetupLoomIde()
+	fabric()
+}
+
+loom {
+	accessWidenerPath = project(':common').loom.accessWidenerPath
+}
+
+fabricApi {
+	configureDataGeneration()
+}
+
+configurations {
+	common
+	shadowCommon
+	compileClasspath.extendsFrom common
+	runtimeClasspath.extendsFrom common
+	developmentFabric.extendsFrom common
+}
+
+base {
+	archivesName = rootProject.archives_base_name + '-fabric'
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+	mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
+
+	modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_version}"
+common(project(path: ':common', configuration: 'namedElements')) { transitive false }
+	shadowCommon(project(path: ':common', configuration: 'transformProductionFabric')) { transitive false }
+
+	implementation 'org.jetbrains:annotations:24.0.0'
+}
+
+processResources {
+	from(rootProject.file('src/main/resources/blockout.accesswidener'))
+	inputs.property 'version', rootProject.version
+
+	filesMatching('fabric.mod.json') {
+		expand 'version': rootProject.version
+	}
+}
+
+tasks.named('shadowJar', com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+	exclude 'architectury.common.json'
+	configurations = [project.configurations.shadowCommon]
+	archiveClassifier = 'dev-shadow'
+}
+
+tasks.named('remapJar') {
+	injectAccessWidener = true
+	input.set tasks.named('shadowJar').get().archiveFile
+	dependsOn tasks.named('shadowJar')
+	archiveClassifier = null
+}
+
+tasks.named('jar') {
+	archiveClassifier = 'dev'
+}
+
+tasks.named('sourcesJar') {
+	duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.EXCLUDE
+	def commonSources = project(':common').tasks.named('sourcesJar')
+	dependsOn commonSources
+	from commonSources.get().archiveFile.map { zipTree(it) }
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${rootProject.archives_base_name}" }
+	}
+}

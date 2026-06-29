@@ -1,0 +1,127 @@
+plugins {
+	id 'com.github.johnrengelman.shadow'
+	id 'dev.architectury.loom'
+}
+
+architectury {
+	platformSetupLoomIde()
+	neoForge()
+}
+
+loom {
+	accessWidenerPath = project(':common').loom.accessWidenerPath
+}
+
+configurations {
+	common
+	shadowCommon
+	compileClasspath.extendsFrom common
+	runtimeClasspath.extendsFrom common
+}
+
+base {
+	archivesName = rootProject.archives_base_name + '-neoforge'
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+	mappings loom.officialMojangMappings()
+	neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
+
+common(project(path: ':common', configuration: 'namedElements')) { transitive false }
+	shadowCommon(project(path: ':common', configuration: 'transformProductionNeoForge')) { transitive false }
+
+	implementation 'org.jetbrains:annotations:24.0.0'
+}
+
+sourceSets {
+	main {
+		resources {
+			srcDirs += [rootProject.file('src/main/resources')]
+		}
+	}
+}
+
+processResources {
+	inputs.property 'version', project.version
+	// fabric.mod.json lives in the common resources dir but belongs only to the Fabric module
+	exclude 'fabric.mod.json'
+
+	filesMatching('META-INF/neoforge.mods.toml') {
+		expand 'version': project.version
+	}
+}
+
+tasks.named('shadowJar', com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) {
+	exclude 'architectury.common.json'
+	exclude 'fabric.mod.json'
+	configurations = [project.configurations.shadowCommon]
+	archiveClassifier = 'dev-shadow'
+}
+
+tasks.named('remapJar') {
+	injectAccessWidener = true
+	input.set tasks.named('shadowJar').get().archiveFile
+	dependsOn tasks.named('shadowJar')
+	archiveClassifier = null
+}
+
+tasks.named('jar') {
+	archiveClassifier = 'dev'
+}
+
+tasks.named('sourcesJar') {
+	def commonSources = project(':common').tasks.named('sourcesJar')
+	dependsOn commonSources
+	from commonSources.get().archiveFile.map { zipTree(it) }
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${rootProject.archives_base_name}" }
+	}
+}
+
+// The Architectury Runtime Transformer uses ASM COMPUTE_FRAMES which calls
+// getCommonSuperClass() when it needs to merge two different reference types in a local
+// variable slot. Our packet classes implement CustomPayload (Yarn name
+// net.minecraft.network.packet.CustomPayload), which is not in the Mojang-mapped NeoForge
+// classpath. We extract only CustomPayload.class into a minimal stub JAR — NeoForge FML
+// won't detect it as a duplicate MC jar because that specific Yarn FQN doesn't exist in
+// the Mojang-mapped jars.
+afterEvaluate {
+	def commonCp = project(':common').configurations.runtimeClasspath
+	def yarnMcJar = commonCp.find { f ->
+		f.name.contains('minecraft-merged') && f.name.contains('yarn')
+	}
+
+	if (yarnMcJar != null) {
+		def createYarnStubs = tasks.register('createYarnStubs', Jar) {
+			archiveFileName = 'yarn-stubs.jar'
+			destinationDirectory = layout.buildDirectory.dir('yarn-stubs')
+			// Always rebuild — Gradle's Jar task is incremental and won't re-extract
+			// files when only the exclude pattern changes without this flag.
+			outputs.upToDateWhen { false }
+			doFirst {
+				// Delete existing jar so the Jar task rebuilds from scratch rather
+				// than incrementally adding to stale content.
+				def stubJar = layout.buildDirectory.dir('yarn-stubs').get().file('yarn-stubs.jar').asFile
+				stubJar.delete()
+			}
+			from(zipTree(yarnMcJar)) {
+				// NeoForge FML detects a duplicate MC jar by looking specifically for
+				// net/minecraft/client/main/Main.class on the classpath. Exclude that
+				// package so FML's heuristic passes while all other Yarn-named MC classes
+				// (CustomPayload, Identifier, etc.) remain available to the transformer.
+				exclude 'net/minecraft/client/main/**'
+			}
+		}
+
+		tasks.withType(JavaExec).configureEach {
+			if (name.startsWith("run")) {
+				dependsOn createYarnStubs
+				classpath += files(createYarnStubs.flatMap { it.archiveFile })
+			}
+		}
+	}
+}

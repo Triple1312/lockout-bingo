@@ -4,7 +4,7 @@ import net.abrikoos.blockout.BlockoutLogger;
 import net.abrikoos.blockout.client.ClientGameStateV2;
 import net.abrikoos.blockout.networkv2.team.PlayerData;
 import net.abrikoos.blockout.networkv2.team.TeammateRespawnRequestPacket;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.abrikoos.blockout.network.NetworkBridge;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.GridWidget;
@@ -37,7 +37,7 @@ public class TeamrespawnScreen extends Screen {
             for (int i = 0; i < players.size(); i++) {
                 var p = players.get(i);
                 ButtonWidget p_w = ButtonWidget.builder(Text.of(p.name), button -> {
-                    ClientPlayNetworking.send(new TeammateRespawnRequestPacket(p.puuid));
+                    NetworkBridge.sendToServer(new TeammateRespawnRequestPacket(p.puuid));
                     this.client.player.requestRespawn();
                 }).width(150).build();
                 p_w.setX(100);

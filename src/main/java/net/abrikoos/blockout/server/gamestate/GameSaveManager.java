@@ -75,7 +75,7 @@ public class GameSaveManager {
                 : GameState.pauseOffset;
         data.saveTime = System.currentTimeMillis();
 
-        for (GoalInfoPacket goal : GameState.info.board().goals()) {
+        GameState.info.board().goals().forEach(goal -> {
             SavedGoal sg = new SavedGoal();
             sg.goalID = goal.goalID();
             sg.goalName = goal.goalName();
@@ -84,23 +84,23 @@ public class GameSaveManager {
             sg.completedTeamUUID = goal.completedTeamUUID();
             sg.color = goal.color();
             data.goals.add(sg);
-        }
+        });
 
-        for (TeamData team : GameState.teamRegistry.teams) {
+        GameState.teamRegistry.teams.forEach(team -> {
             SavedTeam st = new SavedTeam();
             st.teamName = team.teamName;
             st.teamUUID = team.teamUUID;
             st.teamColor = team.teamColor;
             st.playerUUIDs = new ArrayList<>(team.playerUUIDs);
             data.teams.add(st);
-        }
+        });
 
-        for (PlayerData player : GameState.teamRegistry.players) {
+        GameState.teamRegistry.players.forEach(player -> {
             SavedPlayer sp = new SavedPlayer();
             sp.puuid = player.puuid;
             sp.name = player.name;
             data.players.add(sp);
-        }
+        });
 
         Path savePath = FabricLoader.getInstance().getGameDir().resolve(SAVE_FILE);
         try (Writer writer = Files.newBufferedWriter(savePath)) {
@@ -145,10 +145,9 @@ public class GameSaveManager {
 
         List<Integer> scores = new ArrayList<>();
         for (String teamUUID : List.of(data.team1, data.team2)) {
-            int count = 0;
-            for (GoalInfoPacket gip : goalPackets) {
-                if (Objects.equals(gip.completedTeamUUID(), teamUUID)) count++;
-            }
+            int count = (int) goalPackets.stream()
+                    .filter(gip -> Objects.equals(gip.completedTeamUUID(), teamUUID))
+                    .count();
             scores.add(count);
         }
 

@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "blockout",
+	"version": "${version}",
+	"name": "Blockout",
+	"description": "This is a lockout mod made for fabric 1.21",
+	"authors": [
+		"Abrikoos"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/blockout/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.abrikoos.blockout.BlockoutFabric"
+		],
+		"client": [
+			"net.abrikoos.blockout.BlockoutClientFabric"
+		]
+	},
+	"accessWidener": "blockout.accesswidener",
+	"mixins": [
+		"blockout.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.15.11",
+		"minecraft": ">=1.21",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}

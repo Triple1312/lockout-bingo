@@ -3,7 +3,7 @@ package net.abrikoos.blockout.networkv2.team;
 
 import net.abrikoos.blockout.BlockoutLogger;
 import net.abrikoos.blockout.server.gamestate.GameState;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.abrikoos.blockout.network.NetworkBridge;
 import net.minecraft.server.MinecraftServer;
 
 import java.util.ArrayList;
@@ -74,7 +74,7 @@ public class ServerTeamRegV2 extends TeamRegV2 {
 
     public void sendClientsUpdate() {
         GameState.server.getPlayerManager().getPlayerList().forEach(player -> {
-            ServerPlayNetworking.send(player, this);
+            NetworkBridge.sendToPlayer(player, this);
         });
     }
 

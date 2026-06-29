@@ -5,6 +5,14 @@ pluginManagement {
 			url = 'https://maven.fabricmc.net/'
 		}
 		maven {
+			name = 'Architectury'
+			url = 'https://maven.architectury.dev/'
+		}
+		maven {
+			name = 'NeoForged'
+			url = 'https://maven.neoforged.net/releases/'
+		}
+		maven {
 			name = 'parchmentmc'
 			url = "https://maven.parchmentmc.org"
 		}
@@ -12,3 +20,7 @@ pluginManagement {
 		gradlePluginPortal()
 	}
 }
+
+rootProject.name = 'blockout'
+
+include('common', 'fabric', 'neoforge')

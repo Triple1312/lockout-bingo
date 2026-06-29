@@ -1,6 +1,5 @@
 package net.abrikoos.blockout.server.listeners;
 
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.MinecraftServer;
 
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ public class ServerTickListener {
     private static ServerTickListener instance;
 
     private ServerTickListener() {
-        ServerTickEvents.START_SERVER_TICK.register(this::registerEvent);
+        TickListener.subscribe(this::registerEvent);
     }
 
     public static void subscribe(Consumer<MinecraftServer> listener) {
@@ -22,11 +21,10 @@ public class ServerTickListener {
     }
 
     public void registerEvent(MinecraftServer server) {
-        for (Consumer<MinecraftServer> listener : ServerTickListener.getInstance().listeners) {
+        for (Consumer<MinecraftServer> listener : new ArrayList<>(ServerTickListener.getInstance().listeners)) {
             try {
                 listener.accept(server);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 ServerTickListener.getInstance().listeners.remove(listener);
             }
         }
@@ -46,6 +44,4 @@ public class ServerTickListener {
         }
         return instance;
     }
-
-
 }

@@ -1,7 +1,6 @@
 package net.abrikoos.blockout.client.gui;
 
 import net.abrikoos.blockout.client.ClientGameStateV2;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.RenderLayer;

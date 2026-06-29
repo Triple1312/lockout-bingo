@@ -14,7 +14,7 @@ import net.abrikoos.blockout.server.goals.GoalListItemV2;
 import net.abrikoos.blockout.util.BlockoutList;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.abrikoos.blockout.network.NetworkBridge;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvent;
@@ -64,7 +64,7 @@ public class ClientGameStateV2 {
     public static void updateBoard(GoalBoardUpdatePacket packet) {
         int justCompletedGoal = packet.justCompletedGoal();
         if (game == null) {
-            ClientPlayNetworking.send(new GetGameInfo());
+            NetworkBridge.sendToServer(new GetGameInfo());
             return;
         }
         int oldJustCompletedGoal = game.board().justCompletedGoal();

@@ -1,0 +1,43 @@
+plugins {
+	id 'dev.architectury.loom'
+}
+
+architectury {
+	common(rootProject.enabled_platforms.split(','))
+}
+
+def accessWidenerFile = rootProject.file('src/main/resources/blockout.accesswidener')
+loom {
+	accessWidenerPath = accessWidenerFile
+}
+
+// Point common's sources at the root src/ directory
+sourceSets {
+	main {
+		java {
+			srcDirs = [rootProject.file('src/main/java')]
+		}
+		resources {
+			srcDirs = [rootProject.file('src/main/resources')]
+		}
+	}
+}
+
+// Exclude fabric.mod.json from common output (it belongs only in the fabric module)
+processResources {
+	exclude 'fabric.mod.json'
+}
+
+// These classes extend/reference Yarn-named NoiseChunkGenerator, which NeoForge's Architectury
+// Runtime Transformer can't resolve (Mojang classpath only). Keep real impls in fabric module;
+// common stubs and NeoForge stubs provide the public API for each side.
+jar {
+	exclude 'net/abrikoos/blockout/chunkgenerators/**'
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+	mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
+
+}

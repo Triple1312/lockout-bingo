@@ -4,7 +4,7 @@ package net.abrikoos.blockout.server.goals.obtain;
 import net.abrikoos.blockout.BlockoutLogger;
 import net.abrikoos.blockout.server.goals.BlockoutGoal;
 import net.abrikoos.blockout.server.goals.BlockoutGoalEvent;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.abrikoos.blockout.server.listeners.TickListener;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
@@ -16,7 +16,7 @@ public class DontObtainItemGoal extends BlockoutGoal {
     public DontObtainItemGoal(int id, Item item) {
         super(id);
         this.item = item;
-        ServerTickEvents.START_SERVER_TICK.register(this::checkCompletion);
+        TickListener.subscribe(this::checkCompletion);
     }
 
     private void checkCompletion(MinecraftServer minecraftserver) {
